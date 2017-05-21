@@ -1,6 +1,10 @@
 # Westwind.Utiltities
 ### A general purpose utility and helper library for .NET development
 
+> Moved from Westwind.Toolkit repro into seperate repro
+> * Added support for .NET Core 2.0
+> * Targets .NET 4.5, 4.0 and NetCore 2.0
+
 Every .NET application requires small, common and often repeated tasks. This library is a collection of those things that I commonly need on a regular basis and have compiled over the years.
 
 * [Get it on NuGet](http://nuget.org/packages/Westwind.Utilities/)
