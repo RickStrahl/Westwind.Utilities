@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netcoreapp2.0;net452</TargetFrameworks>
+
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CSharp" Version="4.4.0-preview1-25305-02" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0-preview-20170517-02" />
+		<PackageReference Include="MSTest.TestAdapter" Version="1.1.17" />
+		<PackageReference Include="MSTest.TestFramework" Version="1.1.17" />
+		<PackageReference Include="Newtonsoft.Json" Version="10.0.2" />		
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />
+	</ItemGroup>
+
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+		<Reference Include="mscorlib" />
+		<Reference Include="System" />
+		<Reference Include="System.Core" />		
+		<Reference Include="System.Data" />
+		<Reference Include="System.Web" />
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Security" />
+		<Reference Include="System.Xml" />
+		<Reference Include="System.Web" />		
+		<Reference Include="System.Configuration" />
+		<Reference Include="System.ComponentModel.Annotations" />
+	</ItemGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net452'">
+		<DefineConstants>NET45;NETFULL</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Properties\" />
+	</ItemGroup>
+
+
+
+
+
+	<ItemGroup Condition="'$(TargetFramework)'=='netcoreapp2.0'">
+	</ItemGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0'">
+		<DefineConstants>NETSTANDARD2_0;NETCORE;NETSTANDARD;</DefineConstants>
+	</PropertyGroup>
+
+
+</Project>

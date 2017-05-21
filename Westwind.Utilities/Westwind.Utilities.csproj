@@ -1,0 +1,97 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>		
+		<TargetFrameworks>netstandard2.0;net45;net40</TargetFrameworks>
+		<RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+
+		<Authors>Rick Strahl</Authors>	
+		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+		<Language>en-US</Language>
+				
+		<AssemblyName>Westwind.Utilities</AssemblyName>
+		<AssemblyTitle>Westwind.Utilities</AssemblyTitle>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<VersionPrefix>3.0.0-preview1-0</VersionPrefix>
+		<PackageId>Westwind.Utilities</PackageId>
+		<RootNamespace>Westwind.Utilities</RootNamespace>
+
+		
+		<Description>.NET utility library that includes Application Configuration, logging, lightweight ADO.NET Data Access Layer and more. Utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>
+		<Summary>Small library of general purpose utilities for .NET development that almost every application can use. Used as a core reference library for other West Wind libraries.</Summary>
+		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2017</PackageCopyright>
+		<PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
+		<PackageReleaseNotes>		
+		</PackageReleaseNotes>
+		<PackageIconUrl>http://www.west-wind.com/westwindToolkit/images/WestwindWebToolkit_128x128.png</PackageIconUrl>
+		<PackageProjectUrl>http://github.com/rickstrahl/westwind.utilities</PackageProjectUrl>
+		<PackageLicenseUrl>http://www.west-wind.com/WestwindToolkit/docs/?page=_2lp0u0i9b.htm</PackageLicenseUrl>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Copyright>Rick Strahl, West Wind Technologies, 2010-2017</Copyright>
+		<RepositoryType>Github</RepositoryType>
+		<Company>West Wind Technologies</Company>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>				
+	</PropertyGroup>
+	
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <DefineConstants>TRACE;DEBUG;</DefineConstants>		
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<NoWarn>$(NoWarn);CS1591;CS1572;CS1573</NoWarn>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">		
+		<Reference Include="mscorlib" />
+		<Reference Include="System" />
+		<Reference Include="System.Core" />
+		<Reference Include="Microsoft.CSharp" />		
+		<Reference Include="System.Data" />
+		<Reference Include="System.Web" />
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Security" />
+		<Reference Include="System.Xml" />
+		<Reference Include="System.Configuration" />
+	</ItemGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net45'">
+		<DefineConstants>NET45;NETFULL</DefineConstants>
+	</PropertyGroup>
+
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
+		<Reference Include="mscorlib" />
+		<Reference Include="System" />
+		<Reference Include="System.Core" />
+		<Reference Include="Microsoft.CSharp" />
+		<Reference Include="System.Data" />
+		<Reference Include="System.Web" />
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Security" />
+		<Reference Include="System.Xml" />
+		<Reference Include="System.Configuration" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Compile Update="Utilities\HttpUtilsWebClient.cs">
+	    <SubType>Component</SubType>
+	  </Compile>
+	</ItemGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net40'">
+		<DefineConstants>NET40;NETFULL</DefineConstants>
+	</PropertyGroup>
+
+
+
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+		<DefineConstants>TRACE;NETCORE;NETSTANDARD;RELEASE;NETSTANDARD2_0</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="System.Data.SqlClient" Version="4.4.0-preview1-25305-02" />
+	</ItemGroup>
+
+
+</Project>

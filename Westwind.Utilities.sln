@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26510.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.Utilities", "Westwind.Utilities\Westwind.Utilities.csproj", "{16881D93-0458-4DD0-BAB6-111C44864607}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{80CD1636-8E36-4BC3-85E6-80F25C070095}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.Utilities.Test", "Westwind.Utilities.Test\Westwind.Utilities.Test.csproj", "{097C1E6F-8AAD-47B9-8A7F-64B2D7343033}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		net40|Any CPU = net40|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{16881D93-0458-4DD0-BAB6-111C44864607}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16881D93-0458-4DD0-BAB6-111C44864607}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16881D93-0458-4DD0-BAB6-111C44864607}.net40|Any CPU.ActiveCfg = Release|Any CPU
+		{16881D93-0458-4DD0-BAB6-111C44864607}.net40|Any CPU.Build.0 = Release|Any CPU
+		{16881D93-0458-4DD0-BAB6-111C44864607}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16881D93-0458-4DD0-BAB6-111C44864607}.Release|Any CPU.Build.0 = Release|Any CPU
+		{097C1E6F-8AAD-47B9-8A7F-64B2D7343033}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{097C1E6F-8AAD-47B9-8A7F-64B2D7343033}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{097C1E6F-8AAD-47B9-8A7F-64B2D7343033}.net40|Any CPU.ActiveCfg = Release|Any CPU
+		{097C1E6F-8AAD-47B9-8A7F-64B2D7343033}.net40|Any CPU.Build.0 = Release|Any CPU
+		{097C1E6F-8AAD-47B9-8A7F-64B2D7343033}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{097C1E6F-8AAD-47B9-8A7F-64B2D7343033}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{097C1E6F-8AAD-47B9-8A7F-64B2D7343033} = {80CD1636-8E36-4BC3-85E6-80F25C070095}
+	EndGlobalSection
+EndGlobal
