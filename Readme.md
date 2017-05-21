@@ -4,6 +4,9 @@
 > Moved from Westwind.Toolkit repro into seperate repro
 > * Added support for .NET Core 2.0
 > * Targets .NET 4.5, 4.0 and NetCore 2.0
+> * Currently in preview
+> * Full framework library is stable
+> * .NET Core framework library is usable but not stable and under active development
 
 Every .NET application requires small, common and often repeated tasks. This library is a collection of those things that I commonly need on a regular basis and have compiled over the years.
 
