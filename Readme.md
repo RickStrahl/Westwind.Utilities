@@ -1,9 +1,7 @@
-#Westwind.Utiltities
-###A rich library of everyday utilities for .NET development###
+# Westwind.Utiltities
+### A general purpose utility and helper library for .NET development
 
-Every .NET application requires small, common and ofen repeated tasks.
-This library is a collection of those things that I commonly need on
-a regular basis and have compiled over the years.
+Every .NET application requires small, common and often repeated tasks. This library is a collection of those things that I commonly need on a regular basis and have compiled over the years.
 
 * [Get it on NuGet](http://nuget.org/packages/Westwind.Utilities/)
 * [Usage Documentation](http://west-wind.com/westwindtoolkit/docs?page=_3rg13chn1.htm)
