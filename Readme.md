@@ -16,10 +16,11 @@ Every .NET application requires small, common and often repeated tasks. This lib
 
 It includes tools for:
 
-* [**Application Configuration**](http://west-wind.com/westwindtoolkit/docs?page=_2le027umn.htm) class to create code-first strongly typed configuration classes for your applications
-* [**Lightweight ADO.NET Data Access Layer**](http://west-wind.com/westwindtoolkit/docs?=page=_3ou0v2jum.htm) ideal for components or apps
-  that need data access but don't need the bulk of Entity Framework or similar ORM
-* [**Application Logging**](http://west-wind.com/westwindtoolkit/docs?page=_2mp013ssr.htm) that is integrated and easy to use and configure
+* [**Application Configuration**](http://west-wind.com/westwindtoolkit/docs?page=_2le027umn.htm)  
+class to create code-first strongly typed configuration classes for your applications
+* [**Lightweight ADO.NET Data Access Layer**](http://west-wind.com/westwindtoolkit/docs?=page=_3ou0v2jum.htm)  
+ideal for components or apps that need data access but don't need the bulk of Entity Framework or similar ORM
+
 * **General Purpose Utility Classes**:
 	* [StringUtils](http://west-wind.com/westwindtoolkit/docs?topic=Class%20StringUtils)
     * [HtmlUtils](http://west-wind.com/westwindtoolkit/docs?topic=Class%20HtmlUtils)
