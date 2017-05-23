@@ -43,28 +43,61 @@ namespace Westwind.Utilities
     /// </summary>
     public static class XmlUtils
     {
-        /// <summary>
-        /// Retrieves a result string from an XPATH query. Null if not found.
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="XPath"></param>
-        /// <returns></returns>
-        public static string GetXmlString(XmlNode node, string XPath, XmlNamespaceManager ns)
+
+	    /// <summary>
+	    /// Retrieves a result string from an XPATH query. Null if not found.
+	    /// </summary>
+	    /// <param name="node"></param>
+	    /// <param name="xPath"></param>
+	    /// <param name="ns"></param>
+	    /// <returns></returns>
+	    public static XmlNode GetXmlNode(XmlNode node, string xPath, XmlNamespaceManager ns = null)
+	    {
+		    return  node.SelectSingleNode(xPath, ns);		    
+	    }
+
+		/// <summary>
+		/// Retrieves a result string from an XPATH query. Null if not found.
+		/// </summary>
+		/// <param name="node"></param>
+		/// <param name="xPath"></param>
+		/// <param name="ns"></param>
+		/// <returns></returns>
+		public static string GetXmlString(XmlNode node, string xPath, XmlNamespaceManager ns=null)
         {
-            XmlNode selNode = node.SelectSingleNode(XPath,ns);
+            XmlNode selNode = node.SelectSingleNode(xPath,ns);
             if (selNode == null)
                 return null;
 
             return selNode.InnerText;
         }
 
-        /// <summary>
-        /// Retrieves a result int value from an XPATH query. 0 if not found.
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="XPath"></param>
-        /// <returns></returns>
-        public static int GetXmlInt(XmlNode node, string XPath, XmlNamespaceManager ns)
+
+		/// <summary>
+		/// Gets an Enum value from an xml node. Returns enum
+		/// type value. Either flag or string based keys will work
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="node"></param>
+		/// <param name="xPath"></param>
+		/// <param name="ns"></param>
+		/// <returns></returns>
+	    public static T GetXmlEnum<T>(XmlNode node, string xPath, XmlNamespaceManager ns = null)
+	    {
+		    string val = GetXmlString(node, xPath,ns);
+		    if (!string.IsNullOrEmpty(val))
+			    return (T)Enum.Parse(typeof(T), val, true);
+
+		    return default(T);
+	    }
+
+		/// <summary>
+		/// Retrieves a result int value from an XPATH query. 0 if not found.
+		/// </summary>
+		/// <param name="node"></param>
+		/// <param name="XPath"></param>
+		/// <returns></returns>
+		public static int GetXmlInt(XmlNode node, string XPath, XmlNamespaceManager ns = null)
         {
             string val = GetXmlString(node, XPath, ns);
             if (val == null)
@@ -76,15 +109,33 @@ namespace Westwind.Utilities
             return result;
         }
 
-        /// <summary>
-        /// Retrieves a result bool from an XPATH query. false if not found.
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="XPath"></param>
-        /// <returns></returns>
-        public static bool GetXmlBool(XmlNode node, string XPath,XmlNamespaceManager ns)
+	    /// <summary>
+	    /// Retrieves a result decimal value from an XPATH query. 0 if not found.
+	    /// </summary>
+	    /// <param name="node"></param>
+	    /// <param name="XPath"></param>
+	    /// <returns></returns>
+	    public static decimal GetXmlDecimal(XmlNode node, string XPath, XmlNamespaceManager ns = null)
+	    {
+		    string val = GetXmlString(node, XPath, ns);
+		    if (val == null)
+			    return 0;
+
+		    decimal result = 0;
+		    decimal.TryParse(val, out result);
+
+		    return result;
+	    }
+
+		/// <summary>
+		/// Retrieves a result bool from an XPATH query. false if not found.
+		/// </summary>
+		/// <param name="node"></param>
+		/// <param name="xPath"></param>
+		/// <returns></returns>
+		public static bool GetXmlBool(XmlNode node, string xPath,XmlNamespaceManager ns = null)
         {
-            string val = GetXmlString(node, XPath, ns);
+            string val = GetXmlString(node, xPath, ns);
             if (val == null)
                 return false;
 
@@ -94,17 +145,18 @@ namespace Westwind.Utilities
             return false;
         }
 
-        /// <summary>
-        /// Retrieves a result DateTime from an XPATH query. 1/1/1900  if not found.
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="XPath"></param>
-        /// <returns></returns>
-        public static DateTime GetXmlDateTime(XmlNode node, string XPath, XmlNamespaceManager ns)
+	    /// <summary>
+	    /// Retrieves a result DateTime from an XPATH query. 1/1/1900  if not found.
+	    /// </summary>
+	    /// <param name="node"></param>
+	    /// <param name="xPath"></param>
+	    /// <param name="ns"></param>
+	    /// <returns></returns>
+	    public static DateTime GetXmlDateTime(XmlNode node, string xPath, XmlNamespaceManager ns = null)
         {
             DateTime dtVal = new DateTime(1900, 1, 1, 0, 0, 0);
 
-            string val = GetXmlString(node, XPath, ns);
+            string val = GetXmlString(node, xPath, ns);
             if (val == null)
                 return dtVal;
 
@@ -148,14 +200,30 @@ namespace Westwind.Utilities
             return XmlConvert.ToInt32(val);
         }
 
-        
 
-        /// <summary>
-        /// Converts a .NET type into an XML compatible type - roughly
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static string MapTypeToXmlType(Type type)
+		/// <summary>
+		/// Returns an bool value from an attribute
+		/// </summary>
+		/// <param name="node"></param>
+		/// <param name="attributeName"></param>
+		/// <param name="defaultValue"></param>
+		/// <returns></returns>
+		public static bool? GetXmlAttributeBool(XmlNode node, string attributeName)
+		{
+			string val = GetXmlAttributeString(node, attributeName);
+			if (val == null)
+				return null;
+
+			return XmlConvert.ToBoolean(val);
+		}
+
+
+		/// <summary>
+		/// Converts a .NET type into an XML compatible type - roughly
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static string MapTypeToXmlType(Type type)
         {
             if (type == null)
                 return null;
