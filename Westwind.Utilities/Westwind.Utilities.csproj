@@ -30,7 +30,8 @@
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Version>3.0.0.2-preview1-0</Version>
 		<AssemblyVersion>3.0.0.0</AssemblyVersion>
-		<RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>				
+		<RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
+		<FileVersion>3.0.0.2</FileVersion>				
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

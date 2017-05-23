@@ -21,6 +21,9 @@ HMAC provides a standardized way to introduces salted values into hashes that re
 * **Add Encryption.EncryptBytes() and Encryption.DecryptBytes()**  
 Added additional overloads that allow passing byte buffer for the encryption key to make it easier to work with OS data API.
 
+* **DataUtils.DataTableToObjectList<T>**   
+You can now convert a data table to a strongly typed list with this new function.
+
 * **XmlUtils.GetXmlEnum()/GetXmlBool() and XmlUtils.GetAttributeXmlBool()**   
 Added additional conversion methods to the XML helpers to facilitate retrieving values from XML documents more easily.
 
