@@ -144,39 +144,47 @@ namespace Westwind.Utilities
             return true;
         }
 
-        public static void CopyObjectFromDataRow(DataRow row, object targetObject)
-        {
-            MemberInfo[] miT = targetObject.GetType().FindMembers(MemberTypes.Field | MemberTypes.Property, MemberAccess, null, null);
-            foreach (MemberInfo Field in miT)
-            {
-                string Name = Field.Name;
-                if (!row.Table.Columns.Contains(Name))
-                    continue;
+		/// <summary>
+		/// Populates an object passed in from values in
+		/// a data row that's passed in.
+		/// </summary>
+		/// <param name="row">Data row with values to fill from</param>
+		/// <param name="targetObject">Object to file values from data row</param>
+	    public static void CopyObjectFromDataRow(DataRow row, object targetObject)
+	    {
+		    MemberInfo[] miT = targetObject.GetType()
+			    .FindMembers(MemberTypes.Field | MemberTypes.Property,
+				    ReflectionUtils.MemberAccess, null, null);
+		    foreach (MemberInfo Field in miT)
+		    {
+			    string Name = Field.Name;
+			    if (!row.Table.Columns.Contains(Name))
+				    continue;
 
-				object value = row[Name];
-				if (value == null || value == DBNull.Value)
-					value = null;
+			    object value = row[Name];
+			    if (value == DBNull.Value)
+				    value = null;
 
-                if (Field.MemberType == MemberTypes.Field)
-                {
-                    ((FieldInfo)Field).SetValue(targetObject, value);
-                }
-                else if (Field.MemberType == MemberTypes.Property)
-                {
-                    ((PropertyInfo)Field).SetValue(targetObject, value, null);
-                }
-            }
-        }
+			    if (Field.MemberType == MemberTypes.Field)
+			    {
+				    ((FieldInfo)Field).SetValue(targetObject, value);
+			    }
+			    else if (Field.MemberType == MemberTypes.Property)
+			    {
+				    ((PropertyInfo)Field).SetValue(targetObject, value, null);
+			    }
+		    }
+	    }
 
-        /// <summary>
-        /// Copies the content of an object to a DataRow with matching field names.
-        /// Both properties and fields are copied. If a field copy fails due to a
-        /// type mismatch copying continues but the method returns false
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public static bool CopyObjectToDataRow(DataRow row, object target)
+		/// <summary>
+		/// Copies the content of an object to a DataRow with matching field names.
+		/// Both properties and fields are copied. If a field copy fails due to a
+		/// type mismatch copying continues but the method returns false
+		/// </summary>
+		/// <param name="row"></param>
+		/// <param name="target"></param>
+		/// <returns></returns>
+		public static bool CopyObjectToDataRow(DataRow row, object target)
         {
             bool result = true;
 
@@ -191,11 +199,11 @@ namespace Westwind.Utilities
                 {
                     if (Field.MemberType == MemberTypes.Field)
                     {
-                        row[name] = ((FieldInfo)Field).GetValue(target);
+                        row[name] = ((FieldInfo)Field).GetValue(target) ?? DBNull.Value;
                     }
                     else if (Field.MemberType == MemberTypes.Property)
                     {
-                        row[name] = ((PropertyInfo)Field).GetValue(target, null);
+                        row[name] = ((PropertyInfo)Field).GetValue(target, null) ?? DBNull.Value;
                     }
                 }
                 catch { result = false; }
