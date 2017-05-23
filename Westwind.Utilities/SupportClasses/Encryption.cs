@@ -24,17 +24,22 @@ namespace Westwind.Utilities
         /// </summary>
         public static string EncryptionKey = "41a3f131dd91";
 
+#if NETFULL
+		public static int EncryptionKeySize = 16;
+#else
+	    public static int EncryptionKeySize = 24;
+#endif	
 
-        #region Two-way Encryption
+		#region Two-way Encryption
 
-        /// <summary>
-        /// Encodes a stream of bytes using DES encryption with a pass key. Lowest level method that 
-        /// handles all work.
-        /// </summary>
-        /// <param name="inputBytes"></param>
-        /// <param name="encryptionKey"></param>
-        /// <returns></returns>
-        public static byte[] EncryptBytes(byte[] inputBytes, string encryptionKey)
+		/// <summary>
+		/// Encodes a stream of bytes using DES encryption with a pass key. Lowest level method that 
+		/// handles all work.
+		/// </summary>
+		/// <param name="inputBytes"></param>
+		/// <param name="encryptionKey"></param>
+		/// <returns></returns>
+		public static byte[] EncryptBytes(byte[] inputBytes, string encryptionKey)
         {
             if (encryptionKey == null)
                 encryptionKey = Encryption.EncryptionKey;
@@ -55,29 +60,48 @@ namespace Westwind.Utilities
 			var des = TripleDES.Create(); //new TripleDESCryptoServiceProvider();
 			des.Mode = cipherMode;
 
-			MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
-			
 
-#if NETFULL
-			
-			des.Key = hashmd5.ComputeHash(encryptionKey);
-#else			
-			byte[] bytes = hashmd5.ComputeHash(encryptionKey);
-
-			// HACK: Fill out key to 24 bytes required
-			if (bytes.Length < 24)
+			if (EncryptionKeySize == 16)
 			{
-				List<byte> byteList = new List<byte>(bytes);
-				for (int i = bytes.Length -1; i < 24; i++)
-				{
-					byteList.Add(0);
-				}
-				bytes = byteList.ToArray();
+				MD5CryptoServiceProvider hash = new MD5CryptoServiceProvider();
+				des.Key = hash.ComputeHash(encryptionKey);
 			}
-			des.Key = bytes.Take(24).ToArray();
-#endif
-			des.Mode = CipherMode.ECB;
+			else
+			{
+				SHA256CryptoServiceProvider hash = new SHA256CryptoServiceProvider();
+				des.Key = hash.ComputeHash(encryptionKey)
+							  .Take(EncryptionKeySize)
+							  .ToArray();
+			}
 
+//#if NETFULL
+			
+//			if (EncryptionKeySize == 16){
+//				MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+//				des.Key = hashmd5.ComputeHash(encryptionKey);
+//			}
+//			else {
+//				SHA256CryptoServiceProvider sha = new SHA256CryptoServiceProvider();
+//				des.Key = sha.ComputeHash(encryptionKey).Take(EncryptionKeySize);
+//			}
+
+//#else
+//			MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+//			byte[] bytes = hashmd5.ComputeHash(encryptionKey);
+
+//			// HACK: Fill out key to 24 bytes required
+//			if (bytes.Length < 24)
+//			{
+//				List<byte> byteList = new List<byte>(bytes);
+//				for (int i = bytes.Length -1; i < 24; i++)
+//				{
+//					byteList.Add(0);
+//				}
+//				bytes = byteList.ToArray();
+//			}
+//			des.Key = bytes.Take(24).ToArray();
+//#endif
+		
 			ICryptoTransform Transform = des.CreateEncryptor();
 
 			byte[] Buffer = inputBytes;
@@ -165,28 +189,21 @@ namespace Westwind.Utilities
 
 			var des = TripleDES.Create();
 			des.Mode = cipherMode;
-			MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
-
-#if NETFULL
-	
-			des.Key = hashmd5.ComputeHash(encryptionKey);
-#else
-			var bytes = hashmd5.ComputeHash(encryptionKey);
-			// HACK: Fill out key to 24 bytes required
-			if (bytes.Length < 24)
-			{
-				List<byte> byteList = new List<byte>(bytes);
-				for (int i = bytes.Length - 1; i < 24; i++)
-				{
-					byteList.Add(0);
-				}
-				bytes = byteList.ToArray();
-			}
-			des.Key = bytes.Take(24).ToArray();
-#endif
 			
+	        if (EncryptionKeySize == 16)
+	        {
+		        MD5CryptoServiceProvider hash = new MD5CryptoServiceProvider();
+		        des.Key = hash.ComputeHash(encryptionKey);
+	        }
+	        else
+	        {
+		        SHA256CryptoServiceProvider hash = new SHA256CryptoServiceProvider();
+		        des.Key = hash.ComputeHash(encryptionKey)
+			        .Take(EncryptionKeySize)
+			        .ToArray();
+	        }
 
-            ICryptoTransform Transform = des.CreateDecryptor();
+			ICryptoTransform Transform = des.CreateDecryptor();
 
             return Transform.TransformFinalBlock(decryptBuffer, 0, decryptBuffer.Length);
         }
