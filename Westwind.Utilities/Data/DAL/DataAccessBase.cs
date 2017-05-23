@@ -712,8 +712,7 @@ namespace Westwind.Utilities.Data
 
 	    /// <summary>
 	    /// Allows querying and return a list of entities.
-	    /// </summary>
-	    /// <example>
+	    /// </summary>	    
 	    /// <typeparam name="T"></typeparam>
 	    /// <param name="command"></param>
 	    /// <param name="parameters">
@@ -932,20 +931,20 @@ namespace Westwind.Utilities.Data
         }
 
 
-        /// <summary>
-        /// Calls a stored procedure that returns a cursor results
-        /// The result is returned as an IEnumerable&lt;T&gt;> list
-        /// </summary>
-        /// <example>
-        /// IEnumerable&lt;Customer%gt; customers = context.Db.ExecuteStoredProcedureReader&lt;Customer&gt;("GetCustomers",        
-        //              context.Db.CreateParameter('@cCompany','W%'));
-        /// </example>
-        /// <param name="storedProc">Name of the Stored Procedure to call</param>
-        /// <param name="parameters">
-        /// Use CreateParameter() for named, output or return parameters. Plain values for others.
-        /// </param>
-        /// <returns>A DataReader or null on failure</returns>
-        public virtual IEnumerable<T> ExecuteStoredProcedureReader<T>(string storedProc, params object[] parameters)
+		/// <summary>
+		/// Calls a stored procedure that returns a cursor results
+		/// The result is returned as an IEnumerable&lt;T&gt;> list
+		/// </summary>
+		/// <example>
+		///	IEnumerable&lt;Customer%gt; customers = context.Db.ExecuteStoredProcedureReader&lt;Customer&gt;('GetCustomers',         
+		///              context.Db.CreateParameter('@cCompany','W%'));
+		/// </example>
+		/// <param name="storedProc">Name of the Stored Procedure to call</param>
+		/// <param name="parameters">
+		/// Use CreateParameter() for named, output or return parameters. Plain values for others.
+		/// </param>
+		/// <returns>A DataReader or null on failure</returns>
+		public virtual IEnumerable<T> ExecuteStoredProcedureReader<T>(string storedProc, params object[] parameters)
             where T : class, new()
         {
             var command = CreateCommand(storedProc, parameters);
@@ -1561,8 +1560,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// The properties must match the database structure and you can skip
         /// over fields in the propertiesToSkip list.        
         /// </summary>        
-        /// <seealso cref="SaveEntity">
-        /// <seealso cref="UpdateEntity"/>
+        /// <seealso cref="SaveEntity" />        
         /// <param name="entity"></param>
         /// <param name="table"></param>
         /// <param name="KeyField"></param>

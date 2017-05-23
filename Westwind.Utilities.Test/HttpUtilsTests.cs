@@ -189,9 +189,9 @@ namespace Westwind.Utilities.Test
             string result = HttpUtils.HttpRequestString(new HttpRequestSettings()
             {
                 Url="http://west-wind.com/files/wconnect.exe",
-                Timeout = 200
+                Timeout = 100
             });
-
+			
             Assert.IsNotNull(result);
         }
     }

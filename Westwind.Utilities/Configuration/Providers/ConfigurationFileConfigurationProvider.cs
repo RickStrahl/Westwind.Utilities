@@ -68,13 +68,6 @@ namespace Westwind.Utilities.Configuration
         public string ConfigurationFile { get; set; }
 
         /// <summary>
-        /// Optional The Configuration section where settings are stored.
-        /// If not specified the appSettings section is used.
-        /// </summary>
-        //public new string ConfigurationSection {get; set; }
-
-
-        /// <summary>
         /// internal property used to ensure there are no multiple write
         /// operations at the same time
         /// </summary>
@@ -239,8 +232,7 @@ namespace Westwind.Utilities.Configuration
         /// <summary>
         /// Reads Configuration settings from an external file or explicitly from a file.
         /// Uses XML DOM to read values instead of using the native APIs.
-        /// </summary>
-        /// <typeparam name="TAppConfiguration"></typeparam>
+        /// </summary>        
         /// <param name="config">Configuration instance</param>
         /// <param name="filename">Filename to read from</param>
         /// <returns></returns>

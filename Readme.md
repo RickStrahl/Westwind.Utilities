@@ -1,7 +1,7 @@
 # Westwind.Utiltities
 ### A general purpose utility and helper library for .NET development
 
-> Moved from Westwind.Toolkit repro into seperate repro
+> Moved from Westwind.Toolkit repo into seperate repro
 > * Added support for .NET Core 2.0
 > * Targets .NET 4.5, 4.0 and NetCore 2.0
 > * Currently in preview
@@ -18,6 +18,7 @@ It includes tools for:
 
 * [**Application Configuration**](http://west-wind.com/westwindtoolkit/docs?page=_2le027umn.htm)  
 class to create code-first strongly typed configuration classes for your applications
+
 * [**Lightweight ADO.NET Data Access Layer**](http://west-wind.com/westwindtoolkit/docs?=page=_3ou0v2jum.htm)  
 ideal for components or apps that need data access but don't need the bulk of Entity Framework or similar ORM
 

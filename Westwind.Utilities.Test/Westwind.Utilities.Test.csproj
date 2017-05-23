@@ -18,6 +18,12 @@
 		<ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />
 	</ItemGroup>
 
+	<ItemGroup Condition="'$(TargetFramework)'=='netcoreapp2.0'">
+	</ItemGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0'">
+		<DefineConstants>NETSTANDARD2_0;NETCORE;NETSTANDARD;</DefineConstants>
+	</PropertyGroup>
+	
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
 		<Reference Include="mscorlib" />
@@ -44,15 +50,21 @@
 	  <Folder Include="Properties\" />
 	</ItemGroup>
 
-
-
-
-
-	<ItemGroup Condition="'$(TargetFramework)'=='netcoreapp2.0'">
+	<ItemGroup>
+	  <None Update="SupportFiles\customers.DBF">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="SupportFiles\HighQuality.jpg">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="SupportFiles\SailBig.jpg">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="SupportFiles\SquareImage.jpg">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0'">
-		<DefineConstants>NETSTANDARD2_0;NETCORE;NETSTANDARD;</DefineConstants>
-	</PropertyGroup>
+
 
 
 </Project>

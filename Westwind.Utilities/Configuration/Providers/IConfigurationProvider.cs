@@ -42,7 +42,7 @@ namespace Westwind.Utilities.Configuration
     /// 
     /// Used in conjunction with the <seealso cref="AppConfiguration"/> class. 
     /// A base implementation from which to inherit is provided in the
-    /// <seealso cref="Westwind.Utilities.Configuration.ConfigurationProviderBase"/>  class.
+    /// <seealso cref="Westwind.Utilities.Configuration.ConfigurationProviderBase{TAppConfiguration}"/>  class.
     /// </summary>
     public interface IConfigurationProvider        
     {

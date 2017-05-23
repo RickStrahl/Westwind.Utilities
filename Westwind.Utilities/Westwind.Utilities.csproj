@@ -10,7 +10,7 @@
 		<AssemblyName>Westwind.Utilities</AssemblyName>
 		<AssemblyTitle>Westwind.Utilities</AssemblyTitle>
 		<NeutralLanguage>en-US</NeutralLanguage>
-		<VersionPrefix>3.0.0-preview1-0</VersionPrefix>
+		<VersionPrefix>3.0.0.2-preview1-0</VersionPrefix>
 		<PackageId>Westwind.Utilities</PackageId>
 		<RootNamespace>Westwind.Utilities</RootNamespace>
 
@@ -19,8 +19,7 @@
 		<Summary>Small library of general purpose utilities for .NET development that almost every application can use. Used as a core reference library for other West Wind libraries.</Summary>
 		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2017</PackageCopyright>
 		<PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
-		<PackageReleaseNotes>		
-		</PackageReleaseNotes>
+		<PackageReleaseNotes>Added support for .NET Core 2.0 (under construction)</PackageReleaseNotes>
 		<PackageIconUrl>http://www.west-wind.com/westwindToolkit/images/WestwindWebToolkit_128x128.png</PackageIconUrl>
 		<PackageProjectUrl>http://github.com/rickstrahl/westwind.utilities</PackageProjectUrl>
 		<PackageLicenseUrl>http://www.west-wind.com/WestwindToolkit/docs/?page=_2lp0u0i9b.htm</PackageLicenseUrl>
@@ -28,7 +27,10 @@
 		<Copyright>Rick Strahl, West Wind Technologies, 2010-2017</Copyright>
 		<RepositoryType>Github</RepositoryType>
 		<Company>West Wind Technologies</Company>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>				
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Version>3.0.0.2-preview1-0</Version>
+		<AssemblyVersion>3.0.0.0</AssemblyVersion>
+		<RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>				
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

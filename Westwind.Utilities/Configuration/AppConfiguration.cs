@@ -292,7 +292,7 @@ namespace Westwind.Utilities.Configuration
         /// and returns a new instance of the configuration object
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="provider">A configured <seealso cref="IConfiguration" /> provider</param>
+        /// <param name="provider">A configured  <seealso cref="IConfigurationProvider"/>" provider</param>
         /// <returns>instance of configuration or null on failure</returns>
         public static T Read<T>(IConfigurationProvider provider)
             where T : AppConfiguration, new()
