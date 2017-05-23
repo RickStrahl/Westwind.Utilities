@@ -24,8 +24,15 @@ namespace Westwind.Utilities
         /// </summary>
         public static string EncryptionKey = "41a3f131dd91";
 
+		/// <summary>
+		/// Global configuration propery that can be overridden to
+		/// set the key size used for Encrypt/Decript operations.
+		/// Choose between 16 bytes (not recommended except for
+		/// backwards compatibility) or 24 bytes (works both in
+		/// NET Full and NET Core)
+		/// </summary>
 #if NETFULL
-		public static int EncryptionKeySize = 16;
+		public static int EncryptionKeySize = 16;  // set for compatibility with previous version
 #else
 	    public static int EncryptionKeySize = 24;
 #endif	
@@ -73,34 +80,6 @@ namespace Westwind.Utilities
 							  .Take(EncryptionKeySize)
 							  .ToArray();
 			}
-
-//#if NETFULL
-			
-//			if (EncryptionKeySize == 16){
-//				MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
-//				des.Key = hashmd5.ComputeHash(encryptionKey);
-//			}
-//			else {
-//				SHA256CryptoServiceProvider sha = new SHA256CryptoServiceProvider();
-//				des.Key = sha.ComputeHash(encryptionKey).Take(EncryptionKeySize);
-//			}
-
-//#else
-//			MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
-//			byte[] bytes = hashmd5.ComputeHash(encryptionKey);
-
-//			// HACK: Fill out key to 24 bytes required
-//			if (bytes.Length < 24)
-//			{
-//				List<byte> byteList = new List<byte>(bytes);
-//				for (int i = bytes.Length -1; i < 24; i++)
-//				{
-//					byteList.Add(0);
-//				}
-//				bytes = byteList.ToArray();
-//			}
-//			des.Key = bytes.Take(24).ToArray();
-//#endif
 		
 			ICryptoTransform Transform = des.CreateEncryptor();
 
