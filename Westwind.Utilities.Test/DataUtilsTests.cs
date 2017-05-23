@@ -4,6 +4,8 @@ using System.Data;
 using Westwind.Utilities.Logging;
 using System.Diagnostics;
 using System.Data.Common;
+using Westwind.Data.Test.Models;
+using Westwind.Utilities.Test;
 
 namespace Westwind.Utilities.Data.Tests
 {
@@ -13,8 +15,8 @@ namespace Westwind.Utilities.Data.Tests
 	[TestClass]
     public class DataUtilsTests
     {
-	    //private const string STR_TestDataConnection = "WestwindToolkitSamples";
-		private const string STR_TestDataConnection = "server=.;database=WestwindToolkitSamples;integrated security=true;MultipleActiveResultSets=true;";    
+		//private const string STR_TestDataConnection = "WestwindToolkitSamples";
+		private static string STR_TestDataConnection = TestConfigurationSettings.WestwindToolkitConnectionString;
 
         [TestMethod]
         public void DataReaderToObjectTest()
@@ -90,5 +92,22 @@ namespace Westwind.Utilities.Data.Tests
                 Console.WriteLine("DataReaderToList: " + sw.ElapsedMilliseconds.ToString() + " ms");
             }
         }
+
+#if NETFULL   // Net Core SqlDataAdapter not working yet
+		[TestMethod]
+		public void DataTableToListTest()
+		{
+			var sql = new SqlDataAccess(STR_TestDataConnection);
+			var dt = sql.ExecuteTable("items", "select * from customers");
+
+			Assert.IsNotNull(dt, "Failed to load test data");
+
+			var items = DataUtils.DataTableToObjectList<Customer>(dt);
+
+			Assert.IsNotNull(items);
+			Assert.IsTrue(items.Count > 0);
+			Console.WriteLine(items.Count);
+		}
+#endif
     }
 }

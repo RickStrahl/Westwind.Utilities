@@ -150,12 +150,15 @@ namespace Westwind.Utilities
 		/// </summary>
 		/// <param name="row">Data row with values to fill from</param>
 		/// <param name="targetObject">Object to file values from data row</param>
-	    public static void CopyObjectFromDataRow(DataRow row, object targetObject)
+	    public static void CopyObjectFromDataRow(DataRow row, object targetObject, MemberInfo[] cachedMemberInfo = null)
 	    {
-		    MemberInfo[] miT = targetObject.GetType()
-			    .FindMembers(MemberTypes.Field | MemberTypes.Property,
-				    ReflectionUtils.MemberAccess, null, null);
-		    foreach (MemberInfo Field in miT)
+			if (cachedMemberInfo == null)
+			{
+				cachedMemberInfo = targetObject.GetType()
+					.FindMembers(MemberTypes.Field | MemberTypes.Property,
+						ReflectionUtils.MemberAccess, null, null);
+			}
+		    foreach (MemberInfo Field in cachedMemberInfo)
 		    {
 			    string Name = Field.Name;
 			    if (!row.Table.Columns.Contains(Name))
@@ -212,12 +215,36 @@ namespace Westwind.Utilities
             return result;
         }
 
-        /// <summary>
-        /// Copies the content of one object to another. The target object 'pulls' properties of the first. 
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
-        public static void CopyObjectData(object source, Object target)
+		/// <summary>
+		/// Coverts a DataTable to a typed list of items
+		/// </summary>
+		/// <typeparam name="T">Type to </typeparam>
+		/// <param name="dsTable"></param>
+		/// <returns></returns>
+		public static List<T> DataTableToTypedList<T>(DataTable dsTable) where T : class, new()
+		{
+			var objectList = new List<T>();
+
+			MemberInfo[] cachedMemberInfo = null;
+			foreach (DataRow dr in dsTable.Rows)
+			{
+				var obj = default(T); // Activator.CreateInstance<T>();				
+				CopyObjectFromDataRow(dr, obj, cachedMemberInfo);
+				objectList.Add(obj);
+			}
+
+			return objectList;
+		}
+
+
+
+
+		/// <summary>
+		/// Copies the content of one object to another. The target object 'pulls' properties of the first. 
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="target"></param>
+		public static void CopyObjectData(object source, Object target)
         {
             CopyObjectData(source, target, MemberAccess);
         }
@@ -297,24 +324,45 @@ namespace Westwind.Utilities
         }
 
 
-        /// <summary>
-        /// Creates a list of a given type from all the rows in a DataReader.
-        /// 
-        /// Note this method uses Reflection so this isn't a high performance
-        /// operation, but it can be useful for generic data reader to entity
-        /// conversions on the fly and with anonymous types.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="reader">An open DataReader that's in position to read</param>
-        /// <param name="propertiesToSkip">Optional - comma delimited list of fields that you don't want to update</param>
-        /// <param name="piList">
-        /// Optional - Cached PropertyInfo dictionary that holds property info data for this object.
-        /// Can be used for caching hte PropertyInfo structure for multiple operations to speed up
-        /// translation. If not passed automatically created.
-        /// </param>
-        /// <returns></returns>
-        /// <remarks>DataReader is not closed by this method. Make sure you call reader.close() afterwards</remarks>
-        public static List<T> DataReaderToObjectList<T>(IDataReader reader, string propertiesToSkip = null, Dictionary<string, PropertyInfo> piList = null)
+		/// <summary>
+		/// Coverts a DataTable to a typed list of items
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="dsTable"></param>
+		/// <returns></returns>
+		public static List<T> DataTableToObjectList<T>(DataTable dsTable) where T : class, new()
+		{
+			var objectList = new List<T>();
+
+			foreach (DataRow dr in dsTable.Rows)
+			{
+				var obj = Activator.CreateInstance<T>();
+				CopyObjectFromDataRow(dr, obj);
+				objectList.Add(obj);
+			}
+
+			return objectList;
+		}
+
+
+		/// <summary>
+		/// Creates a list of a given type from all the rows in a DataReader.
+		/// 
+		/// Note this method uses Reflection so this isn't a high performance
+		/// operation, but it can be useful for generic data reader to entity
+		/// conversions on the fly and with anonymous types.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="reader">An open DataReader that's in position to read</param>
+		/// <param name="propertiesToSkip">Optional - comma delimited list of fields that you don't want to update</param>
+		/// <param name="piList">
+		/// Optional - Cached PropertyInfo dictionary that holds property info data for this object.
+		/// Can be used for caching hte PropertyInfo structure for multiple operations to speed up
+		/// translation. If not passed automatically created.
+		/// </param>
+		/// <returns></returns>
+		/// <remarks>DataReader is not closed by this method. Make sure you call reader.close() afterwards</remarks>
+		public static List<T> DataReaderToObjectList<T>(IDataReader reader, string propertiesToSkip = null, Dictionary<string, PropertyInfo> piList = null)
             where T : new()
         {
             List<T> list = new List<T>();
