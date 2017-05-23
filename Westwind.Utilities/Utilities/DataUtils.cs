@@ -153,13 +153,17 @@ namespace Westwind.Utilities
                 if (!row.Table.Columns.Contains(Name))
                     continue;
 
+				object value = row[Name];
+				if (value == null || value == DBNull.Value)
+					value = null;
+
                 if (Field.MemberType == MemberTypes.Field)
                 {
-                    ((FieldInfo)Field).SetValue(targetObject, row[Name]);
+                    ((FieldInfo)Field).SetValue(targetObject, value);
                 }
                 else if (Field.MemberType == MemberTypes.Property)
                 {
-                    ((PropertyInfo)Field).SetValue(targetObject, row[Name], null);
+                    ((PropertyInfo)Field).SetValue(targetObject, value, null);
                 }
             }
         }
