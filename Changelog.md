@@ -27,6 +27,9 @@ You can now convert a data table to a strongly typed list with this new function
 * **XmlUtils.GetXmlEnum()/GetXmlBool() and XmlUtils.GetAttributeXmlBool()**   
 Added additional conversion methods to the XML helpers to facilitate retrieving values from XML documents more easily.
 
+* **Fix: HMAC Processing in Encryption.ComputeHash()**  
+HMAC hash computation was broken as salt was added to the data rather than just passed to the hash generator. Fixed.
+
 > ### Breaking Changes for 3.0
 > ##### .NET Core 2.0 Version
 > * ConfigurationFileProvider for Configuration is not supported

@@ -594,7 +594,7 @@ namespace Westwind.Utilities
             // Convert plain text into a byte array.            
             byte[] plainTextWithSaltBytes;
 
-            if (saltBytes != null)
+            if (saltBytes != null && !hashAlgorithm.StartsWith("HMAC"))
             {
                 // Allocate array, which will hold plain text and salt.
                 plainTextWithSaltBytes =
