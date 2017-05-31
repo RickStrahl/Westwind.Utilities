@@ -27,6 +27,9 @@ You can now convert a data table to a strongly typed list with this new function
 * **XmlUtils.GetXmlEnum()/GetXmlBool() and XmlUtils.GetAttributeXmlBool()**   
 Added additional conversion methods to the XML helpers to facilitate retrieving values from XML documents more easily.
 
+* **FileUtils.CopyDirectory()**  
+Copies an entire directory tree to another directory. If the target exists files and folders are merged.
+
 * **Fix: HMAC Processing in Encryption.ComputeHash()**  
 HMAC hash computation was broken as salt was added to the data rather than just passed to the hash generator. Fixed.
 
