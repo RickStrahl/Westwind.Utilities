@@ -736,8 +736,8 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="file"></param>
         /// <param name="mode">SHA256,SHA512,MD5</param>
-        /// <returns></returns>
-        public static string GetChecksumFromFile(string file, string mode, bool useBinHex = false)
+        /// <returns>A binhex string</returns>
+        public static string GetChecksumFromFile(string file, string mode = "SHA256")
         {
             using (FileStream stream = File.OpenRead(file))
             {
@@ -771,7 +771,7 @@ namespace Westwind.Utilities
         /// <param name="fileData"></param>
         /// <param name="mode">SHA256,SHA512,MD5</param>
         /// <returns></returns>
-        public static string GetChecksumFromBytes(byte[] fileData, string mode)
+        public static string GetChecksumFromBytes(byte[] fileData, string mode = "SHA256")
         {
             using (MemoryStream stream = new MemoryStream(fileData))
             {
