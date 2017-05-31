@@ -131,7 +131,7 @@ namespace Westwind.Utilities
         public  static string SafeFilename(string fileName, string replace = "")
         {
             return Path.GetInvalidFileNameChars()
-                .Aggregate(fileName, 
+                .Aggregate(fileName.Trim(), 
                            (file, c) => file.Replace(c.ToString(), replace));
         }
 
@@ -255,6 +255,24 @@ namespace Westwind.Utilities
 
             //return fullPath;
 		}
+
+        /// <summary>
+        /// Copies all files and directories from one directory 
+        /// to another. Directories are created if they don't exist 
+        /// and files are merged just as if you did a file copy.        
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <param name="targetPath"></param>
+        public static void CopyDirectory(string sourcePath, string targetPath)
+        {
+            //Now Create all of the directories
+            foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+                Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
+
+            //Copy all the files & Replaces any files with the same name
+            foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+                File.Copy(newPath, newPath.Replace(sourcePath, targetPath), true);
+        }
 
         /// <summary>
         /// Deletes files based on a file spec and a given timeout.
