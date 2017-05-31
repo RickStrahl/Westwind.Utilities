@@ -259,7 +259,9 @@ namespace Westwind.Utilities
         /// <param name="Time"></param>
         public static string MimeDateTime(DateTime Time)
         {
-            TimeSpan Offset = TimeZone.CurrentTimeZone.GetUtcOffset(Time);
+
+			TimeSpan Offset = TimeZoneInfo.Local.GetUtcOffset(Time);
+            //TimeSpan Offset = TimeZone.CurrentTimeZone.GetUtcOffset(Time);
 
             string sOffset = null;
             if (Offset.Hours < 0)
