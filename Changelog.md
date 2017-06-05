@@ -1,9 +1,9 @@
 ﻿# Westwind.Utilities Changelog
 
 ### 3.0
-*not released yet*
+*not released yet*Main Window Title:  Changelog.md  - Markdown Monster. 
 
-* **Support for .NET Core 2.0**
+* **Support for .NET Core 2.0**  
 Version 3.0 adds support for .NET Core 2.0. Most features of the toolkit have been carried forward, but some features like configuration using standard .NET Configuration files is not available in .NET Core. There are a few other features that are not available.
 
 * **StringUtils.TokenizeString() and DetokenizeString()**  
@@ -15,7 +15,7 @@ Added an optional parameter to `GetLines()` to allow specifying the number of li
 * **StringUtils.GenerateUniqueId() additional characters**
 You can now add additional character to be included in the unique ID in addition to numbers and digits. This makes the string more resilient to avoid dupe values.
 
-* **Add support for HMAC hashing in Encryption.ComputeHash()**
+* **Add support for HMAC hashing in Encryption.ComputeHash()**  
 HMAC provides a standardized way to introduces salted values into hashes that results in fixed length hashes are not vulnerable to length attacks. ComputeHash now exposes HMAC versions of the standard hash algorithms.
 
 * **Add Encryption.EncryptBytes() and Encryption.DecryptBytes()**  
