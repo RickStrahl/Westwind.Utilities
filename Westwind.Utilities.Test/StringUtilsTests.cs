@@ -230,7 +230,9 @@ namespace Westwind.Utilities.Tests
             string source = "Hello: <rant />";
             string extract = StringUtils.ExtractString(source, "<", "/>", false, false, true);
 
-            Console.WriteLine(extract);
+
+
+            Console.WriteLine(extract);            
             Assert.AreEqual(extract, "<rant />");
         }
 

@@ -251,10 +251,7 @@ namespace Westwind.Utilities
                 if (at1 == -1)
                     return string.Empty;
 
-                if (!returnDelimiters)
-                    at2 = source.IndexOf(endDelim, at1 + beginDelim.Length);
-                else
-                    at2 = source.IndexOf(endDelim, at1);
+                at2 = source.IndexOf(endDelim, at1 + beginDelim.Length);
             }
             else
             {
@@ -263,20 +260,22 @@ namespace Westwind.Utilities
                 if (at1 == -1)
                     return string.Empty;
 
-                if (!returnDelimiters)
-                    at2 = source.IndexOf(endDelim, at1 + beginDelim.Length, StringComparison.OrdinalIgnoreCase);
-                else
-                    at2 = source.IndexOf(endDelim, at1, StringComparison.OrdinalIgnoreCase);
+                at2 = source.IndexOf(endDelim, at1 + beginDelim.Length, StringComparison.OrdinalIgnoreCase);
             }
 
-            if (allowMissingEndDelimiter && at2 == -1)
-                return source.Substring(at1 + beginDelim.Length);
+            if (allowMissingEndDelimiter && at2 < 0)
+            {
+                if (!returnDelimiters)
+                    return source.Substring(at1 + beginDelim.Length);
+                else
+                    return source.Substring(at1);
+            }
 
             if (at1 > -1 && at2 > 1)
             {
                 if (!returnDelimiters)
                     return source.Substring(at1 + beginDelim.Length, at2 - at1 - beginDelim.Length);
-                
+
                 return source.Substring(at1, at2 - at1 + endDelim.Length);
             }
 
@@ -662,26 +661,6 @@ namespace Westwind.Utilities
 
             return urlEncoded.TrimEnd('&');
         }
-
-
-        ///// <summary>
-        ///// Converts a Unicode string to a specified encoding
-        ///// </summary>
-        ///// <param name="input">.NET String (unicode)</param>
-        ///// <param name="encoding">Any .NET Encoding type</param>
-        ///// <returns></returns>
-        //public static string UnicodeToEncoding(string input, Encoding encoding = null)
-        //{
-        //    if (encoding == null)
-        //        encoding = new UTF8Encoding();                
-            
-        //    byte[] bytes = Encoding.UTF8.GetBytes(input);            
-        //    string result = encoding.GetString(bytes);   
-                     
-        //    return result;
-        //}
-
-
         #endregion
 
         #region Binary Encoding

@@ -79,6 +79,34 @@ namespace Westwind.Utilities.Tests
         }
 
         [TestMethod]
+        public void ExtractStringWithDelimetersTest()
+        {
+            string sourceString = "<root><data>value</data></root>";
+            string expected = "<data>value</data>";
+
+            // Case sensitive
+            string res = StringUtils.ExtractString(sourceString, "<data>", "</data>",
+                                                   returnDelimiters: true);
+            Assert.AreEqual(expected, res, "Failed to extract string properly");
+
+            // Case Insensitive
+            res = StringUtils.ExtractString(sourceString, "<Data>", "</Data>",
+                caseSensitive: false,
+                returnDelimiters: true);
+            Assert.AreEqual(expected, res, "Failed to extract string properly with case insensitive values");
+
+            // Missing end delimiter - should read until end of the string
+            res = StringUtils.ExtractString(sourceString, "</Data>", "<Data>", 
+                caseSensitive: false,
+                returnDelimiters: true, 
+                allowMissingEndDelimiter: true);
+            
+            expected = "</data></root>";
+            Assert.AreEqual(expected, res, "Failed to extract string with missing end parameter");
+        }
+
+
+        [TestMethod]
         public void RegExExtractionTest()
         {
             string sourceString = "ScriptCompression.ahx?r=ww.jquery.js";
