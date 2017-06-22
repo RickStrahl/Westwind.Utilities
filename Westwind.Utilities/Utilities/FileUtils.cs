@@ -257,20 +257,32 @@ namespace Westwind.Utilities
 		}
 
         /// <summary>
-        /// Copies all files and directories from one directory 
-        /// to another. Directories are created if they don't exist 
-        /// and files are merged just as if you did a file copy.        
+        /// Copies directories using either top level only or deep merge copy.
+        /// 
+        /// Copies a directory by copying files from source folder to target folder.
+        /// If folder(s) don't exist they are created.
+        /// 
+        /// deepCopy copies files in sub-folders and merges them into the target
+        /// folder. Unless you specify deleteFirst, files are copied and overwrite or add to
+        /// existing structure, leaving old files in place. Use deleteFirst if you
+        /// want a new structure with only the source files.
         /// </summary>
-        /// <param name="sourcePath"></param>
-        /// <param name="targetPath"></param>
-        public static void CopyDirectory(string sourcePath, string targetPath)
+        /// <param name="sourcePath">Path to copy from</param>
+        /// <param name="targetPath">Path to copy to</param>
+        /// <param name="deleteFirst">If true deletes target folder before copying. Otherwise files are merged from source into target.</param>
+        public static void CopyDirectory(string sourcePath, string targetPath, bool deleteFirst = false, bool deepCopy = true)
         {
-            //Now Create all of the directories
-            foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+            if (deleteFirst && Directory.Exists(targetPath))
+                Directory.Delete(targetPath, true);
+
+            var searchOption = SearchOption.TopDirectoryOnly;
+            if (deepCopy)
+                searchOption = SearchOption.AllDirectories;
+
+            foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", searchOption))
                 Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
 
-            //Copy all the files & Replaces any files with the same name
-            foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+            foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", searchOption))
                 File.Copy(newPath, newPath.Replace(sourcePath, targetPath), true);
         }
 
