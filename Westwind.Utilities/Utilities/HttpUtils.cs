@@ -107,7 +107,7 @@ namespace Westwind.Utilities
             return (TResultType)JsonSerializationUtils.Deserialize(jsonResult, typeof(TResultType), true);
         }
 
-#if  NET45 || NETSTANDARD
+#if !NET40
         /// <summary>
         /// Retrieves and Http request and returns data as a string.
         /// </summary>
