@@ -27,6 +27,9 @@ You can now convert a data table to a strongly typed list with this new function
 * **XmlUtils.GetXmlEnum()/GetXmlBool() and XmlUtils.GetAttributeXmlBool()**   
 Added additional conversion methods to the XML helpers to facilitate retrieving values from XML documents more easily.
 
+* **LinqUtils.FlattenTree**   
+Flattens a tree type list into a flat enumarable by letting your provide the property for the children to flatten. `var topics = topicTree.FlattenTree(t=> t.Topics);`.
+
 * **FileUtils.CopyDirectory()**  
 Copies an entire directory tree to another directory. If the target exists files and folders are merged.
 
