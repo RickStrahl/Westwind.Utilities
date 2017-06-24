@@ -130,9 +130,31 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public  static string SafeFilename(string fileName, string replace = "")
         {
-            return Path.GetInvalidFileNameChars()
-                .Aggregate(fileName.Trim(), 
-                           (file, c) => file.Replace(c.ToString(), replace));
+            if (string.IsNullOrEmpty(fileName))
+                return fileName;
+
+            string file = Path.GetInvalidFileNameChars()
+               .Aggregate(fileName.Trim(),
+                          (current, c) => current.Replace(c.ToString(), replace));
+
+            file = file.Replace("#", "");
+            return file;
+        }
+
+        /// <summary>
+        /// Returns a safe filename in CamelCase
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public static string CamelCaseSafeFilename(string filename)
+        {
+            if (string.IsNullOrEmpty(filename))
+                return filename;
+
+            string fname = Path.GetFileNameWithoutExtension(filename);
+            string ext = Path.GetExtension(filename);
+
+            return StringUtils.ToCamelCase(SafeFilename(fname)) + ext;
         }
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
@@ -164,30 +186,6 @@ namespace Westwind.Utilities
             return filename;
         }
 
-        /// <summary>
-        /// Returns the full path of a full physical filename
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static string JustPath(string path) 
-		{
-			FileInfo fi = new FileInfo(path);
-			return fi.DirectoryName + "\\";
-		}
-
-        /// <summary>
-        /// Returns a fully qualified path from a partial or relative
-        /// path.
-        /// </summary>
-        /// <param name="Path"></param>
-        public static string GetFullPath(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-                return string.Empty;
-
-            return Path.GetFullPath(path);
-        }
-
 		/// <summary>
 		/// Returns a relative path string from a full path based on a base path
         /// provided.
@@ -212,48 +210,7 @@ namespace Westwind.Utilities
             Uri relativeUri = baseUri.MakeRelativeUri(fullUri);
 
             // Uri's use forward slashes so convert back to backward slahes
-            return relativeUri.ToString().Replace("/", "\\");
-
-
-            //// Start by normalizing paths
-            //fullPath = fullPath.ToLower();
-            //basePath = basePath.ToLower();
-
-            //if ( basePath.EndsWith("\\") ) 
-            //    basePath = basePath.Substring(0,basePath.Length-1);
-            //if ( fullPath.EndsWith("\\") ) 
-            //    fullPath = fullPath.Substring(0,fullPath.Length-1);
-
-            //// First check for full path
-            //if ( (fullPath+"\\").IndexOf(basePath + "\\") > -1) 
-            //    return  fullPath.Replace(basePath,".");
-
-            //// Now parse backwards
-            //string BackDirs = string.Empty;
-            //string PartialPath = basePath;
-            //int Index = PartialPath.LastIndexOf("\\");
-            //while (Index > 0) 
-            //{
-            //    // Strip path step string to last backslash
-            //    PartialPath = PartialPath.Substring(0,Index );
-			
-            //    // Add another step backwards to our pass replacement
-            //    BackDirs = BackDirs + "..\\" ;
-
-            //    // Check for a matching path
-            //    if ( fullPath.IndexOf(PartialPath) > -1 ) 
-            //    {
-            //        if ( fullPath == PartialPath )
-            //            // We're dealing with a full Directory match and need to replace it all
-            //            return fullPath.Replace(PartialPath,BackDirs.Substring(0,BackDirs.Length-1) );
-            //        else
-            //            // We're dealing with a file or a start path
-            //            return fullPath.Replace(PartialPath+ (fullPath == PartialPath ?  string.Empty : "\\"),BackDirs);
-            //    }
-            //    Index = PartialPath.LastIndexOf("\\",PartialPath.Length-1);
-            //}
-
-            //return fullPath;
+            return relativeUri.ToString().Replace("/", "\\");            
 		}
 
         /// <summary>
