@@ -739,27 +739,37 @@ namespace Westwind.Utilities
         /// <returns>A binhex string</returns>
         public static string GetChecksumFromFile(string file, string mode = "SHA256")
         {
-            using (FileStream stream = File.OpenRead(file))
+            if (!File.Exists(file))
+                return null;
+
+            try
             {
-                if (mode == "SHA256")
+                using (FileStream stream = File.OpenRead(file))
                 {
-                    var sha = new SHA256Managed();
-                    byte[] checksum = sha.ComputeHash(stream);
-                    return BinaryToBinHex(checksum);
+                    if (mode == "SHA256")
+                    {
+                        var sha = new SHA256Managed();
+                        byte[] checksum = sha.ComputeHash(stream);
+                        return BinaryToBinHex(checksum);
+                    }
+                    if (mode == "SHA512")
+                    {
+                        var sha = new SHA512Managed();
+                        byte[] checksum = sha.ComputeHash(stream);
+                        return BinaryToBinHex(checksum);
+                    }
+                    if (mode == "MD5")
+                    {
+                        var md = new MD5CryptoServiceProvider();
+                        byte[] checkSum = md.ComputeHash(stream);
+
+                        return BinaryToBinHex(checkSum);
+                    }
                 }
-                if (mode == "SHA512")
-                {
-                    var sha = new SHA512Managed();
-                    byte[] checksum = sha.ComputeHash(stream);
-                    return BinaryToBinHex(checksum);
-                }
-                if (mode == "MD5")
-                {
-                    var md = new MD5CryptoServiceProvider();
-                    byte[] checkSum = md.ComputeHash(stream);
-                    
-                    return BinaryToBinHex(checkSum);
-                }
+            }
+            catch
+            {
+                return null;
             }
 
             return null;
