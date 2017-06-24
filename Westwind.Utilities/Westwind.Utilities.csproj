@@ -11,7 +11,7 @@
     <VersionPrefix>3.0.0.5-preview1-0</VersionPrefix>
     <PackageId>Westwind.Utilities</PackageId>
     <RootNamespace>Westwind.Utilities</RootNamespace>
-    <Description>.NET utility library that includes Application Configuration, logging, lightweight ADO.NET Data Access Layer and more. Utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>
+    <Description>.NET utility library that includes Application Configuration, lightweight ADO.NET Data Access Layer, logging, utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>
     <Summary>Small library of general purpose utilities for .NET development that almost every application can use. Used as a core reference library for other West Wind libraries.</Summary>
     <PackageCopyright>Rick Strahl, West Wind Technologies 2007-2017</PackageCopyright>
     <PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
@@ -27,7 +27,7 @@
     <Version>3.0.0.5-preview1-0</Version>
     <AssemblyVersion>3.0.0.5</AssemblyVersion>
     <RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
-    <FileVersion>3.0.0.5</FileVersion>
+    <FileVersion>3.0.0.5</FileVersion>    
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -37,6 +37,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <NoWarn>$(NoWarn);CS1591;CS1572;CS1573</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
     <DefineConstants>RELEASE</DefineConstants>
   </PropertyGroup>
 
@@ -44,6 +45,14 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.0-preview1-25305-02" />
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+    <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
+
+  
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Reference Include="mscorlib" />
     <Reference Include="System" />
@@ -59,13 +68,8 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net45'">
     <DefineConstants>NET45;NETFULL</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
-    <DocumentationFile>bin\Release\net45\Westwind.Utilities.xml</DocumentationFile>
-  </PropertyGroup>
 
-
-
-
+  
   <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
     <Reference Include="mscorlib" />
     <Reference Include="System" />
@@ -78,27 +82,8 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
   </ItemGroup>
-
-
-  <ItemGroup>
-    <Compile Update="Utilities\HttpUtilsWebClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net40'">
     <DefineConstants>NET40;NETFULL</DefineConstants>
   </PropertyGroup>
 
-
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Westwind.Utilities.xml</DocumentationFile>
-  </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Data.SqlClient" Version="4.4.0-preview1-25305-02" />
-  </ItemGroup>
 </Project>
