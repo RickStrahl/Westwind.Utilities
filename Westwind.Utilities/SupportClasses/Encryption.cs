@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Cryptography;
 using System.Text;
+using Westwind.Utilities.Properties;
 
 
 namespace Westwind.Utilities
@@ -52,6 +55,22 @@ namespace Westwind.Utilities
                 encryptionKey = Encryption.EncryptionKey;
 
             return EncryptBytes(inputBytes, Encoding.UTF8.GetBytes(encryptionKey));
+        }
+
+
+        /// <summary>
+        /// Encodes a stream of bytes using DES encryption with a pass key. Lowest level method that 
+        /// handles all work.
+        /// </summary>
+        /// <param name="inputBytes"></param>
+        /// <param name="encryptionKey"></param>
+        /// <returns></returns>
+        public static byte[] EncryptBytes(byte[] inputBytes, SecureString encryptionKey)
+        {
+            if (encryptionKey == null)
+                throw new ArgumentException(Resources.MissingEncryptionKey);
+
+            return EncryptBytes(inputBytes, Encoding.UTF8.GetBytes(encryptionKey.GetString()));
         }
 
 
@@ -137,6 +156,28 @@ namespace Westwind.Utilities
 
 
         /// <summary>
+        /// Encrypts a string using Triple DES encryption with a two way encryption key.
+        /// String is returned as Base64 or BinHex encoded string.
+        /// </summary>
+        /// <param name="inputString"></param>
+        /// <param name="encryptionKey"></param>
+        /// <param name="useBinHex"></param>
+        /// <returns></returns>
+        public static string EncryptString(string inputString,SecureString encryptionKey, bool useBinHex = false)
+        {
+            if (encryptionKey == null)
+                throw new ArgumentException(Resources.MissingEncryptionKey);
+
+            byte[] bytes = Encoding.UTF8.GetBytes(inputString);
+
+            if (useBinHex)
+                return BinaryToBinHex(EncryptBytes(bytes, encryptionKey.GetString()));
+
+            return Convert.ToBase64String(EncryptBytes(bytes, encryptionKey.GetString()));
+        }
+
+
+        /// <summary>
         /// Decrypts a Byte array from DES with an Encryption Key.
         /// </summary>
         /// <param name="decryptBuffer"></param>
@@ -154,14 +195,31 @@ namespace Westwind.Utilities
         }
 
 
-		/// <summary>
-		/// Decrypts a byte buffer with a byte based encryption key
-		/// </summary>
-		/// <param name="decryptBuffer">Data to encrypt</param>
-		/// <param name="encryptionKey">The key bytes used to encode the data. Use a 24 byte key for best compatibility</param>
-		/// <param name="cipherMode">Optional CipherMode used. Defaults to older ECB for backwards compatibility</param>
-		/// <returns></returns>
-		public static byte[] DecryptBytes(byte[] decryptBuffer, byte[] encryptionKey, CipherMode cipherMode = CipherMode.ECB)
+
+        /// <summary>
+        /// Decrypts a Byte array from DES with an Encryption Key.
+        /// </summary>
+        /// <param name="decryptBuffer"></param>
+        /// <param name="encryptionKey"></param>
+        /// <returns></returns>
+        public static byte[] DecryptBytes(byte[] decryptBuffer, SecureString encryptionKey)
+        {
+            if (decryptBuffer == null || decryptBuffer.Length == 0)
+                return null;
+
+            return DecryptBytes(decryptBuffer, Encoding.UTF8.GetBytes(encryptionKey.GetString()));
+        }
+
+
+
+        /// <summary>
+        /// Decrypts a byte buffer with a byte based encryption key
+        /// </summary>
+        /// <param name="decryptBuffer">Data to encrypt</param>
+        /// <param name="encryptionKey">The key bytes used to encode the data. Use a 24 byte key for best compatibility</param>
+        /// <param name="cipherMode">Optional CipherMode used. Defaults to older ECB for backwards compatibility</param>
+        /// <returns></returns>
+        public static byte[] DecryptBytes(byte[] decryptBuffer, byte[] encryptionKey, CipherMode cipherMode = CipherMode.ECB)
         {
             if (decryptBuffer == null || decryptBuffer.Length == 0)
                 return null;
@@ -203,6 +261,26 @@ namespace Westwind.Utilities
             return DecryptBytes(Convert.FromBase64String(decryptString), encryptionKey);
         }
 
+
+        /// <summary>
+        /// Decrypts a string using DES encryption and a pass key that was used for 
+        /// encryption and returns a byte buffer.    
+        /// </summary>
+        /// <param name="decryptString"></param>
+        /// <param name="encryptionKey"></param>
+        /// <param name="useBinHex">Returns data in useBinHex format (12afb1c3f1). Otherwise base64 is returned.</param>
+        /// <returns>String</returns>
+        public static byte[] DecryptBytes(string decryptString, SecureString encryptionKey, bool useBinHex = false)
+        {
+            if (encryptionKey == null)
+                throw new ArgumentException(Resources.MissingEncryptionKey);
+
+            if (useBinHex)
+                return DecryptBytes(BinHexToBinary(decryptString), encryptionKey.GetString());
+
+            return DecryptBytes(Convert.FromBase64String(decryptString), encryptionKey.GetString());
+        }
+
         /// <summary>
         /// Decrypts a string using DES encryption and a pass key that was used for 
         /// encryption.
@@ -234,6 +312,33 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="decryptString"></param>
         /// <param name="encryptionKey"></param>
+        /// <param name="useBinHex">Returns data in useBinHex format (12afb1c3f1). Otherwise base64 is returned.</param>
+        /// <returns>String</returns>
+        public static string DecryptString(string decryptString, SecureString encryptionKey, bool useBinHex = false)
+        {
+            if (encryptionKey == null)
+                throw new ArgumentException(Resources.MissingEncryptionKey);
+
+            var data = useBinHex ? BinHexToBinary(decryptString) : Convert.FromBase64String(decryptString);
+
+            try
+            {
+                byte[] decrypted = DecryptBytes(data, encryptionKey.GetString());
+                return Encoding.UTF8.GetString(decrypted);
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Decrypts a string using DES encryption and a pass key that was used for 
+        /// encryption.
+        /// <seealso>Class wwEncrypt</seealso>
+        /// </summary>
+        /// <param name="decryptString"></param>
+        /// <param name="encryptionKey"></param>
         /// <param name="useBinHex">Returns data in useBinHex format (12afb1c3f1). Otherwise base64 is returned</param>
         /// <returns>String</returns>
         public static string DecryptString(string decryptString, byte[] encryptionKey, bool useBinHex = false)
@@ -251,6 +356,8 @@ namespace Westwind.Utilities
             }
         }
 
+
+      
 #if NETFULL
 		/// <summary>
 		/// Encrypt bytes using the Data Protection API on Windows. This API
@@ -451,10 +558,10 @@ namespace Westwind.Utilities
         }
 #endif
 
-#endregion
+        #endregion
 
 
-#region Hashes
+        #region Hashes
 
         /// <summary>
         /// Generates a hash for the given plain text value and returns a
@@ -871,6 +978,34 @@ namespace Westwind.Utilities
         }
 
 #endregion
+    }
+
+    internal static class SecureStringExtensions
+    {
+        public static string GetString(this SecureString source)
+        {
+            string result = null;
+            int length = source.Length;
+            IntPtr pointer = IntPtr.Zero;
+            char[] chars = new char[length];
+
+            try
+            {
+                pointer = Marshal.SecureStringToBSTR(source);
+                Marshal.Copy(pointer, chars, 0, length);
+
+                result = string.Join("", chars);
+            }
+            finally
+            {
+                if (pointer != IntPtr.Zero)
+                {
+                    Marshal.ZeroFreeBSTR(pointer);
+                }
+            }
+
+            return result;
+        }
     }
 
 }
