@@ -21,6 +21,9 @@ HMAC provides a standardized way to introduces salted values into hashes that re
 * **Add Encryption.EncryptBytes() and Encryption.DecryptBytes()**  
 Added additional overloads that allow passing byte buffer for the encryption key to make it easier to work with OS data API.
 
+* **Add SecureString Overloads to Encrypt/Decrypt Functions**   
+The various implementations of Encrypt/DecryptString/Bytes now work with SecureString values for the encryption key to minimize holding unencrypted keys in memory as string for all but the immediate encrypt/decrypt operations.
+
 * **DataUtils.DataTableToObjectList<T>**   
 You can now convert a data table to a strongly typed list with this new function.
 

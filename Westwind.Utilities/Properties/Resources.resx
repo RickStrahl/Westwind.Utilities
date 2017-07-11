@@ -177,4 +177,7 @@
   <data name="NoActiveTransactionToCommit" xml:space="preserve">
     <value>No active Transaction to commit.</value>
   </data>
+  <data name="MissingEncryptionKey" xml:space="preserve">
+    <value>Missing encryption key.</value>
+  </data>
 </root>

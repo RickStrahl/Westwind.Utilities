@@ -19,7 +19,7 @@ namespace Westwind.Utilities.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -192,6 +192,15 @@ namespace Westwind.Utilities.Properties {
         public static string JSON_NET_library_not_avaiable {
             get {
                 return ResourceManager.GetString("JSON_NET_library_not_avaiable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing encryption key..
+        /// </summary>
+        public static string MissingEncryptionKey {
+            get {
+                return ResourceManager.GetString("MissingEncryptionKey", resourceCulture);
             }
         }
         
