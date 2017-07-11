@@ -1,5 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+#if !NETFULL
+using System.Net.Http;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 using Westwind.Utilities.InternetTools;
@@ -50,6 +52,21 @@ namespace Westwind.Utilities.InternetTools
 
             Thread.Sleep(2000);
 
+        }
+
+        [TestMethod]
+        public void AddPostKeyGetPostBufferTest()
+        {
+            var client = new HttpClient();
+            client.ContentType = "application/x-www-form-urlencoded";
+            client.PostMode = HttpPostMode.UrlEncoded;
+            
+
+            client.AddPostKey("ctl00_Content_Username", "Rick");
+            client.AddPostKey("ctl00_Content_Password", "seekrit");
+
+            string post = client.GetPostBuffer();
+            Console.WriteLine(post);
         }
 
     }

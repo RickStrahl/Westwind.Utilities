@@ -158,10 +158,16 @@ namespace Westwind.Utilities.InternetTools
             get { return _ContentType; }
             set { 
                 _ContentType = value;
-                PostMode = HttpPostMode.Raw;
+                if (_ContentType == null)
+                    return;
+
+                if (_ContentType.StartsWith("application/x-www-form-urlencoded"))
+                    PostMode = HttpPostMode.UrlEncoded;
+                else if (_ContentType.StartsWith("multipart/form-data"))
+                    PostMode = HttpPostMode.MultiPart;
             }
         }
-        private string _ContentType = string.Empty;
+        private string _ContentType;
 
 
         // this doesn't seem necessary - . NET will automatically decode common encodings like UTF-8
@@ -387,52 +393,7 @@ namespace Westwind.Utilities.InternetTools
             _PostData = new BinaryWriter(_PostStream);
         }
 
-		/// <summary>
-		/// Adds POST form variables to the request buffer.
-		/// PostMode determines how parms are handled.
-		/// </summary>
-		/// <param name="key">Key value or raw buffer depending on post type</param>
-		/// <param name="value">Value to store. Used only in key/value pair modes</param>
-		public void AddPostKey(string key, byte[] value)
-		{
-            if (value == null)
-                return;
-
-            if (key == "RESET")
-            {
-                ResetPostData();
-                return;
-            }
-			
-			if (_PostData == null) 
-			{
-				_PostStream = new MemoryStream();
-				_PostData = new BinaryWriter(_PostStream);
-			}
-
-			switch(_PostMode)
-			{
-				case HttpPostMode.UrlEncoded:
-					_PostData.Write( Encoding.Default.GetBytes(key + "=" +
-						StringUtils.UrlEncode(Encoding.Default.GetString(value)) +
-						"&") );
-					break;
-				case HttpPostMode.MultiPart:
-					_PostData.Write( Encoding.Default.GetBytes(
-						"--" + _MultiPartBoundary + "\r\n" + 
-						"Content-Disposition: form-data; name=\"" +key+"\"\r\n\r\n") );
-					
-					_PostData.Write( value );
-
-					_PostData.Write( Encoding.Default.GetBytes("\r\n") );
-					break;
-				default:  // Raw or Xml, JSON modes
-					_PostData.Write( value );
-					break;
-			}
-		}
-
-        public void SetPostStream(Stream postStream)
+	    public void SetPostStream(Stream postStream)
         {
             MemoryStream ms = new MemoryStream(1024);
             FileUtils.CopyStream(postStream, ms, 1024);
@@ -442,7 +403,52 @@ namespace Westwind.Utilities.InternetTools
             _PostData = new BinaryWriter(ms);            
         }
 
-		/// <summary>
+	    /// <summary>
+	    /// Adds POST form variables to the request buffer.
+	    /// PostMode determines how parms are handled.
+	    /// </summary>
+	    /// <param name="key">Key value or raw buffer depending on post type</param>
+	    /// <param name="value">Value to store. Used only in key/value pair modes</param>
+	    public void AddPostKey(string key, byte[] value)
+	    {
+	        if (value == null)
+	            return;
+
+	        if (key == "RESET")
+	        {
+	            ResetPostData();
+	            return;
+	        }
+			
+	        if (_PostData == null) 
+	        {
+	            _PostStream = new MemoryStream();
+	            _PostData = new BinaryWriter(_PostStream);
+	        }
+
+	        switch(_PostMode)
+	        {
+                case HttpPostMode.UrlEncoded:
+	                _PostData.Write( Encoding.Default.GetBytes(key + "=" +
+	                                                           StringUtils.UrlEncode(Encoding.Default.GetString(value)) +
+	                                                           "&") );
+	                break;
+	            case HttpPostMode.MultiPart:
+	                _PostData.Write( Encoding.Default.GetBytes(
+	                    "--" + _MultiPartBoundary + "\r\n" + 
+	                    "Content-Disposition: form-data; name=\"" +key+"\"\r\n\r\n") );
+					
+	                _PostData.Write( value );
+
+	                _PostData.Write( Encoding.Default.GetBytes("\r\n") );
+	                break;
+	            default:  // Raw or Xml, JSON modes
+	                _PostData.Write( value );
+	                break;
+	        }
+	    }
+
+	    /// <summary>
 		/// Adds POST form variables to the request buffer.
 		/// PostMode determines how parms are handled.
 		/// </summary>
@@ -452,7 +458,7 @@ namespace Westwind.Utilities.InternetTools
 		{
             if (value == null)
                 return;
-			AddPostKey(key,Encoding.GetEncoding(1252).GetBytes(value));
+			AddPostKey(key,Encoding.Default.GetBytes(value));
 		}
 
 		/// <summary>
@@ -530,7 +536,19 @@ namespace Westwind.Utilities.InternetTools
 			return true;
 		}
 
-        /// <summary>
+	    /// <summary>
+	    /// Returns the contents of the post buffer. Useful for debugging
+	    /// </summary>
+	    /// <returns></returns>
+	    public string GetPostBuffer()
+	    {
+	        var bytes = _PostStream?.ToArray();
+	        if (bytes == null)
+	            return null;
+	        return Encoding.Default.GetString(bytes);
+	    }
+
+	    /// <summary>
         /// Return a the result from an HTTP Url into a StreamReader.
         /// Client code should call Close() on the returned object when done reading.
         /// </summary>
