@@ -68,17 +68,17 @@ namespace Westwind.Utilities.Configuration
         }
         private string _ConnectionString = string.Empty;
 
+#if NETFULL
         /// <summary>
         /// The data provider used to access the database
         /// </summary>
-        public string ProviderName
-        {
-            get { return _ProviderName; }
-            set { _ProviderName = value; }
-        }
-        private string _ProviderName = "System.Data.SqlClient";
-        
-
+        public string ProviderName { get; set; } = "System.Data.SqlClient";
+#else
+        /// <summary>
+        /// If ProviderName is missing
+        /// </summary>
+        public DbProviderFactory ProviderFactory { get; set; } = SqlClientFactory.Instance;
+#endif        
         /// <summary>
         /// Table in the database that holds configuration data
         /// Table must have ID(int) and ConfigData (nText) fields
@@ -119,7 +119,7 @@ namespace Westwind.Utilities.Configuration
 #if NETFULL
 			using (SqlDataAccess data = new SqlDataAccess(ConnectionString, ProviderName) )
 #else
-			using (SqlDataAccess data = new SqlDataAccess(ConnectionString, SqlClientFactory.Instance))
+			using (SqlDataAccess data = new SqlDataAccess(ConnectionString, ProviderFactory))
 #endif
 
 			{

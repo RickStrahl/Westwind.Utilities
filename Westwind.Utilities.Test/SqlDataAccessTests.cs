@@ -351,7 +351,7 @@ namespace Westwind.Utilities.Data.Tests
         }
 
 		// TODO: Table Queryies don't work in .NET Core yet due to missing CreateAdapter method
-#if NETFULL
+
 		[TestMethod]
         public void NewParametersTableTest()
         {
@@ -380,7 +380,7 @@ namespace Westwind.Utilities.Data.Tests
             Console.WriteLine(swatch.ElapsedMilliseconds + "ms");
 
         }
-#endif
+
         [TestMethod]
         public void NewParametersExecuteEntityTest()
         {

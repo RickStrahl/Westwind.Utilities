@@ -1,6 +1,7 @@
 using System;
 using System.Configuration;
 using System.Data.Common;
+using System.Data.SqlClient;
 using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities.Data
@@ -38,6 +39,7 @@ namespace Westwind.Utilities.Data
         /// </summary>
         /// <param name="connectionString">Config file connection name or full connection string</param>
         /// <param name="providerName">optional provider name. If not passed with a connection string is considered Sql Server</param>
+        /// <param name="factory">optional provider factory. Use for .NET Core to pass actual provider instance since DbproviderFactories doesn't exist</param> 
         public static ConnectionStringInfo GetConnectionStringInfo(string connectionString, string providerName = null, DbProviderFactory factory = null)
         {            
             var info = new ConnectionStringInfo();
@@ -50,7 +52,7 @@ namespace Westwind.Utilities.Data
 #if NETFULL
 				connectionString = RetrieveConnectionStringFromConfig(connectionString, info);
 #else
-				throw new ArgumentException("Connection string names are not supported. Please use a full connectionstring.");
+				throw new ArgumentException("Connection string names are not supported with .NET Standard. Please use a full connectionstring.");
 #endif
 			}
 			else
@@ -62,10 +64,11 @@ namespace Westwind.Utilities.Data
 					if (providerName == null)
 						providerName = DefaultProviderName;
 
-					// TODO: DbProviderFactories This should get fixed by release of .NET 2.0
+                    // TODO: DbProviderFactories This should get fixed by release of .NET 2.0
 #if NETFULL
-
 					info.Provider = DbProviderFactories.GetFactory(providerName);
+#else                    
+                    info.Provider = SqlClientFactory.Instance;
 #endif
 				}
             }
@@ -74,6 +77,8 @@ namespace Westwind.Utilities.Data
 
             return info;
         }
+
+
 
 #if NETFULL
 		/// <summary>
@@ -102,5 +107,5 @@ namespace Westwind.Utilities.Data
 		}
 #endif
 
-	}
+    }
 }
