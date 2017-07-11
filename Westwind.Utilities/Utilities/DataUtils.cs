@@ -793,8 +793,6 @@ namespace Westwind.Utilities
             return Reader;
         }
 
-// TODO: This should work by the time .NET FULL ships
-#if NETFULL
 		/// <summary>
 		/// Returns a DataTable from a Sql Command string passed in.
 		/// </summary>
@@ -828,7 +826,6 @@ namespace Westwind.Utilities
 
             return dt;
         }
-#endif
 
 
         /// <summary>

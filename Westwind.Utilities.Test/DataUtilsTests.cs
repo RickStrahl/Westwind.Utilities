@@ -93,14 +93,13 @@ namespace Westwind.Utilities.Data.Tests
             }
         }
 
-#if NETFULL   // Net Core SqlDataAdapter not working yet
 		[TestMethod]
 		public void DataTableToListTest()
 		{
 			var sql = new SqlDataAccess(STR_TestDataConnection);
-			var dt = sql.ExecuteTable("items", "select * from customers");
+			var dt = sql.ExecuteTable("items", "select * from ApplicationLog");
 
-			Assert.IsNotNull(dt, "Failed to load test data");
+			Assert.IsNotNull(dt, "Failed to load test data: " + sql.ErrorMessage);
 
 			var items = DataUtils.DataTableToObjectList<Customer>(dt);
 
@@ -108,6 +107,6 @@ namespace Westwind.Utilities.Data.Tests
 			Assert.IsTrue(items.Count > 0);
 			Console.WriteLine(items.Count);
 		}
-#endif
+
     }
 }
