@@ -428,26 +428,25 @@ namespace Westwind.Utilities.InternetTools
 	            _PostData = new BinaryWriter(_PostStream);
 	        }
 
-	        switch(_PostMode)
+	        if (string.IsNullOrEmpty(key))
+	            _PostData.Write(value);
+            else if(PostMode == HttpPostMode.UrlEncoded)
+	                _PostData.Write( 
+                        Encoding.Default.GetBytes(key + "=" +
+	                                              StringUtils.UrlEncode(Encoding.Default.GetString(value)) +
+	                                              "&") );
+            else if (PostMode == HttpPostMode.MultiPart)
 	        {
-                case HttpPostMode.UrlEncoded:
-	                _PostData.Write( Encoding.Default.GetBytes(key + "=" +
-	                                                           StringUtils.UrlEncode(Encoding.Default.GetString(value)) +
-	                                                           "&") );
-	                break;
-	            case HttpPostMode.MultiPart:
-	                _PostData.Write( Encoding.Default.GetBytes(
-	                    "--" + _MultiPartBoundary + "\r\n" + 
-	                    "Content-Disposition: form-data; name=\"" +key+"\"\r\n\r\n") );
-					
-	                _PostData.Write( value );
+	            _PostData.Write(Encoding.Default.GetBytes(
+	                "--" + _MultiPartBoundary + "\r\n" +
+	                "Content-Disposition: form-data; name=\"" + key + "\"\r\n\r\n"));
 
-	                _PostData.Write( Encoding.Default.GetBytes("\r\n") );
-	                break;
-	            default:  // Raw or Xml, JSON modes
-	                _PostData.Write( value );
-	                break;
+	            _PostData.Write(value);
+
+	            _PostData.Write(Encoding.Default.GetBytes("\r\n"));
 	        }
+            else  // Raw or Xml, JSON modes
+                _PostData.Write( value );	            
 	    }
 
 	    /// <summary>
