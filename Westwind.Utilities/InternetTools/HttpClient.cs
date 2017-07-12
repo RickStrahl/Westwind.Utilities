@@ -165,6 +165,8 @@ namespace Westwind.Utilities.InternetTools
                     PostMode = HttpPostMode.UrlEncoded;
                 else if (_ContentType.StartsWith("multipart/form-data"))
                     PostMode = HttpPostMode.MultiPart;
+                else
+                    PostMode = HttpPostMode.Raw;
             }
         }
         private string _ContentType;
@@ -383,7 +385,7 @@ namespace Westwind.Utilities.InternetTools
 			return true;
 		}
 
-
+        #region POST data
         /// <summary>
         /// Resets the Post buffer by clearing out all existing content
         /// </summary>
@@ -547,8 +549,11 @@ namespace Westwind.Utilities.InternetTools
 	            return null;
 	        return Encoding.Default.GetString(bytes);
 	    }
+        #endregion
 
-	    /// <summary>
+        #region Run Requests
+
+        /// <summary>
         /// Return a the result from an HTTP Url into a StreamReader.
         /// Client code should call Close() on the returned object when done reading.
         /// </summary>
@@ -1188,6 +1193,7 @@ namespace Westwind.Utilities.InternetTools
         }
 #endif
 
+        
         /// <summary>
         /// Returns a partial response from the URL by specifying only 
         /// given number of bytes to retrieve. This can reduce network
@@ -1496,6 +1502,9 @@ namespace Westwind.Utilities.InternetTools
             return File.Exists(outputFile);
 		}
 
+        #endregion
+
+        #region Certificates
         /// <summary>
         /// Sets the certificate policy.
         /// 
@@ -1527,16 +1536,16 @@ namespace Westwind.Utilities.InternetTools
         {
             return true;
         }
+        #endregion
 
 
-   
 
-#region Events and Event Delegates and Arguments
+        #region Events and Event Delegates and Arguments
 
-		/// <summary>
-		/// Fires progress events when receiving data from the server
-		/// </summary>
-		public event ReceiveDataDelegate ReceiveData;
+        /// <summary>
+        /// Fires progress events when receiving data from the server
+        /// </summary>
+        public event ReceiveDataDelegate ReceiveData;
 		public delegate void ReceiveDataDelegate(object sender, ReceiveDataEventArgs e);
 
 		/// <summary>

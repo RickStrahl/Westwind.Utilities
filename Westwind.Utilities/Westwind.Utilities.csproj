@@ -24,10 +24,10 @@
     <RepositoryType>Github</RepositoryType>
     <Company>West Wind Technologies</Company>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>3.0.0.8-preview1-0</Version>
-    <AssemblyVersion>3.0.0.8</AssemblyVersion>
+    <Version>3.0.0.9-preview1-0</Version>
+    <AssemblyVersion>3.0.0.9</AssemblyVersion>
     <RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
-    <FileVersion>3.0.0.8</FileVersion>    
+    <FileVersion>3.0.0.9</FileVersion>    
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
