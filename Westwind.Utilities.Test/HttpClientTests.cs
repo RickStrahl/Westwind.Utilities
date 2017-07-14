@@ -59,14 +59,30 @@ namespace Westwind.Utilities.InternetTools
         {
             var client = new HttpClient();
             client.ContentType = "application/x-www-form-urlencoded";
-            client.PostMode = HttpPostMode.UrlEncoded;
-            
+            client.PostMode = HttpPostMode.UrlEncoded;            
 
             client.AddPostKey("ctl00_Content_Username", "Rick");
             client.AddPostKey("ctl00_Content_Password", "seekrit");
 
             string post = client.GetPostBuffer();
             Console.WriteLine(post);
+
+            Assert.IsTrue(post.Contains("&ctl00_Content_Password="));
+        }
+
+        [TestMethod]
+        public void AddPostKeyRawGetPostBufferTest()
+        {
+            var client = new HttpClient();
+            client.ContentType = "application/x-www-form-urlencoded";
+            client.PostMode = HttpPostMode.UrlEncoded;
+            
+            client.AddPostKey("name=Rick&company=West%20Wind");
+            
+            string post = client.GetPostBuffer();
+            Console.WriteLine(post);
+
+            Assert.IsTrue(post == "name=Rick&company=West%20Wind");
         }
 
     }

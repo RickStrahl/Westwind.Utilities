@@ -437,13 +437,13 @@ namespace Westwind.Utilities.InternetTools
 	                                              "&") );
             else if (PostMode == HttpPostMode.MultiPart)
 	        {
-	            _PostData.Write(Encoding.Default.GetBytes(
+                Encoding iso = Encoding.GetEncoding("ISO-8859-1");
+                _PostData.Write(iso.GetBytes(
 	                "--" + _MultiPartBoundary + "\r\n" +
 	                "Content-Disposition: form-data; name=\"" + key + "\"\r\n\r\n"));
 
 	            _PostData.Write(value);
-
-	            _PostData.Write(Encoding.Default.GetBytes("\r\n"));
+	            _PostData.Write(iso.GetBytes("\r\n"));
 	        }
             else  // Raw or Xml, JSON modes
                 _PostData.Write( value );	            
