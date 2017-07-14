@@ -12,7 +12,21 @@ namespace Westwind.Utilities.InternetTools
 {
     [TestClass]
     public class HttpClientTests
-    {
+    { 
+
+        [TestMethod]
+        public void InvalidUrlTest()
+        {
+            var client = new HttpClient();
+
+            var html = client.DownloadString("http://weblog.west-wind.com/nonexistantpage.htm");
+
+            Assert.IsTrue(client.WebResponse.StatusCode == System.Net.HttpStatusCode.NotFound);            
+            Console.WriteLine(client.WebResponse.StatusCode);
+        }
+
+
+      
         [TestMethod]
         public void HttpTimingsTest()
         {
@@ -23,19 +37,8 @@ namespace Westwind.Utilities.InternetTools
             Console.WriteLine(client.WebResponse.ContentLength);
             Console.WriteLine(client.HttpTimings.StartedTime);
             Console.WriteLine("First Byte: " + client.HttpTimings.TimeToFirstByteMs);
-            Console.WriteLine("Last Byte: " + client.HttpTimings.TimeToLastByteMs);            
+            Console.WriteLine("Last Byte: " + client.HttpTimings.TimeToLastByteMs);
         }
-
-        [TestMethod]
-        public void InvalidUrlTest()
-        {
-            var client = new HttpClient();
-
-            var html = client.DownloadString("http://weblog.west-wind.com/nonexistantpage.htm");
-            Assert.IsTrue(client.WebResponse.StatusCode == System.Net.HttpStatusCode.NotFound);            
-            Console.WriteLine(client.WebResponse.StatusCode);                        
-        }
-
 
 
         [TestMethod]
@@ -49,9 +52,6 @@ namespace Westwind.Utilities.InternetTools
             Console.WriteLine(client.HttpTimings.StartedTime);
             Console.WriteLine("First Byte: " + client.HttpTimings.TimeToFirstByteMs);
             Console.WriteLine("Last Byte: " + client.HttpTimings.TimeToLastByteMs);
-
-            Thread.Sleep(2000);
-
         }
 
         [TestMethod]
@@ -59,7 +59,6 @@ namespace Westwind.Utilities.InternetTools
         {
             var client = new HttpClient();
             client.ContentType = "application/x-www-form-urlencoded";
-            client.PostMode = HttpPostMode.UrlEncoded;            
 
             client.AddPostKey("ctl00_Content_Username", "Rick");
             client.AddPostKey("ctl00_Content_Password", "seekrit");
@@ -75,8 +74,8 @@ namespace Westwind.Utilities.InternetTools
         {
             var client = new HttpClient();
             client.ContentType = "application/x-www-form-urlencoded";
-            client.PostMode = HttpPostMode.UrlEncoded;
-            
+
+            // raw POST buffer
             client.AddPostKey("name=Rick&company=West%20Wind");
             
             string post = client.GetPostBuffer();
