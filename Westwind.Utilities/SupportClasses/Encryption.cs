@@ -292,15 +292,16 @@ namespace Westwind.Utilities
         /// <returns>String</returns>
         public static string DecryptString(string decryptString, string encryptionKey,  bool useBinHex = false)
         {
-            var data = useBinHex ? BinHexToBinary(decryptString) : Convert.FromBase64String(decryptString);
-
             try
             {
+                var data = useBinHex ? BinHexToBinary(decryptString) : Convert.FromBase64String(decryptString);
+
                 byte[] decrypted = DecryptBytes(data, encryptionKey);
                 return Encoding.UTF8.GetString(decrypted);                
             }
             catch
             {
+                // undecryptable data
                 return string.Empty;
             }
         }
