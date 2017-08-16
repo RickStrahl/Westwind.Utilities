@@ -82,8 +82,8 @@ namespace Westwind.Utilities.Configuration.Tests
             Assert.IsTrue(xmlConfig.Contains(@"<AppConnectionString>z6+T5mzXbtJBEgWqpQNYbBss0csbtw2b/qdge7PUixE=</AppConnectionString>"));
 #else
 			// Password and AppSettings  should be encrypted in config file
-			Assert.IsTrue(xmlConfig.Contains(@"<Password>FpFibfJwF1idGqAb0vCc8g==</Password>"));
-			Assert.IsTrue(xmlConfig.Contains(@"<AppConnectionString>75zKmNKcBMv1Ab27gEXw1F2p7sl6LH53WKBI2RSuQq8=</AppConnectionString>"));			   
+			Assert.IsTrue(xmlConfig.Contains(@"<Password>Odou0/8LMaGT52eE0DDA2g==</Password>"));
+			Assert.IsTrue(xmlConfig.Contains(@"<AppConnectionString>tLde067qv6r54CVKxse7MtgZXnWDdgSH0CBUWL9CHwc=</AppConnectionString>"));			   
 #endif
 
 		}
