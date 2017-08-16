@@ -24,10 +24,10 @@
     <RepositoryType>Github</RepositoryType>
     <Company>West Wind Technologies</Company>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>3.0.0.9-preview1-0</Version>
-    <AssemblyVersion>3.0.0.9</AssemblyVersion>
+    <Version>3.0.1.0</Version>
+    <AssemblyVersion>3.0.1.0</AssemblyVersion>
     <RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
-    <FileVersion>3.0.0.9</FileVersion>    
+    <FileVersion>3.0.1.0</FileVersion>    
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -42,11 +42,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Data.SqlClient" Version="4.4.0-preview2-25405-01" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
