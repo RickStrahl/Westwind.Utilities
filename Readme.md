@@ -1,12 +1,9 @@
 # Westwind.Utiltities
 ### A general purpose utility and helper library for .NET development
 
-> Moved from Westwind.Toolkit repo into seperate repro
-> * Added support for .NET Core 2.0
-> * Targets .NET 4.5, 4.0 and NetCore 2.0
-> * Currently in preview
-> * Full framework library is stable
-> * .NET Core framework library is usable but not stable and under active development
+> Moved from [Westwind.Toolkit repo](https://github.com/rickstrahl/WestwindToolkit)
+> * Added support for .NET Standard 2.0
+> * Targets .NET 4.5, 4.0 and NetStandard 2.0
 
 Every .NET application requires small, common and often repeated tasks. This library is a collection of those things that I commonly need on a regular basis and have compiled over the years.
 
@@ -34,7 +31,12 @@ ideal for components or apps that need data access but don't need the bulk of En
     * [StringSerializer](http://west-wind.com/westwindtoolkit/docs?topic=Class%20StringSerializer)
     * [Expando](http://west-wind.com/westwindtoolkit/docs?topic=Class%20Expando)
 	* [PropertyBag](http://west-wind.com/westwindtoolkit/docs?topic=Class%20PropertyBag)
-    * [Scheduler](http://west-wind.com/westwindtoolkit/docs?topic=Class%20Scheduler) (for background processing)    
+    * [Scheduler](http://west-wind.com/westwindtoolkit/docs?topic=Class%20Scheduler) (for background processing) 
+    * [Encryption](https://west-wind.com/WestwindToolkit/docs/_4ij04e9ir.htm)
+    * [HttpClient](https://west-wind.com/WestwindToolkit/docs/_4ij04e8lv.htm) (HttpWebRequest wrapper)
+    * [HttpUtils](https://west-wind.com/WestwindToolkit/docs/_4ij04e9r4.htm) (Simple REST client helpers)
+    * [SmptClientNative](https://west-wind.com/WestwindToolkit/docs/_4ij04e8u7.htm) (SmtpClient Wrapper)
+    
     * [DelegateFactory](http://west-wind.com/westwindtoolkit/docs?topic=Class%20DelegateFactory)
 
 and much, much more.
