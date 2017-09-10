@@ -1,4 +1,8 @@
-# Westwind.Utiltities
+# Westwind.Utilities 
+
+[![NuGet](https://img.shields.io/nuget/v/Westwind.Utilities.svg)](https://www.nuget.org/packages/Westwind.Utilities/)
+![](https://img.shields.io/nuget/dt/Westwind.Utilities.svg)
+
 ### A general purpose utility and helper library for .NET development
 
 > Moved from [Westwind.Toolkit repo](https://github.com/rickstrahl/WestwindToolkit)
