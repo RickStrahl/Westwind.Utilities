@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using System.Linq;
 
 namespace Westwind.Utilities.Test
 {
@@ -18,6 +19,27 @@ namespace Westwind.Utilities.Test
 
             Console.WriteLine(result);
         }
+
+        [TestMethod]
+        public void NormalizePathTest()
+        {            
+            var path = @"c:\temp\test/work/play.txt";
+
+            string normal = FileUtils.NormalizePath(path);
+            Console.WriteLine(normal);
+            Assert.IsTrue(normal.ToArray().Count(c => c == Path.DirectorySeparatorChar) == 4);
+
+            path = @"\temp\test/work/play.txt";
+            normal = FileUtils.NormalizePath(path);
+            Console.WriteLine(normal);
+            Assert.IsTrue(normal.ToArray().Count(c => c == Path.DirectorySeparatorChar) == 4);
+
+            path = @"temp\test/work/play.txt";
+            normal = FileUtils.NormalizePath(path);
+            Console.WriteLine(normal);
+            Assert.IsTrue(normal.ToArray().Count(c => c == Path.DirectorySeparatorChar) == 3);
+        }
+    
 
 
         [TestMethod]

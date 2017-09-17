@@ -213,6 +213,28 @@ namespace Westwind.Utilities
             return relativeUri.ToString().Replace("/", "\\");            
 		}
 
+
+	    /// <summary>
+	    /// Normalizes a file path to the operating system default
+	    /// slashes.
+	    /// </summary>
+	    /// <param name="path"></param>
+	    public static string NormalizePath(string path)
+	    {
+
+	        try
+	        {
+	            path = new Uri(path).LocalPath;
+                return path;
+	        }
+            catch { /* not a valid path to convert */}
+
+            // Manual conversion
+	        char slash = System.IO.Path.DirectorySeparatorChar;
+	        path = path.Replace('/', slash).Replace('\\', slash);
+	        return path;
+	    }
+
         /// <summary>
         /// Copies directories using either top level only or deep merge copy.
         /// 
