@@ -1,13 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26608.5
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.Utilities", "Westwind.Utilities\Westwind.Utilities.csproj", "{16881D93-0458-4DD0-BAB6-111C44864607}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{80CD1636-8E36-4BC3-85E6-80F25C070095}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.Utilities.Test", "Westwind.Utilities.Test\Westwind.Utilities.Test.csproj", "{097C1E6F-8AAD-47B9-8A7F-64B2D7343033}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FE23F8DD-98B3-464D-AB7C-AEB259A8A5F9}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		Changelog.md = Changelog.md
+		Readme.md = Readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,5 +41,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{097C1E6F-8AAD-47B9-8A7F-64B2D7343033} = {80CD1636-8E36-4BC3-85E6-80F25C070095}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {76FF4B12-41A6-4CCD-AACE-C84738B9D72C}
 	EndGlobalSection
 EndGlobal

@@ -4,11 +4,12 @@
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
     <Authors>Rick Strahl</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+    
+    
     <Language>en-US</Language>
     <AssemblyName>Westwind.Utilities</AssemblyName>
     <AssemblyTitle>Westwind.Utilities</AssemblyTitle>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <VersionPrefix>3.0.0.5-preview1-0</VersionPrefix>
+    <NeutralLanguage>en-US</NeutralLanguage>    
     <PackageId>Westwind.Utilities</PackageId>
     <RootNamespace>Westwind.Utilities</RootNamespace>
     <Description>.NET utility library that includes Application Configuration, lightweight ADO.NET Data Access Layer, logging, utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>
@@ -24,10 +25,10 @@
     <RepositoryType>Github</RepositoryType>
     <Company>West Wind Technologies</Company>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>3.0.1.0</Version>
-    <AssemblyVersion>3.0.1.0</AssemblyVersion>
+    <Version>3.0.2.0-preview1-0</Version>
+    <AssemblyVersion>3.0.2.0</AssemblyVersion>
+    <FileVersion>3.0.2.0</FileVersion>    
     <RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
-    <FileVersion>3.0.1.0</FileVersion>    
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -98,6 +99,13 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="CoreCompat.System.Drawing.v2">
+      <Version>5.2.0-preview1-r131</Version>
+    </PackageReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net40'">
     <DefineConstants>NET40;NETFULL</DefineConstants>

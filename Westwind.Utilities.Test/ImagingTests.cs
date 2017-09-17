@@ -1,4 +1,4 @@
-#if NETFULL
+
 using System;
 using System.Drawing.Imaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,6 +16,7 @@ namespace Westwind.Utilities.Tests
         private string SquareImageFile = @"supportfiles\SquareImage.jpg";
         private string HighQualityImageFile = @"supportfiles\HighQuality.jpg";
         private string HighQualityImageFileWork = @"supportfiles\HighQualityWork.jpg";
+
 
         [TestMethod]
         public void RotateFileToFileTest()
@@ -76,7 +77,6 @@ namespace Westwind.Utilities.Tests
             }
         }
 
-
         [TestMethod] 
         public void ResizeBitMapFile()
         {
@@ -123,4 +123,3 @@ namespace Westwind.Utilities.Tests
 
     }
 }
-#endif
