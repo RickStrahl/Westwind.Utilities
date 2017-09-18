@@ -35,6 +35,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+//using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Westwind.Utilities
@@ -221,19 +222,31 @@ namespace Westwind.Utilities
 	    /// <param name="path"></param>
 	    public static string NormalizePath(string path)
 	    {
+	        //return Path.GetFullPath(path); // this always turns into a full OS path
 
-	        try
-	        {
-	            path = new Uri(path).LocalPath;
+            if(string.IsNullOrEmpty(path))
                 return path;
-	        }
-            catch { /* not a valid path to convert */}
+            
+            if(System.IO.Path.DirectorySeparatorChar == '\\') 
+                return path.Replace('/', '\\');
+	        
+            return path.Replace('\\', '/');
+        }
 
-            // Manual conversion
-	        char slash = System.IO.Path.DirectorySeparatorChar;
-	        path = path.Replace('/', slash).Replace('\\', slash);
-	        return path;
-	    }
+
+        /// <summary>
+        /// Normalizes path with slashes and forces a trailing slash 
+        /// on the end of the path.
+        /// </summary>
+        /// <param name="Path">Path to pass in</param>
+        /// <returns></returns>
+	    public static string NormalizeDirectory(string path)
+        {
+            path = NormalizePath(path);
+            if (!path.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                path += Path.DirectorySeparatorChar;
+            return path;
+        }
 
         /// <summary>
         /// Copies directories using either top level only or deep merge copy.

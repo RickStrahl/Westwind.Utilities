@@ -24,7 +24,6 @@ namespace Westwind.Utilities.Test
         public void NormalizePathTest()
         {            
             var path = @"c:\temp\test/work/play.txt";
-
             string normal = FileUtils.NormalizePath(path);
             Console.WriteLine(normal);
             Assert.IsTrue(normal.ToArray().Count(c => c == Path.DirectorySeparatorChar) == 4);
@@ -39,7 +38,42 @@ namespace Westwind.Utilities.Test
             Console.WriteLine(normal);
             Assert.IsTrue(normal.ToArray().Count(c => c == Path.DirectorySeparatorChar) == 3);
         }
-    
+
+
+        [TestMethod]
+        public void NormalizeDirectoryTest()
+        {
+            var path = @"c:\temp\test\work";
+            string normal = FileUtils.NormalizeDirectory(path);
+            Console.WriteLine(normal);
+            Assert.IsTrue(normal.ToArray().Count(c => c == Path.DirectorySeparatorChar) == 4);
+
+            path = @"c:\temp\test\work\"; 
+            normal = FileUtils.NormalizeDirectory(path);
+            Console.WriteLine(normal);
+            Assert.IsTrue(normal.ToArray().Count(c => c == Path.DirectorySeparatorChar) == 4);
+
+            path = @"\temp\test\work\";
+            normal = FileUtils.NormalizeDirectory(path);
+            Console.WriteLine(normal);
+            Assert.IsTrue(normal.ToArray().Count(c => c == Path.DirectorySeparatorChar) == 4);
+
+            path = @"\temp\test/work/";
+            normal = FileUtils.NormalizeDirectory(path);
+            Console.WriteLine(normal);
+            Assert.IsTrue(normal.ToArray().Count(c => c == Path.DirectorySeparatorChar) == 4);
+
+
+            path = @"\temp\test/work/play.txt";
+            normal = FileUtils.NormalizeDirectory(path);
+            Console.WriteLine(normal);
+            Assert.IsTrue(normal.ToArray().Count(c => c == Path.DirectorySeparatorChar) == 5);
+
+            path = @"temp\test/work/bogus";
+            normal = FileUtils.NormalizeDirectory(path);
+            Console.WriteLine(normal);
+            Assert.IsTrue(normal.ToArray().Count(c => c == Path.DirectorySeparatorChar) == 4);
+        }
 
 
         [TestMethod]
