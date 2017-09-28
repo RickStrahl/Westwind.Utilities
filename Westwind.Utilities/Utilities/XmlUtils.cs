@@ -32,6 +32,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.Xml;
 using Westwind.Utilities.Properties;
 
@@ -122,7 +123,7 @@ namespace Westwind.Utilities
 			    return 0;
 
 		    decimal result = 0;
-		    decimal.TryParse(val, out result);
+		    decimal.TryParse(val, NumberStyles.Any, CultureInfo.InvariantCulture, out result);
 
 		    return result;
 	    }
