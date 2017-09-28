@@ -43,6 +43,7 @@ namespace Westwind.Utilities.Tests
 	<name>Bill Bunsen</name>
 	<count>32</count>
 	<price>122.22</price>
+	<discount>1,30</discount>
 	<keyValue>value2</keyValue>
 	<isActive>true</isActive>
 	<attributeNode type=""data"" count=""21""  isLive=""true"" />
@@ -65,6 +66,9 @@ namespace Westwind.Utilities.Tests
 
 			decimal price = XmlUtils.GetXmlDecimal(node, "price");
 			Assert.AreEqual(122.22M, price);
+
+			decimal discount = XmlUtils.GetXmlDecimal(node, "discount");
+			Assert.AreEqual(130M, discount);
 
 			bool isActive = XmlUtils.GetXmlBool(node, "isActive");
 			Assert.IsTrue(isActive);
