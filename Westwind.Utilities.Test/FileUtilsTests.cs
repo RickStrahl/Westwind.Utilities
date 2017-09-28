@@ -77,6 +77,14 @@ namespace Westwind.Utilities.Test
 
 
         [TestMethod]
+        public void CompactPathTest()
+        {
+            var path = @"c:\temp\test\node_modules\SomeVeryLongComponentNameSpaceAndName\SomeLongComponentName.md";
+            var result = FileUtils.GetCompactPath(path);
+            Console.WriteLine(result);
+        }
+
+        [TestMethod]
         public void CopyDirectory()
         {
             string target = Path.Combine(Path.GetTempPath(), "_TestFolders2");

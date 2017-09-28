@@ -158,9 +158,7 @@ namespace Westwind.Utilities
             return StringUtils.ToCamelCase(SafeFilename(fname)) + ext;
         }
 
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern uint GetLongPathName(string ShortPath, StringBuilder sb, int buffer);
-
+     
         /// <summary>
         /// This function returns the actual filename of a file
         /// that exists on disk. If you provide a path/file name
@@ -187,19 +185,43 @@ namespace Westwind.Utilities
             return filename;
         }
 
-		/// <summary>
-		/// Returns a relative path string from a full path based on a base path
+	    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+	    static extern uint GetLongPathName(string ShortPath, StringBuilder sb, int buffer);
+
+
+	    /// <summary>
+	    /// Returns a compact path with elipsis from a long path
+	    /// </summary>
+	    /// <param name="path">Original path to potentially trim</param>
+	    /// <param name="length">Max length of the path string returned</param>
+	    /// <returns></returns>
+	    public static string GetCompactPath(string path, int length = 70)
+	    {
+	        if (string.IsNullOrEmpty(path))
+	            return path;
+
+	        StringBuilder sb = new StringBuilder(length + 1);
+	        PathCompactPathEx(sb, path, 70, 0);
+	        return sb.ToString();
+	    }
+
+	    [DllImport("shlwapi.dll", CharSet = CharSet.Auto)]
+	    static extern bool PathCompactPathEx([Out] StringBuilder pszOut, string szPath, int cchMax, int dwFlags);
+
+
+        /// <summary>
+        /// Returns a relative path string from a full path based on a base path
         /// provided.
-		/// </summary>
-		/// <param name="fullPath">The path to convert. Can be either a file or a directory</param>
-		/// <param name="basePath">The base path on which relative processing is based. Should be a directory.</param>
-		/// <returns>
-		/// String of the relative path.
-		/// 
-		/// Examples of returned values:
-		///  test.txt, ..\test.txt, ..\..\..\test.txt, ., .., subdir\test.txt
-		/// </returns>
-		public static string GetRelativePath(string fullPath, string basePath ) 
+        /// </summary>
+        /// <param name="fullPath">The path to convert. Can be either a file or a directory</param>
+        /// <param name="basePath">The base path on which relative processing is based. Should be a directory.</param>
+        /// <returns>
+        /// String of the relative path.
+        /// 
+        /// Examples of returned values:
+        ///  test.txt, ..\test.txt, ..\..\..\test.txt, ., .., subdir\test.txt
+        /// </returns>
+        public static string GetRelativePath(string fullPath, string basePath ) 
 		{
             // ForceBasePath to a path
             if (!basePath.EndsWith("\\"))
