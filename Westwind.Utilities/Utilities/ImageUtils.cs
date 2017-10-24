@@ -31,7 +31,7 @@
 */
 #endregion
 
-//#if NETFULL
+#if NETFULL
 
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -454,4 +454,4 @@ namespace Westwind.Utilities
     }
 }
 
-//#endif
+#endif

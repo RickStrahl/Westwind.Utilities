@@ -1,4 +1,4 @@
-
+#if NETFULL
 using System;
 using System.Drawing.Imaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -123,3 +123,4 @@ namespace Westwind.Utilities.Tests
 
     }
 }
+#endif
