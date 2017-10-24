@@ -46,14 +46,14 @@ namespace Westwind.Utilities.Data
     /// </summary>
     public class SqlDataAccess : DataAccessBase
     {
-#if NETFULL
+
 		public SqlDataAccess() 
         {
-			dbProvider = DbProviderFactories.GetFactory("System.Data.SqlClient"); 
-		}
-#endif
+            dbProvider = SqlClientFactory.Instance;
+        }
 
-        public SqlDataAccess(string connectionString)
+
+            public SqlDataAccess(string connectionString)
             : base(connectionString, SqlClientFactory.Instance)
         { }
 

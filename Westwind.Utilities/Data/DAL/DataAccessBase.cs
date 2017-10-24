@@ -64,19 +64,16 @@ namespace Westwind.Utilities.Data
     [DebuggerDisplay("{ ErrorMessage } {ConnectionString} {LastSql}")]
     public abstract class DataAccessBase : IDisposable
     {        
-        private const string STR_DefaultProviderName = "System.Data.SqlClient";
 
-#if NETFULL
 		/// <summary>
 		/// Default constructor that should be called back to 
 		/// by subclasses. Parameterless assumes default provider
 		/// and no connection string which must be explicitly set.
 		/// </summary>
 		protected DataAccessBase()
-        {
-            dbProvider = DbProviderFactories.GetFactory(STR_DefaultProviderName); 
+		{
+		    dbProvider = SqlClientFactory.Instance;
         }
-#endif
 
         /// <summary>
         /// Most common constructor that expects a connection string or 
