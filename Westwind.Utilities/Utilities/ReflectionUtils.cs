@@ -38,6 +38,7 @@ using System.Globalization;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using Westwind.Utilities.Properties;
@@ -59,18 +60,361 @@ namespace Westwind.Utilities
             BindingFlags.Public | BindingFlags.NonPublic |
             BindingFlags.Static | BindingFlags.Instance | BindingFlags.IgnoreCase;
 
+        #region Type and Assembly Creation
+        /// <summary>
+        /// Creates an instance from a type by calling the parameterless constructor.
+        /// 
+        /// Note this will not work with COM objects - continue to use the Activator.CreateInstance
+        /// for COM objects.
+        /// <seealso>Class wwUtils</seealso>
+        /// </summary>
+        /// <param name="typeToCreate">
+        /// The type from which to create an instance.
+        /// </param>
+        /// <returns>object</returns>
+        public static object CreateInstanceFromType(Type typeToCreate, params object[] args)
+        {
+            if (args == null)
+            {
+                Type[] Parms = Type.EmptyTypes;
+                return typeToCreate.GetConstructor(Parms).Invoke(null);
+            }
+
+            return Activator.CreateInstance(typeToCreate, args);
+        }
+
+
+
 
         /// <summary>
-        /// Retrieve a property value from an object dynamically. This is a simple version
-        /// that uses Reflection calls directly. It doesn't support indexers.
+        /// Creates an instance of a type based on a string. Assumes that the type's
         /// </summary>
-        /// <param name="instance">Object to make the call on</param>
-        /// <param name="property">Property to retrieve</param>
-        /// <returns>Object - cast to proper type</returns>
-        public static object GetProperty(object instance, string property)
+        /// <param name="typeName"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static object CreateInstanceFromString(string typeName, params object[] args)
         {
-            return instance.GetType().GetProperty(property, ReflectionUtils.MemberAccess).GetValue(instance, null);
+            object instance = null;
+
+            try
+            {
+                var type = GetTypeFromName(typeName);
+                if (type == null)
+                    return null;
+
+                instance = Activator.CreateInstance(type, args);
+            }
+            catch
+            {
+                return null;
+            }
+
+            return instance;
         }
+
+        /// <summary>
+        /// Helper routine that looks up a type name and tries to retrieve the
+        /// full type reference using GetType() and if not found looking 
+        /// in the actively executing assemblies and optionally loading
+        /// the specified assembly name.
+        /// </summary>
+        /// <param name="typeName">type to load</param>
+        /// <returns>null</returns>
+        public static Type GetTypeFromName(string typeName, string assemblyName = null)
+        {
+            Type type = null;
+
+            type = Type.GetType(typeName, false);
+            if (type != null)
+                return type;
+
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            // try to find manually
+            foreach (Assembly asm in assemblies)
+            {
+                type = asm.GetType(typeName, false);
+
+                if (type != null)
+                    break;
+            }
+            if (type != null)
+                return type;
+
+            // see if we can load the assembly
+            if (!string.IsNullOrEmpty(assemblyName))
+            {
+                var a = LoadAssembly(assemblyName);
+                if (a != null)
+                {
+                    type = Type.GetType(typeName, false);
+                    if (type != null)
+                        return type;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Creates a COM instance from a ProgID. Loads either
+        /// Exe or DLL servers.
+        /// </summary>
+        /// <param name="progId"></param>
+        /// <returns></returns>
+        public static object CreateComInstance(string progId)
+        {
+            Type type = Type.GetTypeFromProgID(progId);
+            if (type == null)
+                return null;
+
+            return Activator.CreateInstance(type);
+        }
+
+        /// <summary>
+        /// Try to load an assembly into the application's app domain.
+        /// Loads by name first then checks for filename
+        /// </summary>
+        /// <param name="assemblyName">Assembly name or full path</param>
+        /// <returns>null on failure</returns>
+        public static Assembly LoadAssembly(string assemblyName)
+        {
+            Assembly assembly = null;
+            try
+            {
+                assembly = Assembly.Load(assemblyName);
+            }
+            catch { }
+
+            if (assembly != null)
+                return assembly;
+
+            if (File.Exists(assemblyName))
+            {
+                assembly = Assembly.LoadFrom(assemblyName);
+                if (assembly != null)
+                    return assembly;
+            }
+            return null;
+        }
+        #endregion
+
+
+        #region Conversions
+
+        /// <summary>
+        /// Turns a string into a typed value generically.
+        /// Explicitly assigns common types and falls back
+        /// on using type converters for unhandled types.         
+        /// 
+        /// Common uses: 
+        /// * UI -&gt; to data conversions
+        /// * Parsers
+        /// <seealso>Class ReflectionUtils</seealso>
+        /// </summary>
+        /// <param name="sourceString">
+        /// The string to convert from
+        /// </param>
+        /// <param name="targetType">
+        /// The type to convert to
+        /// </param>
+        /// <param name="culture">
+        /// Culture used for numeric and datetime values.
+        /// </param>
+        /// <returns>object. Throws exception if it cannot be converted.</returns>
+        public static object StringToTypedValue(string sourceString, Type targetType, CultureInfo culture = null)
+        {
+            object result = null;
+
+            bool isEmpty = string.IsNullOrEmpty(sourceString);
+
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
+            if (targetType == typeof(string))
+                result = sourceString;
+            else if (targetType == typeof(Int32) || targetType == typeof(int))
+            {
+                if (isEmpty)
+                    result = 0;
+                else
+                    result = Int32.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
+            }
+            else if (targetType == typeof(Int64))
+            {
+                if (isEmpty)
+                    result = (Int64)0;
+                else
+                    result = Int64.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
+            }
+            else if (targetType == typeof(Int16))
+            {
+                if (isEmpty)
+                    result = (Int16)0;
+                else
+                    result = Int16.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
+            }
+            else if (targetType == typeof(decimal))
+            {
+                if (isEmpty)
+                    result = 0M;
+                else
+                    result = decimal.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
+            }
+            else if (targetType == typeof(DateTime))
+            {
+                if (isEmpty)
+                    result = DateTime.MinValue;
+                else
+                    result = Convert.ToDateTime(sourceString, culture.DateTimeFormat);
+            }
+            else if (targetType == typeof(byte))
+            {
+                if (isEmpty)
+                    result = 0;
+                else
+                    result = Convert.ToByte(sourceString);
+            }
+            else if (targetType == typeof(double))
+            {
+                if (isEmpty)
+                    result = 0F;
+                else
+                    result = Double.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
+            }
+            else if (targetType == typeof(Single))
+            {
+                if (isEmpty)
+                    result = 0F;
+                else
+                    result = Single.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
+            }
+            else if (targetType == typeof(bool))
+            {
+                sourceString = sourceString.ToLower();
+                if (!isEmpty &&
+                    sourceString == "true" || sourceString == "on" ||
+                    sourceString == "1" || sourceString == "yes")
+                    result = true;
+                else
+                    result = false;
+            }
+            else if (targetType == typeof(Guid))
+            {
+                if (isEmpty)
+                    result = Guid.Empty;
+                else
+                    result = new Guid(sourceString);
+            }
+            else if (targetType.IsEnum)
+                result = Enum.Parse(targetType, sourceString);
+            else if (targetType == typeof(byte[]))
+            {
+                // TODO: Convert HexBinary string to byte array
+                result = null;
+            }
+
+            // Handle nullables explicitly since type converter won't handle conversions
+            // properly for things like decimal separators currency formats etc.
+            // Grab underlying type and pass value to that
+            else if (targetType.Name.StartsWith("Nullable`"))
+            {
+                if (sourceString.ToLower() == "null" || sourceString == string.Empty)
+                    result = null;
+                else
+                {
+                    targetType = Nullable.GetUnderlyingType(targetType);
+                    result = StringToTypedValue(sourceString, targetType);
+                }
+            }
+            else
+            {
+                TypeConverter converter = TypeDescriptor.GetConverter(targetType);
+                if (converter != null && converter.CanConvertFrom(typeof(string)))
+                    result = converter.ConvertFromString(null, culture, sourceString);
+                else
+                {
+                    Debug.Assert(false, string.Format("Type Conversion not handled in StringToTypedValue for {0} {1}",
+                        targetType.Name, sourceString));
+                    throw (new InvalidCastException(Resources.StringToTypedValueValueTypeConversionFailed + targetType.Name));
+                }
+            }
+
+            return result;
+        }
+
+
+
+        /// <summary>
+        /// Generic version allow for automatic type conversion without the explicit type
+        /// parameter
+        /// </summary>
+        /// <typeparam name="T">Type to be converted to</typeparam>
+        /// <param name="sourceString">input string value to be converted</param>
+        /// <param name="culture">Culture applied to conversion</param>
+        /// <returns></returns>
+        public static T StringToTypedValue<T>(string sourceString, CultureInfo culture = null)
+        {
+            return (T)StringToTypedValue(sourceString, typeof(T), culture);
+        }
+
+        /// <summary>
+        /// Converts a type to string if possible. This method supports an optional culture generically on any value.
+        /// It calls the ToString() method on common types and uses a type converter on all other objects
+        /// if available
+        /// </summary>
+        /// <param name="rawValue">The Value or Object to convert to a string</param>
+        /// <param name="culture">Culture for numeric and DateTime values</param>
+        /// <param name="unsupportedReturn">Return string for unsupported types</param>
+        /// <returns>string</returns>
+        public static string TypedValueToString(object rawValue, CultureInfo culture = null, string unsupportedReturn = null)
+        {
+            if (rawValue == null)
+                return string.Empty;
+
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
+            Type valueType = rawValue.GetType();
+            string returnValue = null;
+
+            if (valueType == typeof(string))
+                returnValue = rawValue as string;
+            else if (valueType == typeof(int) || valueType == typeof(decimal) ||
+                     valueType == typeof(double) || valueType == typeof(float) || valueType == typeof(Single))
+                returnValue = string.Format(culture.NumberFormat, "{0}", rawValue);
+            else if (valueType == typeof(DateTime))
+                returnValue = string.Format(culture.DateTimeFormat, "{0}", rawValue);
+            else if (valueType == typeof(bool) || valueType == typeof(Byte) || valueType.IsEnum)
+                returnValue = rawValue.ToString();
+            else if (valueType == typeof(Guid?))
+            {
+                if (rawValue == null)
+                    returnValue = string.Empty;
+                else
+                    return rawValue.ToString();
+            }
+            else
+            {
+                // Any type that supports a type converter
+                TypeConverter converter = TypeDescriptor.GetConverter(valueType);
+                if (converter != null && converter.CanConvertTo(typeof(string)) && converter.CanConvertFrom(typeof(string)))
+                    returnValue = converter.ConvertToString(null, culture, rawValue);
+                else
+                {
+                    // Last resort - just call ToString() on unknown type
+                    if (!string.IsNullOrEmpty(unsupportedReturn))
+                        returnValue = unsupportedReturn;
+                    else
+                        returnValue = rawValue.ToString();
+                }
+            }
+
+            return returnValue;
+        }
+
+        #endregion
+
+        #region Member Access
 
         /// <summary>
         /// Retrieve a field dynamically from an object. This is a simple implementation that's
@@ -454,340 +798,6 @@ namespace Westwind.Utilities
         }
 
 
-
-
-        /// <summary>
-        /// Creates an instance from a type by calling the parameterless constructor.
-        /// 
-        /// Note this will not work with COM objects - continue to use the Activator.CreateInstance
-        /// for COM objects.
-        /// <seealso>Class wwUtils</seealso>
-        /// </summary>
-        /// <param name="typeToCreate">
-        /// The type from which to create an instance.
-        /// </param>
-        /// <returns>object</returns>
-        public static object CreateInstanceFromType(Type typeToCreate, params object[] args)
-        {
-            if (args == null)
-            {
-                Type[] Parms = Type.EmptyTypes;
-                return typeToCreate.GetConstructor(Parms).Invoke(null);
-            }
-
-            return Activator.CreateInstance(typeToCreate, args);
-        }
-
-
-
-
-        /// <summary>
-        /// Creates an instance of a type based on a string. Assumes that the type's
-        /// </summary>
-        /// <param name="typeName"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public static object CreateInstanceFromString(string typeName, params object[] args)
-        {
-            object instance = null;
-            Type type = null;
-
-            try
-            {
-                type = GetTypeFromName(typeName);
-                if (type == null)
-                    return null;
-
-                instance = Activator.CreateInstance(type, args);
-            }
-            catch
-            {
-                return null;
-            }
-
-            return instance;
-        }
-
-        /// <summary>
-        /// Helper routine that looks up a type name and tries to retrieve the
-        /// full type reference in the actively executing assemblies.
-        /// </summary>
-        /// <param name="typeName"></param>
-        /// <returns></returns>
-        public static Type GetTypeFromName(string typeName)
-        {
-            Type type = null;
-
-            type = Type.GetType(typeName, false);
-            if (type != null)
-                return type;
-
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            // try to find manually
-            foreach (Assembly asm in assemblies)
-            {
-                type = asm.GetType(typeName, false);
-
-                if (type != null)
-                    break;
-            }
-            return type;
-        }
-
-
-        /// <summary>
-        /// Creates a COM instance from a ProgID. Loads either
-        /// Exe or DLL servers.
-        /// </summary>
-        /// <param name="progId"></param>
-        /// <returns></returns>
-        public static object CreateComInstance(string progId)
-        {
-            Type type = Type.GetTypeFromProgID(progId);
-            if (type == null)
-                return null;
-
-            return Activator.CreateInstance(type);
-        }
-
-        /// <summary>
-        /// Converts a type to string if possible. This method supports an optional culture generically on any value.
-        /// It calls the ToString() method on common types and uses a type converter on all other objects
-        /// if available
-        /// </summary>
-        /// <param name="rawValue">The Value or Object to convert to a string</param>
-        /// <param name="culture">Culture for numeric and DateTime values</param>
-        /// <param name="unsupportedReturn">Return string for unsupported types</param>
-        /// <returns>string</returns>
-        public static string TypedValueToString(object rawValue, CultureInfo culture = null, string unsupportedReturn = null)
-        {
-            if (rawValue == null)
-                return string.Empty;
-
-            if (culture == null)
-                culture = CultureInfo.CurrentCulture;
-
-            Type valueType = rawValue.GetType();
-            string returnValue = null;
-
-            if (valueType == typeof(string))
-                returnValue = rawValue as string;
-            else if (valueType == typeof(int) || valueType == typeof(decimal) ||
-                valueType == typeof(double) || valueType == typeof(float) || valueType == typeof(Single))
-                returnValue = string.Format(culture.NumberFormat, "{0}", rawValue);
-            else if (valueType == typeof(DateTime))
-                returnValue = string.Format(culture.DateTimeFormat, "{0}", rawValue);
-            else if (valueType == typeof(bool) || valueType == typeof(Byte) || valueType.IsEnum)
-                returnValue = rawValue.ToString();
-            else if (valueType == typeof(Guid?))
-            {
-                if (rawValue == null)
-                    returnValue = string.Empty;
-                else
-                    return rawValue.ToString();
-            }
-            else
-            {
-                // Any type that supports a type converter
-                TypeConverter converter = TypeDescriptor.GetConverter(valueType);
-                if (converter != null && converter.CanConvertTo(typeof(string)) && converter.CanConvertFrom(typeof(string)))
-                    returnValue = converter.ConvertToString(null, culture, rawValue);
-                else
-                {
-                    // Last resort - just call ToString() on unknown type
-                    if (!string.IsNullOrEmpty(unsupportedReturn))
-                        returnValue = unsupportedReturn;
-                    else
-                        returnValue = rawValue.ToString();
-                }
-            }
-
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Turns a string into a typed value generically.
-        /// Explicitly assigns common types and falls back
-        /// on using type converters for unhandled types.         
-        /// 
-        /// Common uses: 
-        /// * UI -&gt; to data conversions
-        /// * Parsers
-        /// <seealso>Class ReflectionUtils</seealso>
-        /// </summary>
-        /// <param name="sourceString">
-        /// The string to convert from
-        /// </param>
-        /// <param name="targetType">
-        /// The type to convert to
-        /// </param>
-        /// <param name="culture">
-        /// Culture used for numeric and datetime values.
-        /// </param>
-        /// <returns>object. Throws exception if it cannot be converted.</returns>
-        public static object StringToTypedValue(string sourceString, Type targetType, CultureInfo culture = null)
-        {
-            object result = null;
-
-            bool isEmpty = string.IsNullOrEmpty(sourceString);
-
-            if (culture == null)
-                culture = CultureInfo.CurrentCulture;
-
-            if (targetType == typeof(string))
-                result = sourceString;
-            else if (targetType == typeof(Int32) || targetType == typeof(int))
-            {
-                if (isEmpty)
-                    result = 0;
-                else
-                    result = Int32.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
-            }
-            else if (targetType == typeof(Int64))
-            {
-                if (isEmpty)
-                    result = (Int64)0;
-                else
-                    result = Int64.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
-            }
-            else if (targetType == typeof(Int16))
-            {
-                if (isEmpty)
-                    result = (Int16)0;
-                else
-                    result = Int16.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
-            }
-            else if (targetType == typeof(decimal))
-            {
-                if (isEmpty)
-                    result = 0M;
-                else
-                    result = decimal.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
-            }
-            else if (targetType == typeof(DateTime))
-            {
-                if (isEmpty)
-                    result = DateTime.MinValue;
-                else
-                    result = Convert.ToDateTime(sourceString, culture.DateTimeFormat);
-            }
-            else if (targetType == typeof(byte))
-            {
-                if (isEmpty)
-                    result = 0;
-                else
-                    result = Convert.ToByte(sourceString);
-            }
-            else if (targetType == typeof(double))
-            {
-                if (isEmpty)
-                    result = 0F;
-                else
-                    result = Double.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
-            }
-            else if (targetType == typeof(Single))
-            {
-                if (isEmpty)
-                    result = 0F;
-                else
-                    result = Single.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
-            }
-            else if (targetType == typeof(bool))
-            {
-                sourceString = sourceString.ToLower();
-                if (!isEmpty &&
-                    sourceString == "true" || sourceString == "on" || 
-                    sourceString == "1" || sourceString == "yes")
-                    result = true;
-                else
-                    result = false;
-            }
-            else if (targetType == typeof(Guid))
-            {
-                if (isEmpty)
-                    result = Guid.Empty;
-                else
-                    result = new Guid(sourceString);
-            }
-            else if (targetType.IsEnum)
-                result = Enum.Parse(targetType, sourceString);
-            else if (targetType == typeof(byte[]))
-            {
-                // TODO: Convert HexBinary string to byte array
-                result = null;
-            }
-
-            // Handle nullables explicitly since type converter won't handle conversions
-            // properly for things like decimal separators currency formats etc.
-            // Grab underlying type and pass value to that
-            else if (targetType.Name.StartsWith("Nullable`"))
-            {
-                if (sourceString.ToLower() == "null" || sourceString == string.Empty)
-                    result = null;
-                else
-                {
-                    targetType = Nullable.GetUnderlyingType(targetType);
-                    result = StringToTypedValue(sourceString, targetType);
-                }
-            }
-            else
-            {
-                TypeConverter converter = TypeDescriptor.GetConverter(targetType);
-                if (converter != null && converter.CanConvertFrom(typeof(string)))
-                    result = converter.ConvertFromString(null, culture, sourceString);
-                else
-                {
-                    Debug.Assert(false, string.Format("Type Conversion not handled in StringToTypedValue for {0} {1}",
-                                                        targetType.Name, sourceString));
-                    throw (new InvalidCastException(Resources.StringToTypedValueValueTypeConversionFailed + targetType.Name));
-                }
-            }
-
-            return result;
-        }
-
-
-
-        /// <summary>
-        /// Generic version allow for automatic type conversion without the explicit type
-        /// parameter
-        /// </summary>
-        /// <typeparam name="T">Type to be converted to</typeparam>
-        /// <param name="sourceString">input string value to be converted</param>
-        /// <param name="culture">Culture applied to conversion</param>
-        /// <returns></returns>
-        public static T StringToTypedValue<T>(string sourceString, CultureInfo culture = null)
-        {
-            return (T)StringToTypedValue(sourceString, typeof(T), culture);
-        }
-
-
-        /// <summary>
-        /// Returns a List of KeyValuePair object
-        /// </summary>
-        /// <param name="enumeration"></param>
-        /// <returns></returns>
-        public static List<KeyValuePair<string, string>> GetEnumList(Type enumType, bool valueAsFieldValueNumber = false)
-        {
-            //string[] enumStrings = Enum.GetNames(enumType);
-            Array enumValues = Enum.GetValues(enumType);
-            List<KeyValuePair<string, string>> items = new List<KeyValuePair<string, string>>();
-
-            foreach (var enumValue in enumValues)
-            {
-                var strValue = enumValue.ToString();
-
-                if (!valueAsFieldValueNumber)
-                    items.Add(new KeyValuePair<string, string>(enumValue.ToString(), StringUtils.FromCamelCase(strValue)));
-                else
-                    items.Add(new KeyValuePair<string, string>(((int)enumValue).ToString(),
-                                                                 StringUtils.FromCamelCase(strValue)
-                                                              ));
-            }
-            return items;
-        }
-
-
         /// <summary>
         /// Retrieves a value from  a static property by specifying a type full name and property
         /// </summary>
@@ -823,6 +833,45 @@ namespace Westwind.Utilities
 
             return result;
         }
+
+        /// <summary>
+        /// Retrieve a property value from an object dynamically. This is a simple version
+        /// that uses Reflection calls directly. It doesn't support indexers.
+        /// </summary>
+        /// <param name="instance">Object to make the call on</param>
+        /// <param name="property">Property to retrieve</param>
+        /// <returns>Object - cast to proper type</returns>
+        public static object GetProperty(object instance, string property)
+        {
+            return instance.GetType().GetProperty(property, ReflectionUtils.MemberAccess).GetValue(instance, null);
+        }
+
+        /// <summary>
+        /// Returns a List of KeyValuePair object
+        /// </summary>
+        /// <param name="enumeration"></param>
+        /// <returns></returns>
+        public static List<KeyValuePair<string, string>> GetEnumList(Type enumType, bool valueAsFieldValueNumber = false)
+        {
+            //string[] enumStrings = Enum.GetNames(enumType);
+            Array enumValues = Enum.GetValues(enumType);
+            List<KeyValuePair<string, string>> items = new List<KeyValuePair<string, string>>();
+
+            foreach (var enumValue in enumValues)
+            {
+                var strValue = enumValue.ToString();
+
+                if (!valueAsFieldValueNumber)
+                    items.Add(new KeyValuePair<string, string>(enumValue.ToString(), StringUtils.FromCamelCase(strValue)));
+                else
+                    items.Add(new KeyValuePair<string, string>(((int)enumValue).ToString(),
+                        StringUtils.FromCamelCase(strValue)
+                    ));
+            }
+            return items;
+        }
+
+        #endregion
 
         #region COM Reflection Routines
 
