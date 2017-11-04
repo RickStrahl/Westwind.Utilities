@@ -609,7 +609,14 @@ namespace Westwind.Utilities
 
                 return instance as DbProviderFactory;
 #else
-                var instance = ReflectionUtils.GetStaticProperty("System.Data.Sqlite.SqliteFactory", "Instance");
+                var instance = ReflectionUtils.GetStaticProperty("System.Data.Sqlite.SQLiteFactory", "Instance");
+                if (instance == null)
+                {
+                    var a = ReflectionUtils.LoadAssembly("System.Data.SQLite");
+                    if (a != null)
+                        instance = ReflectionUtils.GetStaticProperty("System.Data.SQLite.SQLiteFactory", "Instance");
+                }
+
                 if (instance == null)
                     throw new InvalidOperationException(
                         "Couldn't load SqLite Provider factory. Please make sure the System.Data.SQLite reference has been added to your project");

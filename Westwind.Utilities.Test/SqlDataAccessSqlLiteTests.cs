@@ -67,9 +67,7 @@ namespace Westwind.Utilities.Data.Tests
         [TestMethod]
         public void GetSqliteInstance()
         {
-            
             var data = new SqlDataAccess(STR_ConnectionString, DataAccessProviderTypes.SqLite);
-            
 
             Assert.IsNotNull(data, data.ErrorMessage);
 
@@ -83,8 +81,6 @@ namespace Westwind.Utilities.Data.Tests
             }
 
             readr.Close();
-
-
         }
 
         [TestMethod]
