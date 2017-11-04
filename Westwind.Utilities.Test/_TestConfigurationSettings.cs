@@ -8,6 +8,8 @@ namespace Westwind.Utilities.Test
 		public static string WebStoreConnectionString { get; set; } =
 			"server=.;database=Webstore;integrated security=true;MultipleActiveResultSets=true;";
 
+	    public static string SqliteConnectionString = "Data Source=./SupportFiles/AlbumViewerData.sqlite";
+
 	    public static string Mailserver { get; set;  } = "localhost";
 
         public static string MailServerUsername { get; set;  } 

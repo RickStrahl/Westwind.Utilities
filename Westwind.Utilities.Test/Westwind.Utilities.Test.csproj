@@ -11,21 +11,23 @@
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
 		<PackageReference Include="MSTest.TestAdapter" Version="1.1.18" />
 		<PackageReference Include="MSTest.TestFramework" Version="1.1.18" />
-		<PackageReference Include="Newtonsoft.Json" Version="10.0.3" />		
+		<PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)'=='netcoreapp2.0'">
-	</ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='netcoreapp2.0'">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="2.0.0" />
+  </ItemGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0'">
 		<DefineConstants>NETSTANDARD2_0;NETCORE;NETSTANDARD;</DefineConstants>
 	</PropertyGroup>
-	
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
 		<Reference Include="mscorlib" />
 		<Reference Include="System" />
 		<Reference Include="System.Core" />		
@@ -37,7 +39,8 @@
 		<Reference Include="System.Web" />		
 		<Reference Include="System.Configuration" />
 		<Reference Include="System.ComponentModel.Annotations" />
-	</ItemGroup>
+    <PackageReference Include="System.Data.SQLite" version="1.0.96.0" />
+  </ItemGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net45'">
 		<DefineConstants>NET45;NETFULL</DefineConstants>
 	</PropertyGroup>
@@ -51,6 +54,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="SupportFiles\AlbumViewerData.sqlite">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="SupportFiles\customers.DBF">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
