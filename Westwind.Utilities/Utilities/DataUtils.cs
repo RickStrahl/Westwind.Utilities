@@ -581,12 +581,51 @@ namespace Westwind.Utilities
         }
 
 
-		/// <summary>
-		/// Maps a SqlDbType to a .NET type
-		/// </summary>
-		/// <param name="sqlType"></param>
-		/// <returns></returns>
-		public static Type SqlTypeToDotNetType(SqlDbType sqlType)
+        /// <summary>
+        /// This method loads various providers dynamically similar to the 
+        /// way that DbProviderFactories.GetFactory() works except that
+        /// this API is not available on .NET Standard 2.0
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static DbProviderFactory GetSqlProviderFactory(DataAccessProviderTypes type)
+        {
+            if (type == DataAccessProviderTypes.SqlServer)
+                return SqlClientFactory.Instance;
+
+            if (type == DataAccessProviderTypes.SqLite)
+            {
+#if NETCORE
+                var instance = ReflectionUtils.GetStaticProperty("Microsoft.Data.Sqlite.SqliteFactory", "Instance");
+                if (instance == null)
+                {
+                    var a = ReflectionUtils.LoadAssembly("Microsoft.Data.Sqlite");
+                    if (a != null)
+                        instance = ReflectionUtils.GetStaticProperty("Microsoft.Data.Sqlite.SqliteFactory", "Instance");
+                }
+
+                if (instance == null)
+                    throw new InvalidOperationException("Couldn't load SqLite Provider factory. Please make sure the Microsoft.Data.Sqlite package has been added to your project");
+
+                return instance as DbProviderFactory;
+#else
+                var instance = ReflectionUtils.GetStaticProperty("System.Data.Sqlite.SqliteFactory", "Instance");
+                if (instance == null)
+                    throw new InvalidOperationException(
+                        "Couldn't load SqLite Provider factory. Please make sure the System.Data.SQLite reference has been added to your project");
+                return instance as DbProviderFactory;
+#endif
+            }
+
+            throw new InvalidOperationException("Unsupported Provider Factory specified: " + type);
+        }
+
+        /// <summary>
+        /// Maps a SqlDbType to a .NET type
+        /// </summary>
+        /// <param name="sqlType"></param>
+        /// <returns></returns>
+        public static Type SqlTypeToDotNetType(SqlDbType sqlType)
         {
             if (sqlType == SqlDbType.NText || sqlType == SqlDbType.Text ||
                 sqlType == SqlDbType.VarChar || sqlType == SqlDbType.NVarChar)
@@ -840,5 +879,13 @@ namespace Westwind.Utilities
         }
 #endregion
 
+    }
+
+    public enum DataAccessProviderTypes
+    {
+        SqlServer,
+        SqLite,
+        OleDb,
+        MySql
     }
 }
