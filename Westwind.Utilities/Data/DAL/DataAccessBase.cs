@@ -128,15 +128,26 @@ namespace Westwind.Utilities.Data
 			dbProvider = provider;			
 		}
 
+        public DataAccessBase(string connectionString, DataAccessProviderTypes providerType)
+        {
+            ConnectionString = connectionString;
+            DbProviderFactory instance = DataUtils.GetSqlProviderFactory(providerType);
 
-		/// <summary>
-		/// Figures out the dbProvider and Connection string from a 
-		/// connectionString name in a config file or explicit 
-		/// ConnectionString and provider.         
-		/// </summary>
-		/// <param name="connectionString">Config file connection name or full connection string</param>
-		/// <param name="providerName">optional provider name. If not passed with a connection string is considered Sql Server</param>
-		public void GetConnectionInfo(string connectionString, string providerName = null)
+            ConnectionString = connectionString;
+            dbProvider = instance ?? throw new InvalidOperationException("Can't load database provider: " + providerType.ToString());
+        }
+
+
+
+
+        /// <summary>
+        /// Figures out the dbProvider and Connection string from a 
+        /// connectionString name in a config file or explicit 
+        /// ConnectionString and provider.         
+        /// </summary>
+        /// <param name="connectionString">Config file connection name or full connection string</param>
+        /// <param name="providerName">optional provider name. If not passed with a connection string is considered Sql Server</param>
+        public void GetConnectionInfo(string connectionString, string providerName = null)
         {
             // throws if connection string is invalid or missing
             var connInfo = ConnectionStringInfo.GetConnectionStringInfo(connectionString, providerName);
@@ -1750,5 +1761,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
 #endregion
     }
+
+
 
 }

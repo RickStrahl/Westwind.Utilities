@@ -47,36 +47,43 @@ namespace Westwind.Utilities.Data
     public class SqlDataAccess : DataAccessBase
     {
 
-		public SqlDataAccess() 
+        public SqlDataAccess()
         {
             dbProvider = SqlClientFactory.Instance;
         }
 
 
-            public SqlDataAccess(string connectionString)
-            : base(connectionString, SqlClientFactory.Instance)
+        public SqlDataAccess(string connectionString)
+        : base(connectionString, SqlClientFactory.Instance)
         { }
 
 #if NETFULL
-		public SqlDataAccess(string connectionString, string providerName)
-            :base(connectionString,providerName)
-        { }
+        public SqlDataAccess(string connectionString, string providerName)
+            : base(connectionString, providerName)
+        {
+
+        }
 #endif
 
-		public SqlDataAccess(string connectionString, DbProviderFactory provider)
-			: base(connectionString,provider)
-		{ }
 
-		/// <summary>
-		/// Sql 2005 and later specific semi-generic paging routine
-		/// </summary>
-		/// <param name="sql"></param>
-		/// <param name="pageSize"></param>
-		/// <param name="page"></param>
-		/// <param name="sortOrderFields"></param>
-		/// <param name="Parameters"></param>
-		/// <returns></returns>
-		public override DbCommand CreatePagingCommand(string sql, int pageSize, int page, string sortOrderFields, params object[] Parameters)
+        public SqlDataAccess(string connectionString, DbProviderFactory provider)
+            : base(connectionString, provider)
+        { }
+
+        public SqlDataAccess(string connectionString, DataAccessProviderTypes providerType)
+            : base(connectionString,providerType)
+        { }
+
+        /// <summary>
+        /// Sql 2005 and later specific semi-generic paging routine
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="page"></param>
+        /// <param name="sortOrderFields"></param>
+        /// <param name="Parameters"></param>
+        /// <returns></returns>
+        public override DbCommand CreatePagingCommand(string sql, int pageSize, int page, string sortOrderFields, params object[] Parameters)
         {
             int pos = sql.IndexOf("select ", 0, StringComparison.OrdinalIgnoreCase);
             if (pos == -1)
@@ -101,4 +108,6 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         }
 
     }
+
 }
+
