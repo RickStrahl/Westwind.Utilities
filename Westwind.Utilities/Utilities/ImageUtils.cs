@@ -32,10 +32,11 @@
 #endregion
 
 #if NETFULL
-
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
+#endif
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -47,6 +48,8 @@ namespace Westwind.Utilities
     /// </summary>
     public static class ImageUtils
     {
+
+#if NETFULL
         /// <summary>
         /// Creates a resized bitmap from an existing image on disk. Resizes the image by 
         /// creating an aspect ratio safe image. Image is sized to the larger size of width
@@ -451,7 +454,32 @@ namespace Westwind.Utilities
 
             return imageFormat;
         }
+#endif
+
+        /// <summary>
+        /// Returns the image media type for a give file extension based
+        /// on a filename or url passed in.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public static string GetImageMediaTypeFromFilename(string file)
+        {
+            if (string.IsNullOrEmpty(file))
+                return file;
+
+            string ext = Path.GetExtension(file).ToLower();
+            if (ext == ".jpg" || ext == ".jpeg")
+                return "image/jpeg";
+            if (ext == ".png")
+                return "image/png";
+            if (ext == ".gif")
+                return "image/gif";
+            if (ext == ".bmp")
+                return "image/bmp";
+            if (ext == ".tif" || ext == ".tiff")
+                return "image/tiff";
+
+            return "application/image";
+        }
     }
 }
-
-#endif
