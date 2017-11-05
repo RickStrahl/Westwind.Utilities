@@ -1,7 +1,11 @@
 ﻿# Westwind.Utilities Changelog
 
-### 3.0.2
-*not released yet*
+### 3.0.3
+*November 4th, 2017*
+
+* **DataUtils.GetSqlProviderFactory()**  
+Add helper function to allow retrieving a SQL Provider factory without having to take a dependency on the assembly that contains the provider. This is provided for .NET Standard 2.0 which doesn't have `DbProviderFactories.GetFactory()` support that provides this functionality.
+
 
 * **FileUtils.NormalizePath() and NormalizeDirectory()**  
 Added function to normalize a path for the given platform it runs on - forward backward slashes. Mainly useful for legacy code that explicitly formatted paths to Windows formatting. NormalizeDirectory ensures a trailing path slash on a path.
@@ -9,10 +13,12 @@ Added function to normalize a path for the given platform it runs on - forward b
 * **FileUtils.GetCompactPath()**  
 Added to return a filename that is trimmed in the middle with elipsis for long file names. 
 
-* ~~**Add ImageUtils Support for .NET Standard**  
-Add dependency for CoreCompat.System.Drawing to bring back System drawing functionality that'll work cross platform.~~
+* **FileUtils.SafeFileName() Updates**  
+`SafeFileName()` now has options for the replacement character for invalid characters replaced as well (blank by default) as well as for spaces (which by default are not stripped).
+
 
 ### 3.0.1
+*August 5th, 2017*
 
 * **Support for .NET Core 2.0**  
 Version 3.0 adds support for .NET Core 2.0. Most features of the toolkit have been carried forward, but some features like configuration using standard .NET Configuration files is not available in .NET Core. There are a few other features that are not available.
