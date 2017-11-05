@@ -50,6 +50,7 @@ namespace Westwind.Utilities
 	public static class FileUtils
 	{
 
+        #region StreamFunctions
         /// <summary>
         /// Copies the content of the one stream to another.
         /// Streams must be open and stay open.
@@ -81,84 +82,21 @@ namespace Westwind.Utilities
             return;
         }
 
-        /// <summary>
-        /// Detects the byte order mark of a file and returns
-        /// an appropriate encoding for the file.
-        /// </summary>
-        /// <param name="srcFile"></param>
-        /// <returns></returns>
-        public static Encoding GetFileEncoding(string srcFile)
-        {
-            // Use Default of Encoding.Default (Ansi CodePage)
-            Encoding enc = Encoding.Default;
+	    /// <summary>
+	    /// Opens a stream reader with the appropriate text encoding applied.
+	    /// </summary>
+	    /// <param name="srcFile"></param>
+	    public static StreamReader OpenStreamReaderWithEncoding(string srcFile)
+	    {
+	        Encoding enc = GetFileEncoding(srcFile);
+	        return new StreamReader(srcFile, enc);
+	    }
 
-            // Detect byte order mark if any - otherwise assume default
+	    #endregion
 
-            byte[] buffer = new byte[5];
-            FileStream file = new FileStream(srcFile, FileMode.Open);
-            file.Read(buffer, 0, 5);
-            file.Close();
 
-            if (buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf)
-               enc = Encoding.UTF8;
-            else if (buffer[0] == 0xfe && buffer[1] == 0xff)
-                enc = Encoding.Unicode;
-            else if (buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 0xfe && buffer[3] == 0xff)
-                enc = Encoding.UTF32;
+        #region Path Segments and Path Names
 
-            else if (buffer[0] == 0x2b && buffer[1] == 0x2f && buffer[2] == 0x76)
-                enc = Encoding.UTF7;
-
-            return enc;
-        }
-        
-
-        /// <summary>
-        /// Opens a stream reader with the appropriate text encoding applied.
-        /// </summary>
-        /// <param name="srcFile"></param>
-        public static StreamReader OpenStreamReaderWithEncoding(string srcFile)
-        {
-            Encoding enc = GetFileEncoding(srcFile);
-            return new StreamReader(srcFile, enc);
-        }
-
-        /// <summary>
-        /// Creates a safe file and directory name that is stripped of all invalid characters.
-        /// </summary>
-        /// <param name="fileName">Filename to clean up</param>
-        /// <param name="replace">Replacement character for invalid characters</param>
-        /// <returns></returns>
-        public  static string SafeFilename(string fileName, string replace = "")
-        {
-            if (string.IsNullOrEmpty(fileName))
-                return fileName;
-
-            string file = Path.GetInvalidFileNameChars()
-               .Aggregate(fileName.Trim(),
-                          (current, c) => current.Replace(c.ToString(), replace));
-
-            file = file.Replace("#", "");
-            return file;
-        }
-
-        /// <summary>
-        /// Returns a safe filename in CamelCase
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        public static string CamelCaseSafeFilename(string filename)
-        {
-            if (string.IsNullOrEmpty(filename))
-                return filename;
-
-            string fname = Path.GetFileNameWithoutExtension(filename);
-            string ext = Path.GetExtension(filename);
-
-            return StringUtils.ToCamelCase(SafeFilename(fname)) + ext;
-        }
-
-     
         /// <summary>
         /// This function returns the actual filename of a file
         /// that exists on disk. If you provide a path/file name
@@ -171,7 +109,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="filename">A filename to check</param>
         /// <returns>On disk file name and path with the disk casing</returns>
-	    public static string GetPhysicalPath(string filename)
+        public static string GetPhysicalPath(string filename)
 	    {
 	        try
 	        {
@@ -236,6 +174,50 @@ namespace Westwind.Utilities
             return relativeUri.ToString().Replace("/", "\\");            
 		}
 
+        #endregion
+
+        #region File and Path Normalization
+
+	    /// <summary>
+	    /// Returns a safe filename from a string by stripping out
+	    /// illegal characters
+	    /// </summary>
+	    /// <param name="fileName">Filename to fix up</param>
+	    /// <param name="replacementString">String value to replace illegal chars with. Defaults empty string</param>
+	    /// <param name="spaceReplacement">Optional - replace spaces with a specified string.</param>
+	    /// <returns>Fixed up string</returns>
+	    public static string SafeFilename(string fileName, string replacementString = "", string spaceReplacement = null)
+	    {
+	        if (string.IsNullOrEmpty(fileName))
+	            return fileName;
+
+	        string file = Path.GetInvalidFileNameChars()
+	            .Aggregate(fileName.Trim(),
+	                (current, c) => current.Replace(c.ToString(), replacementString));
+
+	        file = file.Replace("#", "");
+
+	        if (!string.IsNullOrEmpty(spaceReplacement))
+	            file = file.Replace(" ", spaceReplacement);
+
+	        return file;
+	    }
+
+        /// <summary>
+        /// Returns a safe filename in CamelCase
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public static string CamelCaseSafeFilename(string filename)
+	    {
+	        if (string.IsNullOrEmpty(filename))
+	            return filename;
+
+	        string fname = Path.GetFileNameWithoutExtension(filename);
+	        string ext = Path.GetExtension(filename);
+
+	        return StringUtils.ToCamelCase(SafeFilename(fname)) + ext;
+	    }
 
 	    /// <summary>
 	    /// Normalizes a file path to the operating system default
@@ -268,6 +250,41 @@ namespace Westwind.Utilities
             if (!path.EndsWith(Path.DirectorySeparatorChar.ToString()))
                 path += Path.DirectorySeparatorChar;
             return path;
+        }
+
+        #endregion
+
+        #region Miscellaneous functions
+
+        /// <summary>
+        /// Detects the byte order mark of a file and returns
+        /// an appropriate encoding for the file.
+        /// </summary>
+        /// <param name="srcFile"></param>
+        /// <returns></returns>
+        public static Encoding GetFileEncoding(string srcFile)
+        {
+            // Use Default of Encoding.Default (Ansi CodePage)
+            Encoding enc = Encoding.Default;
+
+            // Detect byte order mark if any - otherwise assume default
+
+            byte[] buffer = new byte[5];
+            FileStream file = new FileStream(srcFile, FileMode.Open);
+            file.Read(buffer, 0, 5);
+            file.Close();
+
+            if (buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf)
+                enc = Encoding.UTF8;
+            else if (buffer[0] == 0xfe && buffer[1] == 0xff)
+                enc = Encoding.Unicode;
+            else if (buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 0xfe && buffer[3] == 0xff)
+                enc = Encoding.UTF32;
+
+            else if (buffer[0] == 0x2b && buffer[1] == 0x2f && buffer[2] == 0x76)
+                enc = Encoding.UTF7;
+
+            return enc;
         }
 
         /// <summary>
@@ -307,24 +324,24 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="filespec">A filespec that includes path and/or wildcards to select files</param>
         /// <param name="seconds">The timeout - if files are older than this timeout they are deleted</param>
-        public static void DeleteTimedoutFiles(string filespec,int seconds)
+        public static void DeleteTimedoutFiles(string filespec, int seconds)
         {
             string path = Path.GetDirectoryName(filespec);
             string spec = Path.GetFileName(filespec);
-            string[] files = Directory.GetFiles(path,spec);
+            string[] files = Directory.GetFiles(path, spec);
 
-            foreach(string file in files)
+            foreach (string file in files)
             {
                 try
                 {
                     if (File.GetLastWriteTimeUtc(file) < DateTime.UtcNow.AddSeconds(seconds * -1))
                         File.Delete(file);
                 }
-                catch {}  // ignore locked files
+                catch { }  // ignore locked files
             }
         }
-            
-		
+
+        #endregion
     }
 
 }
