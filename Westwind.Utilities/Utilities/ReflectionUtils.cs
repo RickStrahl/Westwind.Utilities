@@ -112,6 +112,9 @@ namespace Westwind.Utilities
             return instance;
         }
 
+
+      
+
         /// <summary>
         /// Helper routine that looks up a type name and tries to retrieve the
         /// full type reference using GetType() and if not found looking 
@@ -119,12 +122,14 @@ namespace Westwind.Utilities
         /// the specified assembly name.
         /// </summary>
         /// <param name="typeName">type to load</param>
+        /// <param name="assemblyName">
+        /// Optional assembly name to load from if type cannot be loaded initially. 
+        /// Use for lazy loading of assemblies without taking a type dependency.
+        /// </param>
         /// <returns>null</returns>
         public static Type GetTypeFromName(string typeName, string assemblyName = null)
         {
-            Type type = null;
-
-            type = Type.GetType(typeName, false);
+            var type = Type.GetType(typeName, false);
             if (type != null)
                 return type;
 
@@ -154,6 +159,7 @@ namespace Westwind.Utilities
 
             return null;
         }
+
 
         /// <summary>
         /// Creates a COM instance from a ProgID. Loads either

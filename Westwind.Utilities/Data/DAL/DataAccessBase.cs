@@ -1,7 +1,6 @@
 ﻿#define NETCORE
 
 #region License
-#region License
 //#define SupportWebRequestProvider
 /*
  **************************************************************
@@ -36,17 +35,16 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Configuration;
-using System.Data.Common;
-using System.IO;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Westwind.Utilities.Properties;
-using System.Data.SqlClient;
 using System.Text.RegularExpressions;
+using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities.Data
 {
@@ -289,26 +287,26 @@ namespace Westwind.Utilities.Data
                 if (_Connection.State != ConnectionState.Open)
                     _Connection.Open();
             }
-//            catch (SqlException ex)
-//            {
-//                SetError(ex);
-//                return false;
-//            }
+            catch (SqlException ex)
+            {
+                SetError(string.Format(Resources.ConnectionOpeningFailure, ex.Message));
+                return false;
+            }
 //#if !NETCORE
-//			catch (OleDbException ex)
+//            catch (OleDbException ex)
 //            {
 //                SetError(ex);
 //                return false;
 //            }
 //#endif
-			catch (DbException ex)
+            catch (DbException ex)
             {
-                SetError(ex);
+                SetError(string.Format(Resources.ConnectionOpeningFailure, ex.Message));
                 return false;
             }
             catch (Exception ex)
             {
-                SetError(ex.GetBaseException().Message);
+                SetError(string.Format(Resources.ConnectionOpeningFailure, ex.GetBaseException().Message));
                 return false;
             }
 
@@ -570,8 +568,9 @@ namespace Westwind.Utilities.Data
             return true;
         }
 
-#endregion
+        #endregion
 
+        #region Non-list Sql Commands 
         /// <summary>
         /// Executes a non-query command and returns the affected records
         /// </summary>
@@ -630,6 +629,125 @@ namespace Westwind.Utilities.Data
             return ExecuteNonQuery(command);
         }
 
+        /// <summary>
+        /// Executes a command and returns a scalar value from it
+        /// </summary>
+        /// <param name="command">DbCommand containing command to run</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        ///  or use @0,@1 parms in SQL and plain values
+        /// </param>
+        /// <returns>value or null on failure</returns>        
+        public virtual object ExecuteScalar(DbCommand command, params object[] parameters)
+        {
+            SetError();
+
+            AddParameters(command, parameters);
+
+            object Result = null;
+            try
+            {
+                LastSql = command.CommandText;
+                Result = command.ExecuteScalar();
+            }
+            catch (Exception ex)
+            {
+                SetError(ex.GetBaseException());
+            }
+            finally
+            {
+                CloseConnection();
+            }
+
+            return Result;
+        }
+        /// <summary>
+        /// Executes a Sql command and returns a single value from it.
+        /// </summary>
+        /// <param name="Sql">Sql string to execute</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
+        /// <returns>Result value or null. Check ErrorMessage on Null if unexpected</returns>
+        public virtual object ExecuteScalar(string sql, params object[] parameters)
+        {
+            SetError();
+
+            DbCommand command = CreateCommand(sql, parameters);
+            if (command == null)
+                return null;
+
+            return ExecuteScalar(command, null);
+        }
+
+        /// <summary>
+        /// Executes a long SQL script that contains batches (GO commands). This code
+        /// breaks the script into individual commands and captures all execution errors.
+        /// 
+        /// If ContinueOnError is false, operations are run inside of a transaction and
+        /// changes are rolled back. If true commands are accepted even if failures occur
+        /// and are not rolled back.
+        /// </summary>
+        /// <param name="script"></param>
+        /// <param name="continueOnError"></param>
+        /// <param name="scriptIsFile"></param>
+        /// <returns></returns>
+        public bool RunSqlScript(string script, bool continueOnError = false, bool scriptIsFile = false)
+        {
+            SetError();
+
+            if (scriptIsFile)
+            {
+                try
+                {
+                    script = File.ReadAllText(script);
+                }
+                catch (Exception ex)
+                {
+                    SetError(ex.GetBaseException());
+                    return false;
+                }
+            }
+
+            // Normalize line endings to \n
+            string scriptNormal = script.Replace("\r\n", "\n").Replace("\r", "\n");
+            string[] scriptBlocks = Regex.Split(scriptNormal + "\n", "GO\n");
+
+            string errors = "";
+
+            if (!continueOnError)
+                BeginTransaction();
+
+            foreach (string block in scriptBlocks)
+            {
+                if (string.IsNullOrEmpty(block.TrimEnd()))
+                    continue;
+
+                if (ExecuteNonQuery(block) == -1)
+                {
+                    errors = ErrorMessage +  block;
+                    if (!continueOnError)
+                    {
+                        RollbackTransaction();
+                        return false;
+                    }
+                }
+            }
+
+            if (!continueOnError)
+                CommitTransaction();
+
+            if (string.IsNullOrEmpty(errors))
+                return true;
+
+            ErrorMessage = errors;
+            return false;
+        }
+
+        #endregion 
+
+        #region Sql Execution
 
         /// <summary>
         /// Executes a SQL Command object and returns a SqlDataReader object
@@ -1001,7 +1119,7 @@ namespace Westwind.Utilities.Data
 
             AddParameters(command, parameters);
 
-	        DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
+            DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
 	        if (Adapter == null)
 	        {
 		        SetError("Failed to create data adapter.");
@@ -1144,58 +1262,6 @@ namespace Westwind.Utilities.Data
 
 
         /// <summary>
-        /// Executes a command and returns a scalar value from it
-        /// </summary>
-        /// <param name="command">DbCommand containing command to run</param>
-        /// <param name="parameters">
-        /// DbParameters (CreateParameter()) for named parameters
-        ///  or use @0,@1 parms in SQL and plain values
-        /// </param>
-        /// <returns>value or null on failure</returns>        
-        public virtual object ExecuteScalar(DbCommand command, params object[] parameters)
-        {
-            SetError();
-
-            AddParameters(command, parameters);
-
-            object Result = null;
-            try
-            {
-                LastSql = command.CommandText;
-                Result = command.ExecuteScalar();
-            }
-            catch (Exception ex)
-            {
-                SetError(ex.GetBaseException());
-            }
-            finally
-            {
-                CloseConnection();
-            }
-
-            return Result;
-        }
-        /// <summary>
-        /// Executes a Sql command and returns a single value from it.
-        /// </summary>
-        /// <param name="Sql">Sql string to execute</param>
-        /// <param name="parameters">
-        /// DbParameters (CreateParameter()) for named parameters
-        /// or use @0,@1 parms in SQL and plain values
-        /// </param>
-        /// <returns>Result value or null. Check ErrorMessage on Null if unexpected</returns>
-        public virtual object ExecuteScalar(string sql, params object[] parameters)
-        {
-            SetError();
-
-            DbCommand command = CreateCommand(sql, parameters);
-            if (command == null)
-                return null;
-
-            return ExecuteScalar(command, null);
-        }
-
-        /// <summary>
         /// Sql 2005 specific semi-generic paging routine
         /// </summary>
         /// <param name="sql"></param>
@@ -1228,71 +1294,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
         }
 
-        /// <summary>
-        /// Executes a long SQL script that contains batches (GO commands). This code
-        /// breaks the script into individual commands and captures all execution errors.
-        /// 
-        /// If ContinueOnError is false, operations are run inside of a transaction and
-        /// changes are rolled back. If true commands are accepted even if failures occur
-        /// and are not rolled back.
-        /// </summary>
-        /// <param name="script"></param>
-        /// <param name="continueOnError"></param>
-        /// <param name="scriptIsFile"></param>
-        /// <returns></returns>
-        public bool RunSqlScript(string script, bool continueOnError = false, bool scriptIsFile = false)
-        {
-            SetError();
-
-            if (scriptIsFile)
-            {
-                try
-                {
-                    script = File.ReadAllText(script);
-                }
-                catch (Exception ex)
-                {
-                    SetError(ex.GetBaseException());
-                    return false;
-                }
-            }
-
-            // Normalize line endings to \n
-            string scriptNormal = script.Replace("\r\n", "\n").Replace("\r", "\n");
-            string[] scriptBlocks = Regex.Split(scriptNormal + "\n", "GO\n");
-
-            string errors = "";
-
-            if (!continueOnError)
-                BeginTransaction();
-
-            foreach (string block in scriptBlocks)
-            {
-                if (string.IsNullOrEmpty(block.TrimEnd()))
-                    continue;
-
-                if (ExecuteNonQuery(block) == -1)
-                {
-                    errors = ErrorMessage +  block;
-                    if (!continueOnError)
-                    {
-                        RollbackTransaction();
-                        return false;
-                    }
-                }
-            }
-
-            if (!continueOnError)
-                CommitTransaction();
-
-            if (string.IsNullOrEmpty(errors))
-                return true;
-
-            ErrorMessage = errors;
-            return false;
-        }
-
-#endregion
+        #endregion
 
 #region Generic Entity features
         /// <summary>

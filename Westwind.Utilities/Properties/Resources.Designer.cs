@@ -97,6 +97,15 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connection opening failure: {0}.
+        /// </summary>
+        public static string ConnectionOpeningFailure {
+            get {
+                return ResourceManager.GetString("ConnectionOpeningFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Couldn&apos;t load entity - invalid key provided..
         /// </summary>
         public static string CouldntLoadEntityInvalidKeyProvided {
