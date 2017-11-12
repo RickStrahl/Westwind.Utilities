@@ -520,11 +520,13 @@ namespace Westwind.Utilities
                         
                         if (val == DBNull.Value)
                             val = null;           
-                        // deal with data drivers return bit values as int64
-                        else if (prop.PropertyType == typeof (bool) && val is long)
+                        // deal with data drivers return bit values as int64 or in
+                        else if (prop.PropertyType == typeof (bool) && (val is long || val is int))
                             val = (long) val == 1 ? true : false;
-                        else if (prop.PropertyType == typeof (int) && val is long)
+                        // int conversions when the value is not different type of number
+                        else if (prop.PropertyType == typeof (int) && (val is long || val is decimal))
                             val = Convert.ToInt32(val);
+                        
                         prop.SetValue(instance, val, null);
                     }
                 }
@@ -593,6 +595,9 @@ namespace Westwind.Utilities
             if (type == DataAccessProviderTypes.SqlServer)
                 return SqlClientFactory.Instance;
 
+            if (type == DataAccessProviderTypes.SqlServerCompact)
+                throw new NotSupportedException("The Sql Server Compact data provider is not supported on .NET Core");
+
             if (type == DataAccessProviderTypes.SqLite)
             {
 #if NETCORE
@@ -608,6 +613,7 @@ namespace Westwind.Utilities
                     throw new InvalidOperationException("Couldn't load SqLite Provider factory. Please make sure the Microsoft.Data.Sqlite package has been added to your project");
 
                 return instance as DbProviderFactory;
+                //#else
 #else
                 var instance = ReflectionUtils.GetStaticProperty("System.Data.Sqlite.SQLiteFactory", "Instance");
                 if (instance == null)
@@ -623,9 +629,51 @@ namespace Westwind.Utilities
                 return instance as DbProviderFactory;
 #endif
             }
+            else if (type == DataAccessProviderTypes.MySql)
+            {
 
-            throw new InvalidOperationException("Unsupported Provider Factory specified: " + type);
+                var instance = ReflectionUtils.GetStaticProperty("MySql.Data.MySqlClient.MySqlClientFactory", "Instance");
+                if (instance == null)
+                {
+                    var a = ReflectionUtils.LoadAssembly("MySql.Data");
+                    if (a != null)
+                        instance = ReflectionUtils.GetStaticProperty("MySql.Data.MySqlClient.MySqlClientFactory", "Instance");
+                }
+
+                if (instance == null)
+                    throw new InvalidOperationException("Couldn't load SqLite Provider factory. Please make sure the Microsoft.Data.Sqlite package has been added to your project");
+
+                return instance as DbProviderFactory;
+            }
+
+            throw new NotSupportedException("Unsupported Provider Factory specified: " + type);
         }
+
+
+        /// <summary>
+        /// Returns a provider factory using the old Provider Model names from full framework .NET.
+        /// Simply calls DbProviderFactories.
+        /// </summary>
+        /// <param name="providerName"></param>
+        /// <returns></returns>
+        public static DbProviderFactory GetSqlProviderFactory(string providerName)
+        {
+#if NETFULL
+            return DbProviderFactories.GetFactory(providerName);
+#endif
+            var providername = providerName.ToLower();
+
+            if (providerName == "system.data.sqlclient")
+                return GetSqlProviderFactory(DataAccessProviderTypes.SqlServer);
+            if (providerName == "system.data.sqlite" || providerName == "microsoft.data.sqlite")
+                return GetSqlProviderFactory(DataAccessProviderTypes.SqLite);
+            if (providerName == "mysql.data.mysqlclient" || providername == "mysql.data")
+                return GetSqlProviderFactory(DataAccessProviderTypes.MySql);
+
+
+            throw new NotSupportedException("Unsupported Provider Factory specified: " + providerName);
+        }
+
 
         /// <summary>
         /// Maps a SqlDbType to a .NET type
@@ -893,6 +941,7 @@ namespace Westwind.Utilities
         SqlServer,
         SqLite,
         OleDb,
-        MySql
+        MySql,
+        SqlServerCompact
     }
 }
