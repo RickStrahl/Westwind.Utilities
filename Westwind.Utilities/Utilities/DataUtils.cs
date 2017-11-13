@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          © West Wind Technologies, 2009
+ *          ï¿½ West Wind Technologies, 2009
  *          http://www.west-wind.com/
  * 
  * Created: 09/12/2009
@@ -641,7 +641,7 @@ namespace Westwind.Utilities
                 }
 
                 if (instance == null)
-                    throw new InvalidOperationException("Couldn't load SqLite Provider factory. Please make sure the Microsoft.Data.Sqlite package has been added to your project");
+                    throw new InvalidOperationException("Couldn't load MySql Provider factory. Please make sure the MySql.Data package has been added to your project");
 
                 return instance as DbProviderFactory;
             }
