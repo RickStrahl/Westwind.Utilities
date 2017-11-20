@@ -267,8 +267,8 @@ namespace Westwind.Utilities
             {
                 if (!returnDelimiters)
                     return source.Substring(at1 + beginDelim.Length);
-                else
-                    return source.Substring(at1);
+
+                return source.Substring(at1);
             }
 
             if (at1 > -1 && at2 > 1)

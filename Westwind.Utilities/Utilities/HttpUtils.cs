@@ -32,10 +32,8 @@ namespace Westwind.Utilities
         public static string HttpRequestString(HttpRequestSettings settings)
         {
             var client = new HttpUtilsWebClient(settings);            
-
-            if (settings.HttpVerb == "GET")
-                settings.CapturedResponseContent = client.DownloadString(settings.Url);
-            else
+          
+            if (settings.HttpVerb == "POST" || settings.HttpVerb == "PUT")
             {
                 if (!string.IsNullOrEmpty(settings.ContentType))
                     client.Headers["Content-type"] = settings.ContentType;
@@ -53,6 +51,8 @@ namespace Westwind.Utilities
                 else
                     throw new ArgumentException("Data must be either string or byte[].");
             }
+            else 
+                settings.CapturedResponseContent = client.DownloadString(settings.Url);
 
             settings.Response = client.Response;
             
@@ -78,9 +78,7 @@ namespace Westwind.Utilities
 
             string jsonResult;
 
-            if (settings.HttpVerb == "GET")
-                jsonResult = client.DownloadString(settings.Url);
-            else
+            if (settings.HttpVerb == "POST" || settings.HttpVerb == "PUT")
             {
                 if (!string.IsNullOrEmpty(settings.ContentType))
                     client.Headers["Content-type"] = settings.ContentType;
@@ -100,6 +98,8 @@ namespace Westwind.Utilities
                 if (jsonResult == null)
                     return default(TResultType);
             }
+            else
+                jsonResult = client.DownloadString(settings.Url);
 
             settings.CapturedResponseContent = jsonResult;
             settings.Response = client.Response;
@@ -127,11 +127,8 @@ namespace Westwind.Utilities
         public static async Task<string> HttpRequestStringAsync(HttpRequestSettings settings)
         {
             var client = new HttpUtilsWebClient(settings);
-
             
-            if (settings.HttpVerb == "GET")
-                settings.CapturedResponseContent = await client.DownloadStringTaskAsync(new Uri(settings.Url));
-            else
+            if (settings.HttpVerb == "POST" || settings.HttpVerb == "PUT")
             {
                 if (!string.IsNullOrEmpty(settings.ContentType))
                     client.Headers["Content-type"] = settings.ContentType;
@@ -149,6 +146,8 @@ namespace Westwind.Utilities
                 else
                     throw new ArgumentException("Data must be either string or byte[].");
             }
+            else 
+                settings.CapturedResponseContent = await client.DownloadStringTaskAsync(new Uri(settings.Url));
 
             settings.Response = client.Response;
 
@@ -172,9 +171,8 @@ namespace Westwind.Utilities
             client.Headers.Add("Accept", "application/json");
             
             string jsonResult;
-            if (settings.HttpVerb == "GET")
-                jsonResult = await client.DownloadStringTaskAsync(settings.Url);
-            else
+            
+            if (settings.HttpVerb == "POST" || settings.HttpVerb == "PUT")
             {
                 if (!string.IsNullOrEmpty(settings.ContentType))
                     client.Headers["Content-type"] = settings.ContentType;
@@ -192,6 +190,8 @@ namespace Westwind.Utilities
                 if (jsonResult == null)
                     return default(TResultType);
             }
+            else
+                jsonResult = await client.DownloadStringTaskAsync(settings.Url);
 
             settings.CapturedResponseContent = jsonResult;
             settings.Response = client.Response;

@@ -5,7 +5,6 @@
     <Authors>Rick Strahl</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     
-    
     <Language>en-US</Language>
     <AssemblyName>Westwind.Utilities</AssemblyName>
     <AssemblyTitle>Westwind.Utilities</AssemblyTitle>
@@ -17,7 +16,7 @@
     <Summary>Small library of general purpose utilities for .NET development that almost every application can use. Used as a core reference library for other West Wind libraries.</Summary>
     <PackageCopyright>Rick Strahl, West Wind Technologies 2007-2017</PackageCopyright>
     <PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
-    <PackageReleaseNotes>Added support for .NET Core 2.0 (under construction)</PackageReleaseNotes>
+    <PackageReleaseNotes>Added support for .NET Standard 2.0</PackageReleaseNotes>
     <PackageIconUrl>http://www.west-wind.com/westwindToolkit/images/WestwindWebToolkit_128x128.png</PackageIconUrl>
     <PackageProjectUrl>http://github.com/rickstrahl/westwind.utilities</PackageProjectUrl>
     <PackageLicenseUrl>http://www.west-wind.com/WestwindToolkit/docs/?page=_2lp0u0i9b.htm</PackageLicenseUrl>
@@ -26,9 +25,9 @@
     <RepositoryType>Github</RepositoryType>
     <Company>West Wind Technologies</Company>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>3.0.4</Version>
-    <AssemblyVersion>3.0.4.0</AssemblyVersion>
-    <FileVersion>3.0.4.0</FileVersion>    
+    <Version>3.0.5</Version>
+    <AssemblyVersion>3.0.5.0</AssemblyVersion>
+    <FileVersion>3.0.5.0</FileVersion>    
     <RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
   </PropertyGroup>
 
