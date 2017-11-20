@@ -36,6 +36,7 @@ namespace Westwind.Utilities
                         Headers[header.Key] = header.Value;
                     }
                 }
+
             }            
         }
 
@@ -57,7 +58,10 @@ namespace Westwind.Utilities
                 }
 
                 if (!string.IsNullOrEmpty(Settings.UserAgent))
-                    Request.UserAgent = Settings.UserAgent;                
+                    Request.UserAgent = Settings.UserAgent;
+
+                if (!string.IsNullOrEmpty(Settings.HttpVerb))
+                    Request.Method = Settings.HttpVerb;
             }
 
             return Request;

@@ -30,6 +30,17 @@ namespace Westwind.Utilities.Test
         }
 
         [TestMethod]
+        public void SendDeleteRequest()
+        {
+            var settings = new HttpRequestSettings
+            {
+                Url = "http://microsoft.com",
+                HttpVerb = "DELETE"
+            };
+            string result = HttpUtils.HttpRequestString(settings);
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(WebException))]
         public void InvalidUrlTest()
         {
