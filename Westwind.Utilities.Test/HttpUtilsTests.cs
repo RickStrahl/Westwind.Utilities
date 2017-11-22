@@ -35,7 +35,8 @@ namespace Westwind.Utilities.Test
             var settings = new HttpRequestSettings
             {
                 Url = "http://microsoft.com",
-                HttpVerb = "DELETE"
+                HttpVerb = "DELETE",
+                Content = string.Empty // force some content so there is a body!
             };
             string result = HttpUtils.HttpRequestString(settings);
         }

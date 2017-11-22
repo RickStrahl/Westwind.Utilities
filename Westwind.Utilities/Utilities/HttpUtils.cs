@@ -33,7 +33,7 @@ namespace Westwind.Utilities
         {
             var client = new HttpUtilsWebClient(settings);            
           
-            if (settings.HttpVerb == "POST" || settings.HttpVerb == "PUT")
+            if (settings.Content != null)
             {
                 if (!string.IsNullOrEmpty(settings.ContentType))
                     client.Headers["Content-type"] = settings.ContentType;
@@ -78,7 +78,7 @@ namespace Westwind.Utilities
 
             string jsonResult;
 
-            if (settings.HttpVerb == "POST" || settings.HttpVerb == "PUT")
+            if (settings.Content != null)
             {
                 if (!string.IsNullOrEmpty(settings.ContentType))
                     client.Headers["Content-type"] = settings.ContentType;
@@ -127,8 +127,8 @@ namespace Westwind.Utilities
         public static async Task<string> HttpRequestStringAsync(HttpRequestSettings settings)
         {
             var client = new HttpUtilsWebClient(settings);
-            
-            if (settings.HttpVerb == "POST" || settings.HttpVerb == "PUT")
+
+            if (settings.Content != null)
             {
                 if (!string.IsNullOrEmpty(settings.ContentType))
                     client.Headers["Content-type"] = settings.ContentType;
@@ -171,8 +171,8 @@ namespace Westwind.Utilities
             client.Headers.Add("Accept", "application/json");
             
             string jsonResult;
-            
-            if (settings.HttpVerb == "POST" || settings.HttpVerb == "PUT")
+
+            if (settings.HttpVerb == "POST" || settings.HttpVerb == "PUT" || settings.HttpVerb == "PATCH")
             {
                 if (!string.IsNullOrEmpty(settings.ContentType))
                     client.Headers["Content-type"] = settings.ContentType;
