@@ -226,15 +226,14 @@ namespace Westwind.Utilities
 	    /// <param name="path"></param>
 	    public static string NormalizePath(string path)
 	    {
-	        //return Path.GetFullPath(path); // this always turns into a full OS path
+            //return Path.GetFullPath(path); // this always turns into a full OS path
 
-            if(string.IsNullOrEmpty(path))
-                return path;
-            
-            if(System.IO.Path.DirectorySeparatorChar == '\\') 
-                return path.Replace('/', '\\');
-	        
-            return path.Replace('\\', '/');
+	        if (string.IsNullOrEmpty(path))
+	            return path;
+
+	        char slash = Path.DirectorySeparatorChar;
+	        path = path.Replace('/', slash).Replace('\\', slash);
+	        return path.Replace(slash.ToString() + slash.ToString(), slash.ToString());
         }
 
 
