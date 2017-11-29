@@ -183,4 +183,13 @@
   <data name="ConnectionOpeningFailure" xml:space="preserve">
     <value>Connection opening failure: {0}</value>
   </data>
+  <data name="SqlServerCompactDataProviderNotSupportedOnNetCore" xml:space="preserve">
+    <value>The Sql Server Compact data provider is not supported on .NET Core</value>
+  </data>
+  <data name="UnableToRetrieveDbProviderFactoryForm" xml:space="preserve">
+    <value>Unable to retrieve DbProviderFactory for: {0}</value>
+  </data>
+  <data name="UnsupportedProviderFactory" xml:space="preserve">
+    <value>Unsupported Provider Factory specified: {0}</value>
+  </data>
 </root>

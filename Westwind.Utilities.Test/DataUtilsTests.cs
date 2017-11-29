@@ -108,5 +108,26 @@ namespace Westwind.Utilities.Data.Tests
 			Console.WriteLine(items.Count);
 		}
 
+#if false
+        // Add Npgsql package
+        [TestMethod]
+        public void GetPostGreSqlProviderTest()
+        {
+            var provider = DataUtils.GetDbProviderFactory(DataAccessProviderTypes.PostgreSql);
+            Assert.IsNotNull(provider);            
+        }
+#endif
+
+
+#if false
+        // Add MySql.Data Package   
+        [TestMethod]
+        public void GetMySqlProviderTest()
+        {
+            var provider = DataUtils.GetDbProviderFactory(DataAccessProviderTypes.MySql);
+            Assert.IsNotNull(provider);            
+        }
+#endif
+
     }
 }

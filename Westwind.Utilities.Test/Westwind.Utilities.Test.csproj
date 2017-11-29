@@ -1,33 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netcoreapp2.0;net45</TargetFrameworks>
-
+		<TargetFrameworks>netcoreapp2.0;net452</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CSharp" Version="4.4.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="1.1.18" />
-		<PackageReference Include="MSTest.TestFramework" Version="1.1.18" />
-		<PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+		
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="1.2.0" />
+		<PackageReference Include="MSTest.TestFramework" Version="1.2.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="10.0.3" />	  	  
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />
+	  <PackageReference Include="Microsoft.Data.SQLite" Version="2.0.0" />
 	</ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)'=='netcoreapp2.0'">
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="2.0.0" />
-  </ItemGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0'">
 		<DefineConstants>NETSTANDARD2_0;NETCORE;NETSTANDARD;</DefineConstants>
 	</PropertyGroup>
 
 
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
 		<Reference Include="mscorlib" />
 		<Reference Include="System" />
 		<Reference Include="System.Core" />		
@@ -38,10 +35,11 @@
 		<Reference Include="System.Xml" />
 		<Reference Include="System.Web" />		
 		<Reference Include="System.Configuration" />
-		<Reference Include="System.ComponentModel.Annotations" />
-    <PackageReference Include="System.Data.SQLite" version="1.0.96.0" />
+		<Reference Include="System.ComponentModel.Annotations" />    
+    <PackageReference Include="System.Data.SQLite" version="1.0.106.0" />
+    <!--<PackageReference Include="MySql.Data" Version="6.10.4" />-->
   </ItemGroup>
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'net45'">
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net452'">
 		<DefineConstants>NET45;NETFULL</DefineConstants>
 	</PropertyGroup>
 
@@ -70,5 +68,4 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
-
 </Project>

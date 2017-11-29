@@ -49,7 +49,7 @@ namespace Westwind.Utilities
     /// Utility library for common data operations.
     /// </summary>
     public static class DataUtils
-    {        
+    {
         public const BindingFlags MemberAccess =
             BindingFlags.Public | BindingFlags.NonPublic |
             BindingFlags.Static | BindingFlags.Instance | BindingFlags.IgnoreCase;
@@ -81,7 +81,7 @@ namespace Westwind.Utilities
             StringBuilder result = new StringBuilder(stringSize);
             int count = 0;
 
-            
+
             foreach (byte b in Guid.NewGuid().ToByteArray())
             {
                 result.Append(chars[b % (chars.Length)]);
@@ -92,7 +92,7 @@ namespace Westwind.Utilities
             return result.ToString();
         }
 
-		
+
         ///<summary>
         /// Generates a unique numeric ID. Generated off a GUID and
         /// returned as a 64 bit long value
@@ -101,7 +101,7 @@ namespace Westwind.Utilities
         public static long GenerateUniqueNumericId()
         {
             byte[] bytes = Guid.NewGuid().ToByteArray();
-            return (long) BitConverter.ToUInt64(bytes, 0);
+            return (long)BitConverter.ToUInt64(bytes, 0);
         }
 
         private static Random rnd = new Random();
@@ -138,56 +138,56 @@ namespace Westwind.Utilities
                 {
                     target[x] = source[fieldname];
                 }
-                catch { ;}  // skip any errors
+                catch {; }  // skip any errors
             }
 
             return true;
         }
 
-		/// <summary>
-		/// Populates an object passed in from values in
-		/// a data row that's passed in.
-		/// </summary>
-		/// <param name="row">Data row with values to fill from</param>
-		/// <param name="targetObject">Object to file values from data row</param>
-	    public static void CopyObjectFromDataRow(DataRow row, object targetObject, MemberInfo[] cachedMemberInfo = null)
-	    {
-			if (cachedMemberInfo == null)
-			{
-				cachedMemberInfo = targetObject.GetType()
-					.FindMembers(MemberTypes.Field | MemberTypes.Property,
-						ReflectionUtils.MemberAccess, null, null);
-			}
-		    foreach (MemberInfo Field in cachedMemberInfo)
-		    {
-			    string Name = Field.Name;
-			    if (!row.Table.Columns.Contains(Name))
-				    continue;
+        /// <summary>
+        /// Populates an object passed in from values in
+        /// a data row that's passed in.
+        /// </summary>
+        /// <param name="row">Data row with values to fill from</param>
+        /// <param name="targetObject">Object to file values from data row</param>
+        public static void CopyObjectFromDataRow(DataRow row, object targetObject, MemberInfo[] cachedMemberInfo = null)
+        {
+            if (cachedMemberInfo == null)
+            {
+                cachedMemberInfo = targetObject.GetType()
+                    .FindMembers(MemberTypes.Field | MemberTypes.Property,
+                        ReflectionUtils.MemberAccess, null, null);
+            }
+            foreach (MemberInfo Field in cachedMemberInfo)
+            {
+                string Name = Field.Name;
+                if (!row.Table.Columns.Contains(Name))
+                    continue;
 
-			    object value = row[Name];
-			    if (value == DBNull.Value)
-				    value = null;
+                object value = row[Name];
+                if (value == DBNull.Value)
+                    value = null;
 
-			    if (Field.MemberType == MemberTypes.Field)
-			    {
-				    ((FieldInfo)Field).SetValue(targetObject, value);
-			    }
-			    else if (Field.MemberType == MemberTypes.Property)
-			    {
-				    ((PropertyInfo)Field).SetValue(targetObject, value, null);
-			    }
-		    }
-	    }
+                if (Field.MemberType == MemberTypes.Field)
+                {
+                    ((FieldInfo)Field).SetValue(targetObject, value);
+                }
+                else if (Field.MemberType == MemberTypes.Property)
+                {
+                    ((PropertyInfo)Field).SetValue(targetObject, value, null);
+                }
+            }
+        }
 
-		/// <summary>
-		/// Copies the content of an object to a DataRow with matching field names.
-		/// Both properties and fields are copied. If a field copy fails due to a
-		/// type mismatch copying continues but the method returns false
-		/// </summary>
-		/// <param name="row"></param>
-		/// <param name="target"></param>
-		/// <returns></returns>
-		public static bool CopyObjectToDataRow(DataRow row, object target)
+        /// <summary>
+        /// Copies the content of an object to a DataRow with matching field names.
+        /// Both properties and fields are copied. If a field copy fails due to a
+        /// type mismatch copying continues but the method returns false
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static bool CopyObjectToDataRow(DataRow row, object target)
         {
             bool result = true;
 
@@ -215,36 +215,36 @@ namespace Westwind.Utilities
             return result;
         }
 
-		/// <summary>
-		/// Coverts a DataTable to a typed list of items
-		/// </summary>
-		/// <typeparam name="T">Type to </typeparam>
-		/// <param name="dsTable"></param>
-		/// <returns></returns>
-		public static List<T> DataTableToTypedList<T>(DataTable dsTable) where T : class, new()
-		{
-			var objectList = new List<T>();
+        /// <summary>
+        /// Coverts a DataTable to a typed list of items
+        /// </summary>
+        /// <typeparam name="T">Type to </typeparam>
+        /// <param name="dsTable"></param>
+        /// <returns></returns>
+        public static List<T> DataTableToTypedList<T>(DataTable dsTable) where T : class, new()
+        {
+            var objectList = new List<T>();
 
-			MemberInfo[] cachedMemberInfo = null;
-			foreach (DataRow dr in dsTable.Rows)
-			{
-				var obj = default(T); // Activator.CreateInstance<T>();				
-				CopyObjectFromDataRow(dr, obj, cachedMemberInfo);
-				objectList.Add(obj);
-			}
+            MemberInfo[] cachedMemberInfo = null;
+            foreach (DataRow dr in dsTable.Rows)
+            {
+                var obj = default(T); // Activator.CreateInstance<T>();				
+                CopyObjectFromDataRow(dr, obj, cachedMemberInfo);
+                objectList.Add(obj);
+            }
 
-			return objectList;
-		}
-
-
+            return objectList;
+        }
 
 
-		/// <summary>
-		/// Copies the content of one object to another. The target object 'pulls' properties of the first. 
-		/// </summary>
-		/// <param name="source"></param>
-		/// <param name="target"></param>
-		public static void CopyObjectData(object source, Object target)
+
+
+        /// <summary>
+        /// Copies the content of one object to another. The target object 'pulls' properties of the first. 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        public static void CopyObjectData(object source, Object target)
         {
             CopyObjectData(source, target, MemberAccess);
         }
@@ -268,7 +268,7 @@ namespace Westwind.Utilities
         /// <param name="excludedProperties"></param>
         public static void CopyObjectData(object source, Object target, string excludedProperties)
         {
-             CopyObjectData(source, target,excludedProperties, MemberAccess);
+            CopyObjectData(source, target, excludedProperties, MemberAccess);
         }
 
         /// <summary>
@@ -324,45 +324,45 @@ namespace Westwind.Utilities
         }
 
 
-		/// <summary>
-		/// Coverts a DataTable to a typed list of items
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="dsTable"></param>
-		/// <returns></returns>
-		public static List<T> DataTableToObjectList<T>(DataTable dsTable) where T : class, new()
-		{
-			var objectList = new List<T>();
+        /// <summary>
+        /// Coverts a DataTable to a typed list of items
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dsTable"></param>
+        /// <returns></returns>
+        public static List<T> DataTableToObjectList<T>(DataTable dsTable) where T : class, new()
+        {
+            var objectList = new List<T>();
 
-			foreach (DataRow dr in dsTable.Rows)
-			{
-				var obj = Activator.CreateInstance<T>();
-				CopyObjectFromDataRow(dr, obj);
-				objectList.Add(obj);
-			}
+            foreach (DataRow dr in dsTable.Rows)
+            {
+                var obj = Activator.CreateInstance<T>();
+                CopyObjectFromDataRow(dr, obj);
+                objectList.Add(obj);
+            }
 
-			return objectList;
-		}
+            return objectList;
+        }
 
 
-		/// <summary>
-		/// Creates a list of a given type from all the rows in a DataReader.
-		/// 
-		/// Note this method uses Reflection so this isn't a high performance
-		/// operation, but it can be useful for generic data reader to entity
-		/// conversions on the fly and with anonymous types.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="reader">An open DataReader that's in position to read</param>
-		/// <param name="propertiesToSkip">Optional - comma delimited list of fields that you don't want to update</param>
-		/// <param name="piList">
-		/// Optional - Cached PropertyInfo dictionary that holds property info data for this object.
-		/// Can be used for caching hte PropertyInfo structure for multiple operations to speed up
-		/// translation. If not passed automatically created.
-		/// </param>
-		/// <returns></returns>
-		/// <remarks>DataReader is not closed by this method. Make sure you call reader.close() afterwards</remarks>
-		public static List<T> DataReaderToObjectList<T>(IDataReader reader, string propertiesToSkip = null, Dictionary<string, PropertyInfo> piList = null)
+        /// <summary>
+        /// Creates a list of a given type from all the rows in a DataReader.
+        /// 
+        /// Note this method uses Reflection so this isn't a high performance
+        /// operation, but it can be useful for generic data reader to entity
+        /// conversions on the fly and with anonymous types.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="reader">An open DataReader that's in position to read</param>
+        /// <param name="propertiesToSkip">Optional - comma delimited list of fields that you don't want to update</param>
+        /// <param name="piList">
+        /// Optional - Cached PropertyInfo dictionary that holds property info data for this object.
+        /// Can be used for caching hte PropertyInfo structure for multiple operations to speed up
+        /// translation. If not passed automatically created.
+        /// </param>
+        /// <returns></returns>
+        /// <remarks>DataReader is not closed by this method. Make sure you call reader.close() afterwards</remarks>
+        public static List<T> DataReaderToObjectList<T>(IDataReader reader, string propertiesToSkip = null, Dictionary<string, PropertyInfo> piList = null)
             where T : new()
         {
             List<T> list = new List<T>();
@@ -373,7 +373,7 @@ namespace Westwind.Utilities
                 if (piList == null)
                 {
                     piList = new Dictionary<string, PropertyInfo>();
-                    var props = typeof (T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                    var props = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
                     foreach (var prop in props)
                         piList.Add(prop.Name.ToLower(), prop);
                 }
@@ -383,7 +383,7 @@ namespace Westwind.Utilities
                     T inst = new T();
                     DataReaderToObject(reader, inst, propertiesToSkip, piList);
                     list.Add(inst);
-                }             
+                }
             }
 
             return list;
@@ -404,18 +404,18 @@ namespace Westwind.Utilities
         /// translation. If not passed automatically created.
         /// </param>
         /// <returns></returns>
-        public static IEnumerable<T> DataReaderToIEnumerable<T>(IDataReader reader, string propertiesToSkip = null, Dictionary<string, PropertyInfo> piList = null)            
+        public static IEnumerable<T> DataReaderToIEnumerable<T>(IDataReader reader, string propertiesToSkip = null, Dictionary<string, PropertyInfo> piList = null)
             where T : new()
         {
             if (reader != null)
-            {				
+            {
                 using (reader)
                 {
                     // Get a list of PropertyInfo objects we can cache for looping            
                     if (piList == null)
                     {
                         piList = new Dictionary<string, PropertyInfo>();
-                        var props = typeof (T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                        var props = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
                         foreach (var prop in props)
                             piList.Add(prop.Name.ToLower(), prop);
                     }
@@ -452,7 +452,7 @@ namespace Westwind.Utilities
                     {
                         T inst = new T();
                         DataReaderToObject(reader, inst, propertiesToSkip, piList);
-                        list.Add(inst);                        
+                        list.Add(inst);
                     }
                 }
             }
@@ -475,9 +475,9 @@ namespace Westwind.Utilities
         /// <param name="instance">Instance of the object to populate properties on</param>
         /// <param name="propertiesToSkip">Optional - A comma delimited list of object properties that should not be updated</param>
         /// <param name="piList">Optional - Cached PropertyInfo dictionary that holds property info data for this object</param>
-        public static void DataReaderToObject(IDataReader reader, object instance, 
-                                              string propertiesToSkip = null, 
-                                              Dictionary<string,PropertyInfo> piList = null)
+        public static void DataReaderToObject(IDataReader reader, object instance,
+                                              string propertiesToSkip = null,
+                                              Dictionary<string, PropertyInfo> piList = null)
         {
             if (reader.IsClosed)
                 throw new InvalidOperationException(Resources.DataReaderPassedToDataReaderToObjectCannot);
@@ -515,18 +515,18 @@ namespace Westwind.Utilities
 
                     // find writable properties and assign
                     if ((prop != null) && prop.CanWrite)
-                    {                        
+                    {
                         var val = reader.GetValue(index);
-                        
+
                         if (val == DBNull.Value)
-                            val = null;           
+                            val = null;
                         // deal with data drivers return bit values as int64 or in
-                        else if (prop.PropertyType == typeof (bool) && (val is long || val is int))
-                            val = (long) val == 1 ? true : false;
+                        else if (prop.PropertyType == typeof(bool) && (val is long || val is int))
+                            val = (long)val == 1 ? true : false;
                         // int conversions when the value is not different type of number
-                        else if (prop.PropertyType == typeof (int) && (val is long || val is decimal))
+                        else if (prop.PropertyType == typeof(int) && (val is long || val is decimal))
                             val = Convert.ToInt32(val);
-                        
+
                         prop.SetValue(instance, val, null);
                     }
                 }
@@ -582,6 +582,30 @@ namespace Westwind.Utilities
             }
         }
 
+        #region Provider Factories
+
+        /// <summary>
+        /// Loads a SQL Provider factory based on the DbFactory type name and assembly.       
+        /// </summary>
+        /// <param name="dbProviderFactoryTypename">Type name of the DbProviderFactory</param>
+        /// <param name="assemblyName">Short assembly name of the provider factory. Note: Host project needs to have a reference to this assembly</param>
+        /// <returns></returns>
+        public static DbProviderFactory GetDbProviderFactory(string dbProviderFactoryTypename, string assemblyName)
+        {
+            var instance = ReflectionUtils.GetStaticProperty(dbProviderFactoryTypename, "Instance");
+            if (instance == null)
+            {
+                var a = ReflectionUtils.LoadAssembly(assemblyName);
+                if (a != null)
+                    instance = ReflectionUtils.GetStaticProperty(dbProviderFactoryTypename, "Instance");
+            }
+
+            if (instance == null)
+                throw new InvalidOperationException(string.Format(Resources.UnableToRetrieveDbProviderFactoryForm, dbProviderFactoryTypename));
+
+            return instance as DbProviderFactory;
+        }
+
 
         /// <summary>
         /// This method loads various providers dynamically similar to the 
@@ -590,65 +614,34 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static DbProviderFactory GetSqlProviderFactory(DataAccessProviderTypes type)
+        public static DbProviderFactory GetDbProviderFactory(DataAccessProviderTypes type)
         {
             if (type == DataAccessProviderTypes.SqlServer)
-                return SqlClientFactory.Instance;
-
-            if (type == DataAccessProviderTypes.SqlServerCompact)
-                throw new NotSupportedException("The Sql Server Compact data provider is not supported on .NET Core");
+                return SqlClientFactory.Instance; // this library has a ref to SqlClient so this works
 
             if (type == DataAccessProviderTypes.SqLite)
             {
-#if NETCORE
-                var instance = ReflectionUtils.GetStaticProperty("Microsoft.Data.Sqlite.SqliteFactory", "Instance");
-                if (instance == null)
-                {
-                    var a = ReflectionUtils.LoadAssembly("Microsoft.Data.Sqlite");
-                    if (a != null)
-                        instance = ReflectionUtils.GetStaticProperty("Microsoft.Data.Sqlite.SqliteFactory", "Instance");
-                }
-
-                if (instance == null)
-                    throw new InvalidOperationException("Couldn't load SqLite Provider factory. Please make sure the Microsoft.Data.Sqlite package has been added to your project");
-
-                return instance as DbProviderFactory;
-                //#else
+#if NETFULL
+                return GetDbProviderFactory("System.Data.SQLite.SQLiteFactory", "System.Data.SQLite");
 #else
-                var instance = ReflectionUtils.GetStaticProperty("System.Data.Sqlite.SQLiteFactory", "Instance");
-                if (instance == null)
-                {
-                    var a = ReflectionUtils.LoadAssembly("System.Data.SQLite");
-                    if (a != null)
-                        instance = ReflectionUtils.GetStaticProperty("System.Data.SQLite.SQLiteFactory", "Instance");
-                }
-
-                if (instance == null)
-                    throw new InvalidOperationException(
-                        "Couldn't load SqLite Provider factory. Please make sure the System.Data.SQLite reference has been added to your project");
-                return instance as DbProviderFactory;
+                return GetDbProviderFactory("Microsoft.Data.Sqlite.SqliteFactory", "Microsoft.Data.Sqlite");
 #endif
             }
-            else if (type == DataAccessProviderTypes.MySql)
-            {
+            if (type == DataAccessProviderTypes.MySql)
+                return GetDbProviderFactory("MySql.Data.MySqlClient.MySqlClientFactory", "MySql.Data");
+            if (type == DataAccessProviderTypes.PostgreSql)
+                return GetDbProviderFactory("Npgsql.NpgsqlFactory", "Npgsql");
+#if NETFULL
+            if (type == DataAccessProviderTypes.OleDb)
+                return System.Data.OleDb.OleDbFactory.Instance;
+            if (type == DataAccessProviderTypes.SqlServerCompact)
+                return DbProviderFactories.GetFactory("System.Data.SqlServerCe.4.0");                
+#endif
 
-                var instance = ReflectionUtils.GetStaticProperty("MySql.Data.MySqlClient.MySqlClientFactory", "Instance");
-                if (instance == null)
-                {
-                    var a = ReflectionUtils.LoadAssembly("MySql.Data");
-                    if (a != null)
-                        instance = ReflectionUtils.GetStaticProperty("MySql.Data.MySqlClient.MySqlClientFactory", "Instance");
-                }
-
-                if (instance == null)
-                    throw new InvalidOperationException("Couldn't load MySql Provider factory. Please make sure the MySql.Data package has been added to your project");
-
-                return instance as DbProviderFactory;
-            }
-
-            throw new NotSupportedException("Unsupported Provider Factory specified: " + type);
+            throw new NotSupportedException(string.Format(Resources.UnsupportedProviderFactory,type.ToString()));
         }
 
+        
 
         /// <summary>
         /// Returns a provider factory using the old Provider Model names from full framework .NET.
@@ -656,25 +649,30 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="providerName"></param>
         /// <returns></returns>
-        public static DbProviderFactory GetSqlProviderFactory(string providerName)
+        public static DbProviderFactory GetDbProviderFactory(string providerName)
         {
 #if NETFULL
             return DbProviderFactories.GetFactory(providerName);
-#endif
+#else
             var providername = providerName.ToLower();
 
             if (providerName == "system.data.sqlclient")
-                return GetSqlProviderFactory(DataAccessProviderTypes.SqlServer);
+                return GetDbProviderFactory(DataAccessProviderTypes.SqlServer);
             if (providerName == "system.data.sqlite" || providerName == "microsoft.data.sqlite")
-                return GetSqlProviderFactory(DataAccessProviderTypes.SqLite);
+                return GetDbProviderFactory(DataAccessProviderTypes.SqLite);
             if (providerName == "mysql.data.mysqlclient" || providername == "mysql.data")
-                return GetSqlProviderFactory(DataAccessProviderTypes.MySql);
+                return GetDbProviderFactory(DataAccessProviderTypes.MySql);            
+            if (providerName == "npgsql")
+                return GetDbProviderFactory(DataAccessProviderTypes.PostgreSql);            
 
-
-            throw new NotSupportedException("Unsupported Provider Factory specified: " + providerName);
+            throw new NotSupportedException(string.Format(Resources.UnsupportedProviderFactory,providerName));
+#endif
         }
 
+        #endregion
 
+
+        #region Type Conversions
         /// <summary>
         /// Maps a SqlDbType to a .NET type
         /// </summary>
@@ -739,7 +737,7 @@ namespace Westwind.Utilities
             else if (sqlType == DbType.Guid)
                 return typeof(Guid);
             else if (sqlType == DbType.Binary)
-                return typeof(byte[]);            
+                return typeof(byte[]);
 
             throw new InvalidCastException("Unable to convert " + sqlType.ToString() + " to .NET type.");
         }
@@ -776,17 +774,17 @@ namespace Westwind.Utilities
             else if (type == typeof(byte))
                 return DbType.Byte;
             else if (type == typeof(byte[]))
-                return DbType.Binary;            
+                return DbType.Binary;
 
-            throw new InvalidCastException(string.Format("Unable to cast {0} to a DbType",type.Name));
+            throw new InvalidCastException(string.Format("Unable to cast {0} to a DbType", type.Name));
         }
 
-		/// <summary>
-		/// Converts a .NET type into a SqlDbType.
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		public static SqlDbType DotNetTypeToSqlType(Type type)
+        /// <summary>
+        /// Converts a .NET type into a SqlDbType.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static SqlDbType DotNetTypeToSqlType(Type type)
         {
             if (type == typeof(string))
                 return SqlDbType.NVarChar;
@@ -818,7 +816,9 @@ namespace Westwind.Utilities
             throw new InvalidCastException(string.Format("Unable to cast {0} to a DbType", type.Name));
         }
 
-#region Minimal Sql Data Access Function
+        #endregion
+
+        #region Minimal Sql Data Access Function
 
         /// <summary>
         /// Creates a Command object and opens a connection
@@ -887,15 +887,15 @@ namespace Westwind.Utilities
             return Reader;
         }
 
-		/// <summary>
-		/// Returns a DataTable from a Sql Command string passed in.
-		/// </summary>
-		/// <param name="Tablename"></param>
-		/// <param name="ConnectionString"></param>
-		/// <param name="Sql"></param>
-		/// <param name="Parameters"></param>
-		/// <returns></returns>
-		public static DataTable GetDataTable(string Tablename, string ConnectionString, string Sql, params SqlParameter[] Parameters)
+        /// <summary>
+        /// Returns a DataTable from a Sql Command string passed in.
+        /// </summary>
+        /// <param name="Tablename"></param>
+        /// <param name="ConnectionString"></param>
+        /// <param name="Sql"></param>
+        /// <param name="Parameters"></param>
+        /// <returns></returns>
+        public static DataTable GetDataTable(string Tablename, string ConnectionString, string Sql, params SqlParameter[] Parameters)
         {
             SqlCommand Command = GetSqlCommand(ConnectionString, Sql, Parameters);
             if (Command == null)
@@ -932,7 +932,7 @@ namespace Westwind.Utilities
                 Command.Connection.State == ConnectionState.Open)
                 Command.Connection.Close();
         }
-#endregion
+        #endregion
 
     }
 
@@ -940,8 +940,12 @@ namespace Westwind.Utilities
     {
         SqlServer,
         SqLite,
-        OleDb,
         MySql,
+        PostgreSql,
+
+#if NETFULL
+        OleDb,
         SqlServerCompact
+#endif
     }
 }

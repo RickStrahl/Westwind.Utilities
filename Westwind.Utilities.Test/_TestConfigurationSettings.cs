@@ -10,7 +10,9 @@ namespace Westwind.Utilities.Test
 
 	    public static string SqliteConnectionString = "Data Source=./SupportFiles/AlbumViewerData.sqlite";
 
-	    public static string Mailserver { get; set;  } = "localhost";
+	    public static string MySqlConnectionString = "server=localhost;uid=testuser;pwd=super10seekrit;database=Localizations";
+
+        public static string Mailserver { get; set;  } = "localhost";
 
         public static string MailServerUsername { get; set;  } 
 

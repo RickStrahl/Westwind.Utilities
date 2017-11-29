@@ -86,7 +86,7 @@ namespace Westwind.Utilities.Data
 
             // sets dbProvider and ConnectionString properties
             // based on connectionString Name or full connection string
-            GetConnectionInfo(connectionString,null);
+            GetConnectionInfo(connectionString,null);            
         }
 
 #if NETFULL
@@ -99,28 +99,26 @@ namespace Westwind.Utilities.Data
 		/// <param name="providerName"></param>
 		protected DataAccessBase(string connectionString, string providerName)
         {
-#if SupportWebRequestProvider
-            // Explicitly load Web Request Provider so the provider
-            // doesn't need to be registered
-            if (providerName == "Westwind.Utilities. Wind Web Request Provider")
-                dbProvider = WebRequestClientFactory.Instance;
-            else
-#endif
-
-			dbProvider = DbProviderFactories.GetFactory(providerName);
             ConnectionString = connectionString;
+            dbProvider = DbProviderFactories.GetFactory(providerName);
 
-		}
+            var cmd = dbProvider.CreateCommand();
+            cmd.CommandText = "select * from customers";
+            cmd.Connection = dbProvider.CreateConnection();
+            cmd.Connection.ConnectionString = ConnectionString;
+            var reader = cmd.ExecuteReader();
+
+        }
 #endif
 
-		/// <summary>
-		/// Constructor that expects a full connection string and provider
-		/// for creating a SQL instance. To be called by the same implementation
-		/// on a subclass.
-		/// </summary>
-		/// <param name="connectionString"></param>
-		/// <param name="providerName"></param>
-		protected DataAccessBase(string connectionString, DbProviderFactory provider)
+        /// <summary>
+        /// Constructor that expects a full connection string and provider
+        /// for creating a SQL instance. To be called by the same implementation
+        /// on a subclass.
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <param name="providerName"></param>
+        protected DataAccessBase(string connectionString, DbProviderFactory provider)
 		{
 			ConnectionString = connectionString;
 			dbProvider = provider;			
@@ -129,7 +127,7 @@ namespace Westwind.Utilities.Data
         public DataAccessBase(string connectionString, DataAccessProviderTypes providerType)
         {
             ConnectionString = connectionString;
-            DbProviderFactory instance = DataUtils.GetSqlProviderFactory(providerType);
+            DbProviderFactory instance = DataUtils.GetDbProviderFactory(providerType);
 
             ConnectionString = connectionString;
             dbProvider = instance ?? throw new InvalidOperationException("Can't load database provider: " + providerType.ToString());

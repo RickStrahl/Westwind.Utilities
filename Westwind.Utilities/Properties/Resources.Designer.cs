@@ -232,6 +232,15 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Sql Server Compact data provider is not supported on .NET Core.
+        /// </summary>
+        public static string SqlServerCompactDataProviderNotSupportedOnNetCore {
+            get {
+                return ResourceManager.GetString("SqlServerCompactDataProviderNotSupportedOnNetCore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Type Conversion not handled in StringToTypedValue for .
         /// </summary>
         public static string StringToTypedValueValueTypeConversionFailed {
@@ -255,6 +264,24 @@ namespace Westwind.Utilities.Properties {
         public static string UnableToReadConfigDataFromString {
             get {
                 return ResourceManager.GetString("UnableToReadConfigDataFromString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to retrieve DbProviderFactory for: {0}.
+        /// </summary>
+        public static string UnableToRetrieveDbProviderFactoryForm {
+            get {
+                return ResourceManager.GetString("UnableToRetrieveDbProviderFactoryForm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported Provider Factory specified: {0}.
+        /// </summary>
+        public static string UnsupportedProviderFactory {
+            get {
+                return ResourceManager.GetString("UnsupportedProviderFactory", resourceCulture);
             }
         }
     }
