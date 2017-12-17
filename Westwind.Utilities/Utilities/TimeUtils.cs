@@ -33,6 +33,7 @@
 
 using System;
 using System.Globalization;
+using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities
 {
@@ -47,28 +48,28 @@ namespace Westwind.Utilities
         /// <summary>
         /// Displays a date in friendly format.
         /// </summary>
-        /// <param name="Date"></param>
-        /// <param name="ShowTime"></param>
+        /// <param name="date"></param>
+        /// <param name="showTime"></param>
         /// <returns>Today,Yesterday,Day of week or a string day (Jul 15, 2008)</returns>
-        public static string FriendlyDateString(DateTime Date, bool ShowTime)
+        public static string FriendlyDateString(DateTime date, bool showTime)
         {
-            if (Date < TimeUtils.MIN_DATE_VALUE)
+            if (date < TimeUtils.MIN_DATE_VALUE)
                 return string.Empty;
 
             string FormattedDate = string.Empty;
-            if (Date.Date.Equals(DateTime.Today))
-                FormattedDate = "Today"; //Resources.Resources.Today; 
-            else if (Date.Date == DateTime.Today.AddDays(-1))
-                FormattedDate = "Yesterday"; //Resources.Resources.Yesterday;
-            else if (Date.Date > DateTime.Today.AddDays(-6))
+            if (date.Date.Equals(DateTime.Today))
+                FormattedDate = Resources.Today; 
+            else if (date.Date == DateTime.Today.AddDays(-1))
+                FormattedDate = Resources.Yesterday;
+            else if (date.Date > DateTime.Today.AddDays(-6))
                 // Show the Day of the week
-                FormattedDate = Date.ToString("dddd").ToString();
+                FormattedDate = date.ToString("dddd").ToString();
             else
-                FormattedDate = Date.ToString("MMMM dd, yyyy");
+                FormattedDate = date.ToString("MMMM dd, yyyy");
 
-            if (ShowTime)
-                FormattedDate += " @ " + Date.ToString("t").ToLower().Replace(" ","");
-
+            if (showTime)
+                FormattedDate += " @  " + date.ToString("t").ToLower().Replace(" ","");
+            
             return FormattedDate;
         }
 

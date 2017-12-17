@@ -250,6 +250,15 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Today.
+        /// </summary>
+        public static string Today {
+            get {
+                return ResourceManager.GetString("Today", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to read configuration string from Sql Server field..
         /// </summary>
         public static string UnableToExtractKeys {
@@ -282,6 +291,15 @@ namespace Westwind.Utilities.Properties {
         public static string UnsupportedProviderFactory {
             get {
                 return ResourceManager.GetString("UnsupportedProviderFactory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yesterday.
+        /// </summary>
+        public static string Yesterday {
+            get {
+                return ResourceManager.GetString("Yesterday", resourceCulture);
             }
         }
     }

@@ -192,4 +192,10 @@
   <data name="UnsupportedProviderFactory" xml:space="preserve">
     <value>Unsupported Provider Factory specified: {0}</value>
   </data>
+  <data name="Today" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>Yesterday</value>
+  </data>
 </root>
