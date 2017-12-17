@@ -1,5 +1,11 @@
 ﻿# Westwind.Utilities Changelog
 
+### 3.0.5
+*not released yet*
+
+* **FileUtils.AddTrailingSlash()**  
+Adds a trailing OS specific slash to the end of a path if there isn't one.
+
 ### 3.0.4
 *November 12th, 2017*
 
@@ -10,7 +16,7 @@ Add helper function to allow retrieving a SQL Provider factory without having to
 Added function to normalize a path for the given platform it runs on - forward backward slashes. Mainly useful for legacy code that explicitly formatted paths to Windows formatting. NormalizeDirectory ensures a trailing path slash on a path.
 
 * **FileUtils.GetCompactPath()**  
-Added to return a filename that is trimmed in the middle with elipsis for long file names. 
+Added to return a filename that is trimmed in the middle with elipsis for long file names. You specify a max string length the and the method truncates accordingly.
 
 * **FileUtils.SafeFileName() Updates**  
 `SafeFileName()` now has options for the replacement character for invalid characters replaced as well (blank by default) as well as for spaces (which by default are not stripped).

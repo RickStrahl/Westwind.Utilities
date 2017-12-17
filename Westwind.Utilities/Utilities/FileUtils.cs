@@ -251,7 +251,24 @@ namespace Westwind.Utilities
             return path;
         }
 
-        #endregion
+
+        /// <summary>
+        /// Adds a trailing slash to a path if there isn't one.
+        /// </summary>
+        /// <param name="path">A file system path</param>
+        /// <returns></returns>
+	    public static string AddTrailingSlash(string path)
+	    {
+	        string separator = Path.DirectorySeparatorChar.ToString();	        
+
+	        path = path.TrimEnd();
+
+	        if (path.EndsWith(separator) || path.EndsWith(Path.AltDirectorySeparatorChar.ToString()))
+	            return path;
+
+	        return path + separator;
+	    }
+	    #endregion
 
         #region Miscellaneous functions
 
