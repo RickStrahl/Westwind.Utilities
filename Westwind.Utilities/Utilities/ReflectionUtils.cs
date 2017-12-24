@@ -127,7 +127,7 @@ namespace Westwind.Utilities
         /// Use for lazy loading of assemblies without taking a type dependency.
         /// </param>
         /// <returns>null</returns>
-        public static Type GetTypeFromName(string typeName, string assemblyName = null)
+        public static Type GetTypeFromName(string typeName, string assemblyName )
         {
             var type = Type.GetType(typeName, false);
             if (type != null)
@@ -160,6 +160,16 @@ namespace Westwind.Utilities
             return null;
         }
 
+        /// <summary>
+        /// Overload for backwards compatibility which only tries to load
+        /// assemblies that are already loaded in memory.
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <returns></returns>        
+        public static Type GetTypeFromName(string typeName)
+        {
+            return GetTypeFromName(typeName, null);
+        }
 
         /// <summary>
         /// Creates a COM instance from a ProgID. Loads either
