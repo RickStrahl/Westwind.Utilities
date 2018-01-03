@@ -16,9 +16,7 @@ namespace Westwind.Utilities.Test
         /// </summary>
         [TestMethod]
         public void SendMailTest()
-        {
-            string errorMessage = null;
-
+        {            
             SmtpClientNative smtp = new SmtpClientNative();
             smtp.MailServer = TestConfigurationSettings.Mailserver;
             smtp.Username = TestConfigurationSettings.MailServerUsername;
@@ -45,8 +43,6 @@ namespace Westwind.Utilities.Test
         [TestMethod]
         public void SendMailAsyncTest()
         {
-            string errorMessage = null;
-
             SmtpClientNative smtp = new SmtpClientNative();
             smtp.MailServer = TestConfigurationSettings.Mailserver;
             smtp.Username = TestConfigurationSettings.MailServerUsername;
