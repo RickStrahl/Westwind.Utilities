@@ -162,16 +162,18 @@ namespace Westwind.Utilities
         public static string GetRelativePath(string fullPath, string basePath ) 
 		{
             // ForceBasePath to a path
-            if (!basePath.EndsWith("\\"))
+            if (!basePath.EndsWith(value: "\\"))
                 basePath += "\\";
+            
+#pragma warning disable CS0618
+            Uri baseUri = new Uri(uriString: basePath,dontEscape: true);
+            Uri fullUri = new Uri(uriString: fullPath,dontEscape: true);
+#pragma warning restore CS0618
 
-            Uri baseUri = new Uri(basePath);
-            Uri fullUri = new Uri(fullPath);
-
-            Uri relativeUri = baseUri.MakeRelativeUri(fullUri);
+            Uri relativeUri = baseUri.MakeRelativeUri(uri: fullUri);
 
             // Uri's use forward slashes so convert back to backward slahes
-            return relativeUri.ToString().Replace("/", "\\");            
+            return relativeUri.ToString().Replace(oldValue: "/", newValue: "\\");            
 		}
 
         #endregion
