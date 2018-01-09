@@ -119,5 +119,15 @@ namespace Westwind.Utilities.Test
             Directory.Delete(source, true);
         }
 
+        [TestMethod]
+        public void ExpandPathEnvironmentVariablesTest()
+        {
+            string path = "%appdata%\\Markdown Monster";
+            string result = FileUtils.ExpandPathEnvironmentVariables(path);
+
+            Console.WriteLine(result);
+            Assert.IsFalse(result.Contains("%appdata%"));
+            Assert.IsTrue(result.ToLower().Contains("appdata"));
+        }
     }
 }

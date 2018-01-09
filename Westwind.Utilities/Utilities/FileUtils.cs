@@ -176,19 +176,44 @@ namespace Westwind.Utilities
             return relativeUri.ToString().Replace(oldValue: "/", newValue: "\\");            
 		}
 
+
+
+        /// <summary>
+        /// Expands Path Environment Variables like %appdata% in paths.
+        /// </summary>
+        /// <param name="path">Path with potential environment variables.</param>
+        /// <returns></returns>
+        public static string ExpandPathEnvironmentVariables(string path)
+        {   
+            while (path.Contains("%"))
+            {
+                var extract = StringUtils.ExtractString(path, "%", "%");
+                if (string.IsNullOrEmpty(extract))
+                    return path;
+
+                var env = Environment.GetEnvironmentVariable(extract);
+                if (!string.IsNullOrEmpty(env))
+                    path = path.Replace("%" + extract + "%", env);
+                else
+                    return path;
+            }
+
+            return path;
+        }
+
         #endregion
 
         #region File and Path Normalization
 
-	    /// <summary>
-	    /// Returns a safe filename from a string by stripping out
-	    /// illegal characters
-	    /// </summary>
-	    /// <param name="fileName">Filename to fix up</param>
-	    /// <param name="replacementString">String value to replace illegal chars with. Defaults empty string</param>
-	    /// <param name="spaceReplacement">Optional - replace spaces with a specified string.</param>
-	    /// <returns>Fixed up string</returns>
-	    public static string SafeFilename(string fileName, string replacementString = "", string spaceReplacement = null)
+        /// <summary>
+        /// Returns a safe filename from a string by stripping out
+        /// illegal characters
+        /// </summary>
+        /// <param name="fileName">Filename to fix up</param>
+        /// <param name="replacementString">String value to replace illegal chars with. Defaults empty string</param>
+        /// <param name="spaceReplacement">Optional - replace spaces with a specified string.</param>
+        /// <returns>Fixed up string</returns>
+        public static string SafeFilename(string fileName, string replacementString = "", string spaceReplacement = null)
 	    {
 	        if (string.IsNullOrEmpty(fileName))
 	            return fileName;

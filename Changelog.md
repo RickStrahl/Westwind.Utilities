@@ -1,10 +1,16 @@
 ﻿# Westwind.Utilities Changelog
 
-### 3.0.5
-*not released yet*
+### 3.0.10
+*January 9th, 2018*
 
 * **FileUtils.AddTrailingSlash()**  
 Adds a trailing OS specific slash to the end of a path if there isn't one.
+
+* **FileUtils.ExpandPathEnvironmentVariables()**  
+Method that checks for %envVar% embedded in the path and tries to evaluate the value from environment vars.
+
+* **Fix: FileUtils.GetRelativePath()**   
+Fix Uri usage with local file paths.
 
 ### 3.0.4
 *November 12th, 2017*
