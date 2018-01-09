@@ -317,6 +317,7 @@ namespace Westwind.Utilities.InternetTools
 		}
 		string _UserAgent = "West Wind HTTP .NET Client";
 
+	    public string HttpVerb { get; set; } = "GET";
 		
 		// member properties
 		//string cPostBuffer = string.Empty;
@@ -633,12 +634,13 @@ namespace Westwind.Utilities.InternetTools
             if (WebRequest == null)
             {
                 WebRequest = (HttpWebRequest)System.Net.WebRequest.Create(url);
-                //WebRequest.Headers.Add("Cache","no-cache");
+                //WebRequest.Headers.Add("Cache","no-cache");                
             }
 
             WebRequest.UserAgent = _UserAgent;
             WebRequest.Timeout = _timeout * 1000;
-
+            WebRequest.Method = HttpVerb;
+            
 #if NETFULL
 			WebRequest.ReadWriteTimeout = _timeout * 1000;
 #endif
@@ -840,6 +842,7 @@ namespace Westwind.Utilities.InternetTools
 				
 				WebRequest.UserAgent = _UserAgent;
 				WebRequest.Timeout = _timeout * 1000;
+                WebRequest.Method = HttpVerb;
 #if NETFULL
 				WebRequest.ReadWriteTimeout = _timeout * 1000;
 #endif	
