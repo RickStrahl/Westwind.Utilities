@@ -9,6 +9,20 @@
 > * Added support for .NET Standard 2.0
 > * Targets .NET 4.5, 4.0 and NetStandard 2.0
 
+### Installation
+You can install the package [from NuGet](http://nuget.org/packages/Westwind.Utilities/) using the Visual Studio Package Manager or NuGet UI:
+
+```
+PM> install-package westwind.utilities
+```
+
+or the `dotnet` command line:
+
+```
+dotnet add package westwind.utilities
+```
+
+### What is it?
 Every .NET application requires small, common and often repeated tasks. This library is a collection of those things that I commonly need on a regular basis and have compiled over the years.
 
 * [Get it on NuGet](http://nuget.org/packages/Westwind.Utilities/)
