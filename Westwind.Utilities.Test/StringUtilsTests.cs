@@ -25,17 +25,12 @@ namespace Westwind.Utilities.Tests
         /// </summary>
         public TestContext TestContext
         {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
+            get { return testContextInstance; }
+            set { testContextInstance = value; }
         }
 
         #region Additional test attributes
+
         //
         // You can use the following additional attributes as you write your tests:
         //
@@ -55,6 +50,7 @@ namespace Westwind.Utilities.Tests
         // [TestCleanup()]
         // public void MyTestCleanup() { }
         //
+
         #endregion
 
         [TestMethod]
@@ -102,6 +98,7 @@ namespace Westwind.Utilities.Tests
             {
                 Assert.IsTrue(ex is ArgumentException, "Failed Null Test");
             }
+
             Assert.AreEqual(expected, actual, "Failed null test - exception should have been thrown.");
 
             expected = "Pronto 123";
@@ -218,7 +215,7 @@ namespace Westwind.Utilities.Tests
         {
             for (int i = 0; i < 20; i++)
             {
-                string random = StringUtils.RandomString(20,true);
+                string random = StringUtils.RandomString(20, true);
                 foreach (var ch in random)
                     Assert.IsTrue(char.IsLetterOrDigit(ch));
             }
@@ -232,7 +229,7 @@ namespace Westwind.Utilities.Tests
 
 
 
-            Console.WriteLine(extract);            
+            Console.WriteLine(extract);
             Assert.AreEqual(extract, "<rant />");
         }
 
@@ -264,7 +261,8 @@ Rick Strahl's Weblog
 <!-- End Post Configuration -->
 ";
 
-            string extract = StringUtils.ExtractString(source, "<!-- Post Configuration -->", "<!-- End Post Configuration -->", false,  true, true );
+            string extract = StringUtils.ExtractString(source, "<!-- Post Configuration -->",
+                "<!-- End Post Configuration -->", false, true, true);
 
             Console.WriteLine(extract);
             Assert.IsTrue(extract.Contains("<!-- Post Configuration -->"));
@@ -275,8 +273,8 @@ Rick Strahl's Weblog
         [TestMethod]
         public void GetLinesTest()
         {
-            string s = 
-@"this is test
+            string s =
+                @"this is test
 with
 multiple lines";
 
@@ -292,18 +290,18 @@ multiple lines";
 
             s = null;
             strings = StringUtils.GetLines(s);
-            Assert.IsNull(strings);            
+            Assert.IsNull(strings);
         }
 
         [TestMethod]
         public void CountLinesTest()
         {
-            string s = 
-"this is test\r\n" + 
-"with\n" +
-"multiple lines";
+            string s =
+                "this is test\r\n" +
+                "with\n" +
+                "multiple lines";
 
-            int count = StringUtils.CountLines(s);            
+            int count = StringUtils.CountLines(s);
             Assert.IsTrue(count == 3);
 
             s = string.Empty;
@@ -325,7 +323,7 @@ multiple lines";
             string tokenString = code;
 
             var tokens = StringUtils.TokenizeString(ref tokenString, "{{", "}}");
-            Assert.IsTrue(tokens.Count > 0,"No tokens found");
+            Assert.IsTrue(tokens.Count > 0, "No tokens found");
 
 
             Console.WriteLine("Tokenized Code String:");
@@ -346,6 +344,30 @@ multiple lines";
             Console.WriteLine(code);
 
             Assert.IsTrue(returnedCode == code, "Code doesn't match");
+        }
+
+        [TestMethod]
+        public void NormalizeLineFeedTest()
+        {
+            string text = "Hello World!\r\nMy name is Harold.\nWhat do you want?";
+            string converted = StringUtils.NormalizeLineFeeds(text, LineFeedTypes.Lf);
+
+            Assert.IsNotNull(converted);
+            Assert.IsFalse(converted.Contains("\r"));
+            Assert.IsTrue(converted.Count(c => c == '\n') == 2);
+
+            converted = StringUtils.NormalizeLineFeeds(text, LineFeedTypes.CrLf);
+            Assert.IsNotNull(converted);
+            Assert.IsTrue(converted.Count(c => c == '\n') == 2 && converted.Count(c => c == '\r') == 2);
+
+
+            text = null;
+            converted = StringUtils.NormalizeLineFeeds(text, LineFeedTypes.CrLf);
+            Assert.IsNull(converted);
+
+            text = String.Empty;
+            converted = StringUtils.NormalizeLineFeeds(text, LineFeedTypes.CrLf);
+            Assert.IsTrue(converted == string.Empty);
         }
     }
 }
