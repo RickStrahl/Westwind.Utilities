@@ -809,6 +809,32 @@ namespace Westwind.Utilities
         #endregion
 
         #region Miscellaneous
+
+        /// <summary>
+        /// Normalizes linefeeds to the appropriate 
+        /// </summary>
+        /// <param name="text">The text to fix up</param>
+        /// <param name="type">Type of linefeed to fix up to</param>
+        /// <returns></returns>
+        public static string NormalizeLineFeeds(string text, LineFeedTypes type = LineFeedTypes.Auto)
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
+            if (type == LineFeedTypes.Auto)
+            {
+                if (Environment.NewLine.Contains('\r'))
+                    type = LineFeedTypes.CrLf;
+                else
+                    type = LineFeedTypes.Lf;
+            }
+
+            if (type == LineFeedTypes.Lf)            
+                return text.Replace("\r\n", "\n");            
+            
+            return text.Replace("\r\n", "*@\r@*").Replace("\n","\r\n").Replace("*@\r@*","\r\n");
+        }
+
         /// <summary>
         /// Strips any common white space from all lines of text that have the same
         /// common white space text. Effectively removes common code indentation from
@@ -955,5 +981,15 @@ namespace Westwind.Utilities
         }
 
         #endregion
+    }
+
+    public enum LineFeedTypes
+    {
+        // Linefeed \n only
+        Lf,
+        // Carriage Return and Linefeed \r\n
+        CrLf,
+        // Platform default Environment.NewLine
+        Auto
     }
 }
