@@ -75,14 +75,32 @@ namespace Westwind.Utilities.Test
             Assert.IsTrue(normal.ToArray().Count(c => c == Path.DirectorySeparatorChar) == 4);
         }
 
-
+#if NETFULL
         [TestMethod]
         public void CompactPathTest()
         {
             var path = @"c:\temp\test\node_modules\SomeVeryLongComponentNameSpaceAndName\SomeLongComponentName.md";
+            Console.WriteLine("Orig: "  + path);
             var result = FileUtils.GetCompactPath(path);
-            Console.WriteLine(result);
+            Console.WriteLine($"{result.Length} {result}");
+            Assert.IsTrue(result.Length == 70);
+
+
+            path = @"c:\temp\SomeLongComponentName.md";
+            Console.WriteLine("Orig: " + path);
+            result = FileUtils.GetCompactPath(path);
+            Console.WriteLine($"{result.Length} {result}");
+            Assert.IsTrue(result.Length < 70);
+
+            path = @"\\temp\test\node_modules\SomeVeryLongComponentNameSpaceAndName\SomeLongComponentName.md";
+            Console.WriteLine("Orig: " + path);
+            result = FileUtils.GetCompactPath(path);
+            Console.WriteLine($"{result.Length} {result}");
+            Assert.IsTrue(result.Length == 70);
+
         }
+#endif
+
 
         [TestMethod]
         public void CopyDirectory()

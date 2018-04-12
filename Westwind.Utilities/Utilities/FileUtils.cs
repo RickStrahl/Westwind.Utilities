@@ -92,10 +92,11 @@ namespace Westwind.Utilities
 	        return new StreamReader(srcFile, enc);
 	    }
 
-	    #endregion
+        #endregion
 
 
         #region Path Segments and Path Names
+
 
         /// <summary>
         /// This function returns the actual filename of a file
@@ -113,38 +114,59 @@ namespace Westwind.Utilities
 	    {
 	        try
 	        {
-	            StringBuilder sb = new StringBuilder(1500);
-	            uint result = GetLongPathName(filename, sb, sb.Capacity);
-	            if (result > 0)
-	                filename = sb.ToString();
+	            return new FileInfo(filename).FullName;
+                //StringBuilder sb = new StringBuilder(1500);
+	            //uint result = GetLongPathName(filename, sb, sb.Capacity);
+	            //if (result > 0)
+	            //    filename = sb.ToString();
 	        }
             catch { }
 
             return filename;
         }
 
-	    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-	    static extern uint GetLongPathName(string ShortPath, StringBuilder sb, int buffer);
+	    //[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+	    //static extern uint GetLongPathName(string ShortPath, StringBuilder sb, int buffer);
 
-
-	    /// <summary>
-	    /// Returns a compact path with elipsis from a long path
-	    /// </summary>
-	    /// <param name="path">Original path to potentially trim</param>
-	    /// <param name="length">Max length of the path string returned</param>
-	    /// <returns></returns>
-	    public static string GetCompactPath(string path, int length = 70)
+        /// <summary>
+        /// Returns a compact path with elipsis from a long path
+        /// </summary>
+        /// <param name="path">Original path to potentially trim</param>
+        /// <param name="length">Max length of the path string returned</param>
+        /// <returns></returns>
+        public static string GetCompactPath(string path, int length = 70)
 	    {
 	        if (string.IsNullOrEmpty(path))
 	            return path;
 
-	        StringBuilder sb = new StringBuilder(length + 1);
-	        PathCompactPathEx(sb, path, 70, 0);
-	        return sb.ToString();
-	    }
+	        if (path.Length <= length)
+	            return path;
 
-	    [DllImport("shlwapi.dll", CharSet = CharSet.Auto)]
-	    static extern bool PathCompactPathEx([Out] StringBuilder pszOut, string szPath, int cchMax, int dwFlags);
+	        var index = -1;
+	        for (int i = path.Length-1; i >= 0; i--)
+	        {
+	            if (path[i] == '\\' || path[i] == '/')
+	            {
+	                index = i;
+                    break;
+	            }
+	        }
+
+            if (index == -1) // no slashes
+                return path.Substring(0,length); 
+
+	        var end = path.Substring(index);
+	        var start = path.Substring(0, index - 1);
+
+	        var maxStartLength = length - end.Length ;
+
+            var startBlock = start.Substring(0, maxStartLength);
+
+	        if (start.Length > maxStartLength)
+	            startBlock = startBlock.Substring(0, maxStartLength - 3) + "...";
+
+            return startBlock + end;
+	    }
 
 
         /// <summary>
