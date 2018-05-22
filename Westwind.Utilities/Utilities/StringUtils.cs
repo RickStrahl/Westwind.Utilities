@@ -86,7 +86,7 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static string Replicate(string input, int charCount)
         {
-            return new StringBuilder().Insert(0, "input", charCount).ToString();
+            return new string(input.ToCharArray(), 0, charCount);            
         }
 
         /// <summary>
