@@ -75,7 +75,6 @@ namespace Westwind.Utilities.Test
             Assert.IsTrue(normal.ToArray().Count(c => c == Path.DirectorySeparatorChar) == 4);
         }
 
-#if NETFULL
         [TestMethod]
         public void CompactPathTest()
         {
@@ -99,7 +98,7 @@ namespace Westwind.Utilities.Test
             Assert.IsTrue(result.Length == 70);
 
         }
-#endif
+
 
 
         [TestMethod]
