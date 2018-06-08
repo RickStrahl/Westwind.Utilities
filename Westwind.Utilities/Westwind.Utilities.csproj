@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45;net40</TargetFrameworks>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
@@ -25,9 +25,9 @@
     <RepositoryType>Github</RepositoryType>
     <Company>West Wind Technologies</Company>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>3.0.14.0</Version>
-    <AssemblyVersion>3.0.14.0</AssemblyVersion>
-    <FileVersion>3.0.14.0</FileVersion>    
+    <Version>3.0.15.1</Version>
+    <AssemblyVersion>3.0.15.1</AssemblyVersion>
+    <FileVersion>3.0.15.1</FileVersion>    
     <RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
   </PropertyGroup>
 

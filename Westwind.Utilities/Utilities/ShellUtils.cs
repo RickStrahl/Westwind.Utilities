@@ -1,4 +1,4 @@
-﻿#region License
+﻿#region 
 /*
  **************************************************************
  *  Author: Rick Strahl 
@@ -33,19 +33,132 @@
 
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Runtime.InteropServices;
 using System.IO;
 using System.Net;
 using System.Diagnostics;
 
 namespace Westwind.Utilities
 {
+
+    /// <summary>
+    /// Windows specific shell utility functions 
+    /// </summary>
     public static class ShellUtils
     {
 
+        #region Open in or Start Process
+        /// <summary>
+        /// Opens a File or Folder in Explorer. If the path is a file
+        /// Explorer is opened in the parent folder with the file selected
+        /// </summary>
+        /// <param name="filename"></param>
+        public static void OpenFileInExplorer(string filename)
+        {
+            if (Directory.Exists(filename))
+                ShellUtils.GoUrl(filename);
+            else
+                Process.Start("explorer.exe", $"/select,\"{filename}\"");
+        }
+
+
+        /// <summary>
+        /// Executes a Windows process with given command line parameters
+        /// </summary>
+        /// <param name="executable">Executable to run</param>
+        /// <param name="arguments"></param>
+        /// <param name="timeoutMs">Timeout of the process in milliseconds. Pass -1 to wait forever. Pass 0 to not wait.</param>
+        /// <param name="windowStyle"></param>
+        /// <returns></returns>
+        public static int ExecuteProcess(string executable, string arguments = null, int timeoutMs = 0, ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden)
+        {
+            Process process;
+
+            try
+            {
+                using (process = new Process())
+                {
+                    process.StartInfo.FileName = executable;
+                    process.StartInfo.Arguments = arguments;
+                    process.StartInfo.WindowStyle = windowStyle;
+                    if (windowStyle == ProcessWindowStyle.Hidden)
+                        process.StartInfo.CreateNoWindow = true;
+
+                    process.StartInfo.UseShellExecute = false;
+
+
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
+
+                    process.OutputDataReceived += (sender, args) =>
+                    {
+                        Console.WriteLine(args.Data);
+                    };
+                    process.ErrorDataReceived += (sender, args) =>
+                    {
+                        Console.WriteLine(args.Data);
+                    };
+
+                    process.Start();
+
+                    if (timeoutMs < 0)
+                        timeoutMs = 99999999; // indefinitely
+
+                    if (timeoutMs > 0)
+                    {
+                        if (!process.WaitForExit(timeoutMs))
+                        {
+                            Console.WriteLine("Process timed out.");
+                            return 1460;
+                        }
+                    }
+                    else
+                        return 0;
+
+                    return process.ExitCode;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error executing process: " + ex.Message);
+                return -1; // unhandled error
+            }
+        }
+
+        /// <summary>
+        /// Opens a Terminal window in the specified folder
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param  name="mode">Powershell, Command or Bash</param>
+        /// <returns>false if process couldn't be started - most likely invalid link</returns>
+        public static bool OpenTerminal(string folder, TerminalModes mode = TerminalModes.Powershell)
+        {
+            try
+            {
+                string cmd = null, args = null;
+
+                if (mode == TerminalModes.Powershell)
+                {
+                    cmd = "powershell.exe";
+                    args = "-noexit -command \"cd '{0}'\"";
+                }
+                else if(mode == TerminalModes.Command)
+                {
+                    cmd = "cmd.exe";
+                    args = "/k \"cd {0}\"";
+                }
+                
+                Process.Start(cmd,string.Format(args, folder));
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+#endregion
+
+        #region URL and HTTP Access
         /// <summary>
         /// Uses the Shell Extensions to launch a program based on URL moniker or file name
         /// Basically a wrapper around ShellExecute
@@ -140,17 +253,17 @@ namespace Westwind.Utilities
             string responseText = string.Empty;
             errorMessage = null;
 
-            WebClient Http = new WebClient();
-
-            // Download the Web resource and save it into a data buffer.
-            try
+            using (WebClient Http = new WebClient())
             {
-                responseText = Http.DownloadString(url);                
-            }
-            catch (Exception ex)
-            {
-                errorMessage = ex.Message;
-                return null;
+                try
+                {
+                    responseText = Http.DownloadString(url);                
+                }
+                catch (Exception ex)
+                {
+                    errorMessage = ex.Message;
+                    return null;
+                }
             }
 
             return responseText;
@@ -181,20 +294,27 @@ namespace Westwind.Utilities
             byte[] result = null;
             errorMessage = null;
 
-            var Http = new WebClient();
-
-            try
+            using (var http = new WebClient())
             {
-                result = Http.DownloadData(url);
-            }
-            catch (Exception ex)
-            {
-                errorMessage = ex.Message;
-                return null;
+                try
+                {
+                    result = http.DownloadData(url);
+                }
+                catch (Exception ex)
+                {
+                    errorMessage = ex.Message;
+                    return null;
+                }
             }
 
             return result;
         }
+        #endregion
+    }
 
+    public enum TerminalModes
+    {
+        Powershell,
+        Command
     }
 }

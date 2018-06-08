@@ -1,9 +1,23 @@
 ﻿# Westwind.Utilities Changelog
 
-### 3.0.12
+### 3.0.15
+
+* **ShellUtils.OpenInExplorer()**  
+Allows opening an Explorer Window for for a folder or file in a folder. (full framework only)
+
+* **ShellUtils.ExecuteProcess()**  
+Wrapper around Process.Start() that captures exceptions and handles a few common scenarios simply including execution with timeout and presetting the Window. (full framework only)
+
+* **ShellUtils.OpenTerminal()**  
+Opens a shell window using Powershell or Command Prompt in a given pre-selected folder. (full framework only)
+
+* **WindowsUtils.GetWindowsVersion() and GetDotnetVerision()**  
+Helpers that retrieve a display version string that can be used by an application to display the Windows and .NET version in a meaningful way.
 
 * **HttpClient.HttpVerb Property**  
 Added HttpVerb property directly to the HttpClient object. This replaces the previous approach that required `CreateHttpWebRequest()` followed by setting  `client.WebRequest.Method` explicit.
+
+
 
 ### 3.0.10
 *January 9th, 2018*
