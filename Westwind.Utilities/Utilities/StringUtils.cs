@@ -53,13 +53,13 @@ namespace Westwind.Utilities
 
 
         /// <summary>
-        /// Trims a sub string from a string
+        /// Trims a sub string from a string. 
         /// </summary>
         /// <param name="text"></param>
         /// <param name="textToTrim"></param>
-        /// <returns></returns>
+        /// <returns></returns>        
         public static string TrimStart(string text, string textToTrim, bool caseInsensitive)
-        {
+        {            
             while (true)
             {
                 string match = text.Substring(0, textToTrim.Length);
@@ -99,6 +99,122 @@ namespace Westwind.Utilities
         {
             return new StringBuilder().Insert(0, "input", charCount).ToString();
         }
+
+        /// <summary>
+        /// Finds the nth index of strting in a string
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="matchString"></param>
+        /// <param name="stringInstance"></param>
+        /// <returns></returns>
+        public static int IndexOfNth(this string source, string matchString, int stringInstance, StringComparison stringComparison = StringComparison.CurrentCulture)
+        {
+            if (string.IsNullOrEmpty(source))
+                return -1;
+
+            int lastPos = 0;
+            int count = 0;
+           
+            while (count < stringInstance )
+            {
+                var len = source.Length - lastPos;
+                lastPos = source.IndexOf(matchString, lastPos,len,stringComparison);
+                if (lastPos == -1)
+                    break;
+
+                count++;
+                if (count == stringInstance)
+                    return lastPos;
+
+                lastPos += matchString.Length;
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// Returns the nth Index of a character in a string
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="matchChar"></param>
+        /// <param name="charInstance"></param>
+        /// <returns></returns>
+        public static int IndexOfNth(this string source, char matchChar, int charInstance)        
+        {
+            if (string.IsNullOrEmpty(source))
+                return -1;
+
+            if (charInstance < 1)
+                return -1;
+
+            int count = 0;
+            for (int i = 0; i < source.Length; i++)
+            {
+                if (source[i] == matchChar)
+                {
+                    count++;
+                    if (count == charInstance)                 
+                        return i;                 
+                }
+            }
+            return -1;
+        }
+
+
+
+        /// <summary>
+        /// Finds the nth index of strting in a string
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="matchString"></param>
+        /// <param name="charInstance"></param>
+        /// <returns></returns>
+        public static int LastIndexOfNth(this string source, string matchString, int charInstance, StringComparison stringComparison = StringComparison.CurrentCulture)
+        {
+            if (string.IsNullOrEmpty(source))
+                return -1;
+
+            int lastPos = source.Length;
+            int count = 0;
+
+            while (count < charInstance)
+            {                
+                lastPos = source.LastIndexOf(matchString, lastPos, lastPos, stringComparison);
+                if (lastPos == -1)
+                    break;
+
+                count++;
+                if (count == charInstance)
+                    return lastPos;                
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// Finds the nth index of in a string from the end.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="matchChar"></param>
+        /// <param name="charInstance"></param>
+        /// <returns></returns>
+        public static int LastIndexOfNth(this string source, char matchChar, int charInstance)
+        {
+            if (string.IsNullOrEmpty(source))
+                return -1;
+
+            int count = 0;
+            for (int i = source.Length-1 ; i > -1; i--)
+            {
+                if (source[i] == matchChar)
+                {
+                    count++;
+                    if (count == charInstance)
+                        return i;
+                }
+            }
+            return -1;
+        }
+
+
 
         /// <summary>
         /// Return a string in proper Case format
@@ -390,7 +506,7 @@ namespace Westwind.Utilities
         /// <param name="s">String to check for lines</param>
         /// <param name="maxLines">Optional - max number of lines to return</param>
         /// <returns>array of strings, or null if the string passed was a null</returns>
-        public static string[] GetLines(string s, int maxLines = 0)
+        public static string[] GetLines(this string s, int maxLines = 0)
         {
             if (s == null)
                 return null;
@@ -408,7 +524,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="s">string to count lines for</param>
         /// <returns></returns>
-        public static int CountLines(string s)
+        public static int CountLines(this string s)
         {
             if (string.IsNullOrEmpty(s))
                 return 0;
@@ -434,58 +550,6 @@ namespace Westwind.Utilities
 
             return sb.ToString();
         }
-
-        /// <summary>
-        /// Returns the nth Index of a character in a string
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="matchChar"></param>
-        /// <param name="charInstance"></param>
-        /// <returns></returns>
-        public static int IndexOfNth(string source, char matchChar, int charInstance)        
-        {
-            if (string.IsNullOrEmpty(source))
-                return -1;
-
-            int count = 0;
-            for (int i = 0; i < source.Length; i++)
-            {
-                if (source[i] == matchChar)
-                {
-                    count++;
-                    if (count == charInstance)                 
-                        return i;                 
-                }
-            }
-            return -1;
-        }
-
-        /// <summary>
-        /// Finds the nth index of in a string from the end.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="matchChar"></param>
-        /// <param name="charInstance"></param>
-        /// <returns></returns>
-        public static int LastIndexOfNth(string source, char matchChar, int charInstance)
-        {
-            if (string.IsNullOrEmpty(source))
-                return -1;
-
-            int count = 0;
-            for (int i = source.Length-1 ; i > -1; i--)
-            {
-                if (source[i] == matchChar)
-                {
-                    count++;
-                    if (count == charInstance)
-                        return i;
-                }
-            }
-            return -1;
-        }
-
-
 
 
         static Regex tokenizeRegex = new Regex("{{.*?}}");
