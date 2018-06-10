@@ -1,6 +1,10 @@
 ﻿# Westwind.Utilities Changelog
 
 ### 3.0.15
+*not released yet*
+
+* **StringUtils.IndexOfNth() and .LastIndexOfNth()**  
+Helper that returns an index for the nTh occurrance of a matched character in string.
 
 * **ShellUtils.OpenInExplorer()**  
 Allows opening an Explorer Window for for a folder or file in a folder. (full framework only)
