@@ -18,7 +18,6 @@ Helpers that retrieve a display version string that can be used by an applicatio
 Added HttpVerb property directly to the HttpClient object. This replaces the previous approach that required `CreateHttpWebRequest()` followed by setting  `client.WebRequest.Method` explicit.
 
 
-
 ### 3.0.10
 *January 9th, 2018*
 

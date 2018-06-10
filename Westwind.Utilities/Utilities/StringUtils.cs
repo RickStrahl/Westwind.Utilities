@@ -417,43 +417,6 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Parses an string into an integer. If the value can't be parsed
-        /// a default value is returned instead
-        /// </summary>
-        /// <param name="input">Input numeric string to be parsed</param>
-        /// <param name="defaultValue">Optional default value if parsing fails</param>
-        /// <param name="formatProvider">Optional NumberFormat provider. Defaults to current culture's number format</param>
-        /// <returns></returns>
-        public static int ParseInt(string input, int defaultValue=0, IFormatProvider numberFormat = null)
-        {
-            if (numberFormat == null)
-                numberFormat = CultureInfo.CurrentCulture.NumberFormat;
-
-            int val = defaultValue;
-            if (!int.TryParse(input, NumberStyles.Any, numberFormat, out val))
-                return defaultValue;
-            return val;
-        }
-
-
-
-        /// <summary>
-        /// Parses an string into an decimal. If the value can't be parsed
-        /// a default value is returned instead
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        public static decimal ParseDecimal(string input, decimal defaultValue = 0M, IFormatProvider numberFormat = null)
-        {
-            numberFormat = numberFormat ?? CultureInfo.CurrentCulture.NumberFormat;
-            decimal val = defaultValue;
-            if (!decimal.TryParse(input, NumberStyles.Any, numberFormat, out val))
-                return defaultValue;
-            return val;
-        }
-
-        /// <summary>
         /// Strips all non digit values from a string and only
         /// returns the numeric string.
         /// </summary>
@@ -472,7 +435,59 @@ namespace Westwind.Utilities
             return sb.ToString();
         }
 
-        
+        /// <summary>
+        /// Returns the nth Index of a character in a string
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="matchChar"></param>
+        /// <param name="charInstance"></param>
+        /// <returns></returns>
+        public static int IndexOfNth(string source, char matchChar, int charInstance)        
+        {
+            if (string.IsNullOrEmpty(source))
+                return -1;
+
+            int count = 0;
+            for (int i = 0; i < source.Length; i++)
+            {
+                if (source[i] == matchChar)
+                {
+                    count++;
+                    if (count == charInstance)                 
+                        return i;                 
+                }
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// Finds the nth index of in a string from the end.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="matchChar"></param>
+        /// <param name="charInstance"></param>
+        /// <returns></returns>
+        public static int LastIndexOfNth(string source, char matchChar, int charInstance)
+        {
+            if (string.IsNullOrEmpty(source))
+                return -1;
+
+            int count = 0;
+            for (int i = source.Length-1 ; i > -1; i--)
+            {
+                if (source[i] == matchChar)
+                {
+                    count++;
+                    if (count == charInstance)
+                        return i;
+                }
+            }
+            return -1;
+        }
+
+
+
+
         static Regex tokenizeRegex = new Regex("{{.*?}}");
 
         /// <summary>
@@ -521,6 +536,43 @@ namespace Westwind.Utilities
                 i++;
             }
             return text;
+        }
+
+        /// <summary>
+        /// Parses an string into an integer. If the value can't be parsed
+        /// a default value is returned instead
+        /// </summary>
+        /// <param name="input">Input numeric string to be parsed</param>
+        /// <param name="defaultValue">Optional default value if parsing fails</param>
+        /// <param name="formatProvider">Optional NumberFormat provider. Defaults to current culture's number format</param>
+        /// <returns></returns>
+        public static int ParseInt(string input, int defaultValue=0, IFormatProvider numberFormat = null)
+        {
+            if (numberFormat == null)
+                numberFormat = CultureInfo.CurrentCulture.NumberFormat;
+
+            int val = defaultValue;
+            if (!int.TryParse(input, NumberStyles.Any, numberFormat, out val))
+                return defaultValue;
+            return val;
+        }
+
+
+
+        /// <summary>
+        /// Parses an string into an decimal. If the value can't be parsed
+        /// a default value is returned instead
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        public static decimal ParseDecimal(string input, decimal defaultValue = 0M, IFormatProvider numberFormat = null)
+        {
+            numberFormat = numberFormat ?? CultureInfo.CurrentCulture.NumberFormat;
+            decimal val = defaultValue;
+            if (!decimal.TryParse(input, NumberStyles.Any, numberFormat, out val))
+                return defaultValue;
+            return val;
         }
 
         #endregion

@@ -313,6 +313,68 @@ multiple lines";
             Assert.IsTrue(count == 0);
         }
 
+        [TestMethod]
+        public void IndexOfNthTest()
+        {
+            string version = "1.11.13.2";
+
+            var idx = StringUtils.IndexOfNth(version, '.', 1);
+            Assert.IsTrue(idx == 1);
+
+
+            idx = StringUtils.IndexOfNth(version, '.', 3);
+            Assert.IsTrue(version.Substring(idx, 1) == ".");
+
+            idx = StringUtils.IndexOfNth(version, '.', 2);
+            Assert.IsTrue(version.Substring(idx, 1) == ".");
+
+            idx = StringUtils.IndexOfNth(version, '.', 1);
+            Assert.IsTrue(version.Substring(idx, 1) == ".");
+
+            idx = StringUtils.IndexOfNth(version, '.', 4);
+            Assert.IsTrue(idx == -1,"");
+
+            version = string.Empty;
+            idx = StringUtils.IndexOfNth(version, '.', 2);
+            Assert.IsTrue(idx == -1);
+
+            version = null;
+            idx = StringUtils.IndexOfNth(version, '.', 2);
+            Assert.IsTrue(idx == -1);
+        }
+
+
+        [TestMethod]
+        public void LastIndexOfNthTest()
+        {
+            string version = "1.11.13.2";
+
+            var idx = StringUtils.LastIndexOfNth(version, '.', 3);
+            Assert.IsTrue(idx == 1);
+
+
+            idx = StringUtils.LastIndexOfNth(version, '.', 1);
+            Assert.IsTrue(version.Substring(idx, 1) == ".");
+
+            idx = StringUtils.LastIndexOfNth(version, '.', 2);
+            Assert.IsTrue(version.Substring(idx, 1) == ".");
+
+            idx = StringUtils.LastIndexOfNth(version, '.', 3);
+            Assert.IsTrue(version.Substring(idx, 1) == ".");
+            Assert.IsTrue(idx == 1);
+
+            idx = StringUtils.LastIndexOfNth(version, '.', 4);
+            Assert.IsTrue(idx == -1);
+
+            version = string.Empty;
+            idx = StringUtils.LastIndexOfNth(version, '.', 2);
+            Assert.IsTrue(idx == -1);
+
+            version = null;
+            idx = StringUtils.LastIndexOfNth(version, '.', 2);
+            Assert.IsTrue(idx == -1);
+        }
+
 
 
         [TestMethod]
