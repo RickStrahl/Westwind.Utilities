@@ -79,6 +79,23 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
+        /// Trims a string to a specific number of max characters
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="charCount"></param>
+        /// <returns></returns>
+        public static string TrimTo(string value, int charCount)
+        {
+            if (value == null)
+                return string.Empty;
+
+            if (value.Length > charCount)
+                return value.Substring(0, charCount);
+
+            return value;
+        }
+
+        /// <summary>
         /// Replicates an input string n number of times
         /// </summary>
         /// <param name="input"></param>
@@ -213,8 +230,9 @@ namespace Westwind.Utilities
             }
             return -1;
         }
+        #endregion
 
-
+        #region String Casing
 
         /// <summary>
         /// Return a string in proper Case format
@@ -320,36 +338,22 @@ namespace Westwind.Utilities
             return value + terminator;
         }
 
-        /// <summary>
-        /// Trims a string to a specific number of max characters
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="charCount"></param>
-        /// <returns></returns>
-        public static string TrimTo(string value, int charCount)
-        {
-            if (value == null)
-                return string.Empty;
-
-            if (value.Length > charCount)
-                return value.Substring(0, charCount);
-
-            return value;
-        }
-
         #endregion
 
         #region String Manipulation
+
         /// <summary>
         /// Extracts a string from between a pair of delimiters. Only the first 
         /// instance is found.
         /// </summary>
         /// <param name="source">Input String to work on</param>
-        /// <param name="StartDelim">Beginning delimiter</param>
+        /// <param name="beginDelim">Beginning delimiter</param>
         /// <param name="endDelim">ending delimiter</param>
-        /// <param name="CaseInsensitive">Determines whether the search for delimiters is case sensitive</param>
-        /// <returns>Extracted string or ""</returns>
-        public static string ExtractString(string source,
+        /// <param name="caseSensitive">Determines whether the search for delimiters is case sensitive</param>        
+        /// <param name="allowMissingEndDelimiter"></param>
+        /// <param name="returnDelimiters"></param>
+        /// <returns>Extracted string or string.Empty on no match</returns>
+        public static string ExtractString(this string source,
             string beginDelim,
             string endDelim,
             bool caseSensitive = false,
@@ -363,11 +367,11 @@ namespace Westwind.Utilities
 
             if (caseSensitive)
             {
-                at1 = source.IndexOf(beginDelim);
+                at1 = source.IndexOf(beginDelim,StringComparison.CurrentCulture);
                 if (at1 == -1)
                     return string.Empty;
 
-                at2 = source.IndexOf(endDelim, at1 + beginDelim.Length);
+                at2 = source.IndexOf(endDelim, at1 + beginDelim.Length,StringComparison.CurrentCulture);
             }
             else
             {
@@ -397,7 +401,6 @@ namespace Westwind.Utilities
 
             return string.Empty;
         }
-
 
 
         /// <summary>
