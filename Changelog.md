@@ -1,6 +1,6 @@
 ﻿# Westwind.Utilities Changelog
 
-### 3.0.15
+### 3.0.16
 *not released yet*
 
 * **StringUtils.IndexOfNth() and .LastIndexOfNth()**  
@@ -21,6 +21,8 @@ Helpers that retrieve a display version string that can be used by an applicatio
 * **HttpClient.HttpVerb Property**  
 Added HttpVerb property directly to the HttpClient object. This replaces the previous approach that required `CreateHttpWebRequest()` followed by setting  `client.WebRequest.Method` explicit.
 
+* **LanguageUtils.IgnoreErrors()**   
+Helper functions that allows you to execute a block of code explicitly with a wrapped around try/catch block. Two version - one that returns true or false, one that allows the operation to return a result.
 
 ### 3.0.10
 *January 9th, 2018*
