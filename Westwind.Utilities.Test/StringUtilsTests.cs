@@ -154,6 +154,19 @@ namespace Westwind.Utilities.Tests
         }
 
         [TestMethod]
+        public void ReplicateStringTest()
+        {
+            Assert.IsTrue(StringUtils.Replicate("123", 3) == "123123123");
+            Assert.IsTrue(StringUtils.Replicate("1", 2) == "11");
+        }
+
+        [TestMethod]
+        public void ReplicateCharTest()
+        {            
+            Assert.IsTrue(StringUtils.Replicate('1', 4) == "1111");
+        }
+
+        [TestMethod]
         public void Base36EncodeTest()
         {
             // positive number

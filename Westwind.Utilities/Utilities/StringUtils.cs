@@ -114,7 +114,7 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static string Replicate(char character, int charCount)
         {
-            return new StringBuilder().Insert(0, "input", charCount).ToString();
+            return new StringBuilder().Insert(0, character.ToString(), charCount).ToString();
         }
 
         /// <summary>
