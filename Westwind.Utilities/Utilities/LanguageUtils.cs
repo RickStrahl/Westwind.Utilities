@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Westwind.Utilities.Utilities
+namespace Westwind.Utilities
 {
 
     public static class LanguageUtils
