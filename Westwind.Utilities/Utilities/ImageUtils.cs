@@ -136,14 +136,12 @@ namespace Westwind.Utilities
 
         /// <summary>
         /// Resizes an image from a bitmap.
-        /// 
-        /// Note it will size to the larger of the sides 
-        /// 
+        /// Note image will resize to the larger of the two sides
         /// </summary>
-        /// <param name="bmp"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
+        /// <param name="bmp">Bitmap to resize</param>
+        /// <param name="width">new width</param>
+        /// <param name="height">new height</param>
+        /// <returns>resized or original bitmap. Be sure to Dispose this bitmap</returns>
         public static Bitmap ResizeImage(Bitmap bmp, int width, int height,
                                          InterpolationMode mode = InterpolationMode.HighQualityBicubic)
         {
@@ -191,18 +189,19 @@ namespace Westwind.Utilities
                         newWidth = (int)lnTemp;
                     }
                 }
-
-                //bmpOut = new Bitmap(bmp, new Size( newWidth, newHeight));                     
+                                    
                 bmpOut = new Bitmap(newWidth, newHeight);
                 bmpOut.SetResolution(bmp.HorizontalResolution, bmp.VerticalResolution);
 
-                Graphics g = Graphics.FromImage(bmpOut);
-                g.InterpolationMode = mode;
-                g.SmoothingMode = SmoothingMode.HighQuality;
-                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                using (Graphics g = Graphics.FromImage(bmpOut))
+                {
+                    g.InterpolationMode = mode;
+                    g.SmoothingMode = SmoothingMode.HighQuality;
+                    g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                g.FillRectangle(Brushes.White, 0, 0, newWidth, newHeight);
-                g.DrawImage(bmp, 0, 0, newWidth, newHeight);
+                    g.FillRectangle(Brushes.White, 0, 0, newWidth, newHeight);
+                    g.DrawImage(bmp, 0, 0, newWidth, newHeight);
+                }
             }
             catch
             {
@@ -210,6 +209,115 @@ namespace Westwind.Utilities
             }
 
             return bmpOut;
+        }
+
+        /// <summary>
+        /// Adjusts an image to a specific aspect ratio by clipping
+        /// from the center outward - essentially capturing the center
+        /// to fit the width/height of the aspect ratio.
+        /// </summary>
+        /// <param name="imageStream">Stream to an image</param>
+        /// <param name="ratio">Aspect ratio default is 16:9</param>
+        /// <param name="resizeWidth">Optionally resize with to this width (if larger than height)</param>
+        /// <param name="resizeHeight">Optionally resize to this height (if larger than width)</param>
+        /// <returns>Bitmap image - make sure to dispose this image</returns>
+        public static Bitmap AdjustImageToRatio(Stream imageStream, decimal ratio = 16M / 9M, int resizeWidth = 0,
+            int resizeHeight = 0)
+        {
+            if (imageStream == null)
+                return null;
+
+            decimal width = 0;
+            decimal height = 0;
+
+
+            Bitmap bmpOut = null;
+            Bitmap bitmap = null;
+
+            try
+            {
+                bitmap = new Bitmap(imageStream);
+
+                height = bitmap.Height;
+                width = bitmap.Width;
+
+                if (width >= height * ratio)
+                {
+                    // clip width
+                    decimal clipWidth = height * ratio;
+                    decimal clipX = (width - clipWidth) / 2;
+
+                    bmpOut = new Bitmap((int) clipWidth, (int) height);
+                    bmpOut.SetResolution(bitmap.HorizontalResolution, bitmap.VerticalResolution);
+
+                    using (Graphics g = Graphics.FromImage(bmpOut))
+                    {
+                        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                        g.SmoothingMode = SmoothingMode.HighQuality;
+                        g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+
+                        var sourceRect = new Rectangle((int) clipX, 0, (int) clipWidth, (int) height);
+                        var targetRect = new Rectangle(0, 0, (int) clipWidth, (int) height);
+
+                        g.DrawImage(bitmap, targetRect, sourceRect, GraphicsUnit.Pixel);
+                    }
+                }
+                else if (width < height * ratio)
+                {
+                    // clip height
+                    decimal clipHeight = width / ratio;
+                    decimal clipY = (height - clipHeight) / 2;
+
+                    bmpOut = new Bitmap((int) width, (int) clipHeight);
+                    bmpOut.SetResolution(bitmap.HorizontalResolution, bitmap.VerticalResolution);
+
+                    using (Graphics g = Graphics.FromImage(bmpOut))
+                    {
+                        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                        g.SmoothingMode = SmoothingMode.HighQuality;
+                        g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                        var sourceRect = new Rectangle(0, (int) clipY, (int) width, (int) clipHeight);
+                        var targetRect = new Rectangle(0, 0, (int) width, (int) clipHeight);
+
+                        g.DrawImage(bitmap, targetRect, sourceRect, GraphicsUnit.Pixel);
+                    }
+                }
+                else
+                    bmpOut = bitmap;
+
+                if (resizeWidth == 0 || resizeWidth == 0)
+                    return bmpOut;
+
+                var resizedImage = ResizeImage(bmpOut, resizeWidth, resizeHeight);
+                return resizedImage;
+            }
+            finally
+            {
+                bitmap?.Dispose();
+                bmpOut?.Dispose();
+            }
+        }
+
+
+        /// <summary>
+        /// Adjusts an image to a specific aspect ratio by clipping
+        /// from the center outward - essentially capturing the center
+        /// to fit the width/height of the aspect ratio.
+        /// </summary>
+        /// <param name="imageContent"></param>
+        /// <param name="ratio"></param>
+        /// <param name="resizeWidth"></param>
+        /// <param name="resizeHeight"></param>
+        /// <returns></returns>
+        public static Bitmap AdjustImageToRatio(byte[] imageContent, decimal ratio = 16M / 9M, int resizeWidth = 0,
+            int resizeHeight = 0)
+        {
+            using (var ms = new MemoryStream(imageContent))
+            {
+                return AdjustImageToRatio(ms, ratio, resizeWidth, resizeHeight);
+            }
         }
 
 
@@ -249,6 +357,44 @@ namespace Westwind.Utilities
 
             return true;
         }
+
+        /// <summary>
+        /// Saves a jpeg BitMap  to disk with a jpeg quality setting.
+        /// Does not dispose the bitmap.
+        /// </summary>
+        /// <param name="bmp">Bitmap to save</param>
+        /// <param name="outputStream">Binary stream to write image data to</param>
+        /// <param name="jpegQuality"></param>
+        /// <returns></returns>
+        public static bool SaveJpeg(Bitmap bmp, Stream imageStream, long jpegQuality = 90)
+        {
+            try
+            {
+                //get the jpeg codec
+                ImageCodecInfo jpegCodec = null;
+                if (Encoders.ContainsKey("image/jpeg"))
+                    jpegCodec = Encoders["image/jpeg"];
+
+                EncoderParameters encoderParams = null;
+                if (jpegCodec != null)
+                {
+                    //create an encoder parameter for the image quality
+                    EncoderParameter qualityParam = new EncoderParameter(Encoder.Quality, jpegQuality);
+
+                    //create a collection of all parameters that we will pass to the encoder
+                    encoderParams = new EncoderParameters(1);
+                    encoderParams.Param[0] = qualityParam;
+                }
+                bmp.Save(imageStream, jpegCodec, encoderParams);
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
 
         /// <summary>
         /// Rotates an image and writes out the rotated image to a file.
