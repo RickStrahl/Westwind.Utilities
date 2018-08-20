@@ -1,6 +1,6 @@
 ﻿# Westwind.Utilities Changelog
 
-### 3.0.16
+### 3.0.18
 *not released yet*
 
 * **StringUtils.IndexOfNth() and .LastIndexOfNth()**  
@@ -23,6 +23,9 @@ Added HttpVerb property directly to the HttpClient object. This replaces the pre
 
 * **LanguageUtils.IgnoreErrors()**   
 Helper functions that allows you to execute a block of code explicitly with a wrapped around try/catch block. Two version - one that returns true or false, one that allows the operation to return a result.
+
+* **ImageUtils.AdjustAspectRatio**   
+Image helper routine that crops an image according to a new aspect ratio from the center outward. Useful for creating uniform images in uploaded files for previews. Also optionally resizes the adjusted image to a fixed width or height.
 
 ### 3.0.10
 *January 9th, 2018*
