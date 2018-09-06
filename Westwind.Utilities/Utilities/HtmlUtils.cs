@@ -232,11 +232,11 @@ namespace Westwind.Utilities
 				// Just to be sure fix up any double slashes
 				return newUrl;
 #else
-				throw new ArgumentException("Invalid URL: Relative URL not allowed.");
+                throw new ArgumentException("Invalid URL: Relative URL not allowed.");
 #endif
-			}
+            }
 
-			return originalUrl;
+            return originalUrl;
         }
 
 
@@ -254,15 +254,14 @@ namespace Westwind.Utilities
 
         static string HtmlSanitizeTagBlackList { get; } = "script|iframe|object|embed|form";
 
-        static Regex _RegExScript = new Regex(
-    $@"(<({HtmlSanitizeTagBlackList})\b[^<]*(?:(?!<\/({HtmlSanitizeTagBlackList}))<[^<]*)*<\/({HtmlSanitizeTagBlackList})>)",
-    RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        static Regex _RegExScript = new Regex($@"(<({HtmlSanitizeTagBlackList})\b[^<]*(?:(?!<\/({HtmlSanitizeTagBlackList}))<[^<]*)*<\/({HtmlSanitizeTagBlackList})>)",
+        RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         // strip javascript: and unicode representation of javascript:
         // href='javascript:alert(\"gotcha\")'
         // href='&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;:alert(\"gotcha\");'
         static Regex _RegExJavaScriptHref = new Regex(
-            @"<.*?(href|src|dynsrc|lowsrc)=.{0,20}((javascript:)|(&#106;&#97)).*?>",
+            @"<.*?(href|src|dynsrc|lowsrc)=.{0,20}((javascript:)|(&#)).*?>",
             RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         static Regex _RegExOnEventAttributes = new Regex(

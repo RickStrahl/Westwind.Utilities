@@ -1,7 +1,7 @@
 ﻿# Westwind.Utilities Changelog
 
-### 3.0.19
-*September 5th, 2018**
+### 3.0.20
+*September 6th, 2018**
 
 * **HtmlUtils.SanitizeHtml()**  
 RegEx based HTML sanitation that handles the most common script injection scenarios for `<script>`,`<iframe>`,`<form>` etc. tags, `javascript:` script embeds and `onXXX` DOM element event handlers.
