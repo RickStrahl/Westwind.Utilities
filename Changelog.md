@@ -1,7 +1,10 @@
 ﻿# Westwind.Utilities Changelog
 
-### 3.0.18
-*not released yet*
+### 3.0.19
+*September 5th, 2018**
+
+* **HtmlUtils.SanitizeHtml()**  
+RegEx based HTML sanitation that handles the most common script injection scenarios for `<script>`,`<iframe>`,`<form>` etc. tags, `javascript:` script embeds and `onXXX` DOM element event handlers.
 
 * **StringUtils.IndexOfNth() and .LastIndexOfNth()**  
 Helper that returns an index for the nTh occurrance of a matched character in string.

@@ -25,9 +25,9 @@
     <RepositoryType>Github</RepositoryType>
     <Company>West Wind Technologies</Company>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>3.0.18</Version>
-    <AssemblyVersion>3.0.18</AssemblyVersion>
-    <FileVersion>3.0.18</FileVersion>    
+    <Version>3.0.19</Version>
+    <AssemblyVersion>3.0.19</AssemblyVersion>
+    <FileVersion>3.0.19</FileVersion>    
     <RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
   </PropertyGroup>
 
