@@ -502,6 +502,19 @@ namespace Westwind.Utilities
             return list.Contains(s);
         }
 
+
+        /// <summary>
+        /// String.Contains() extension method that allows to specify case
+        /// </summary>
+        /// <param name="text">Input text</param>
+        /// <param name="searchFor">text to search for</param>
+        /// <param name="stringComparison">Case sensitivity options</param>
+        /// <returns></returns>
+        public static bool Contains(this string text, string searchFor, StringComparison stringComparison)
+        {
+            return text.IndexOf(searchFor, stringComparison) > -1;
+        }
+
         /// <summary>
         /// Parses a string into an array of lines broken
         /// by \r\n or \n
