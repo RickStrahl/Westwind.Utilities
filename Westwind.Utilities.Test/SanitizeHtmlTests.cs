@@ -5,7 +5,7 @@ using Westwind.Utilities;
 namespace Westwind.Utilities.Tests
 {
     [TestClass]
-    public class HtmlSanitizeTests
+    public class SanitizeHtmlTests
     {
         [TestMethod]
         public void HtmlSanitizeScriptTags()

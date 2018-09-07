@@ -261,7 +261,7 @@ namespace Westwind.Utilities
         // href='javascript:alert(\"gotcha\")'
         // href='&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;:alert(\"gotcha\");'
         static Regex _RegExJavaScriptHref = new Regex(
-            @"<.*?(href|src|dynsrc|lowsrc)=.{0,20}((javascript:)|(&#)).*?>",
+            @"<.*?\s(href|src|dynsrc|lowsrc)=.{0,20}((javascript:)|(&#)).*?>",
             RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         static Regex _RegExOnEventAttributes = new Regex(
@@ -302,7 +302,7 @@ namespace Westwind.Utilities
             {
                 if (match.Groups.Count > 2)
                 {
-                    var txt = match.Value.Replace(match.Groups[2].Value, "'#'");
+                    var txt = match.Value.Replace(match.Groups[2].Value, "unsupported:");
                     html = html.Replace(match.Value, txt);
                 }
             }
