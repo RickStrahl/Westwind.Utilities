@@ -508,9 +508,13 @@ namespace Westwind.Utilities.Data
             return parm;
         }
 
+        #endregion
+
+        #region Transactions
         /// <summary>
         /// Starts a new transaction on this connection/instance
         /// </summary>
+        /// <remarks>Opens a Connection and keeps it open for the duration of the transaction. Calls to `.CloseConnection` while the transaction is active have no effect.</remarks>
         /// <returns></returns>
         public virtual bool BeginTransaction()
         {
@@ -530,6 +534,7 @@ namespace Westwind.Utilities.Data
         /// <summary>
         /// Commits all changes to the database and ends the transaction
         /// </summary>
+        /// <remarks>Closes Connection</remarks>
         /// <returns></returns>
         public virtual bool CommitTransaction()
         {
@@ -552,6 +557,7 @@ namespace Westwind.Utilities.Data
         /// <summary>
         /// Rolls back a transaction
         /// </summary>
+        /// <remarks>Closes Connection</remarks>
         /// <returns></returns>
         public virtual bool RollbackTransaction()
         {
