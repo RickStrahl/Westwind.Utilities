@@ -7,6 +7,8 @@ namespace Westwind.Utilities.Tests
     [TestClass]
     public class SanitizeHtmlTests
     {
+
+#if NETFULL
         [TestMethod]
         public void HtmlSanitizeScriptTags()
         {
@@ -17,7 +19,7 @@ namespace Westwind.Utilities.Tests
             Console.WriteLine(result);
             Assert.IsTrue(!result.Contains("<ScRipt>"));
         }
-
+#endif
 
         [TestMethod]
         public void HtmlSanitizeJavaScriptTags()
@@ -64,6 +66,18 @@ namespace Westwind.Utilities.Tests
 
             Console.WriteLine(result);
             Assert.IsTrue(!result.Contains("onmouseover:") && !result.Contains("onclick"));
+        }
+
+        [TestMethod]
+        public void IncorrectOnParsingBugTest()
+        {
+            string html = "<div><a href=\"https://west-wind.com\">This</a> is on ss <a href=\"https://markdownmonster.west-wind.com\">time</a> train.";
+
+            var result = HtmlUtils.SanitizeHtml(html);
+
+            Console.WriteLine(result);
+            
+
         }
     }
 }

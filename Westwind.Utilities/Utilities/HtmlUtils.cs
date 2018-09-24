@@ -265,7 +265,7 @@ namespace Westwind.Utilities
             RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         static Regex _RegExOnEventAttributes = new Regex(
-            @"<.*?\s(on.{4,12}=([""].*?[""]|['].*?['])).*?(>|\/>)",
+            @"<.*?\s(on[^\s\\]{0,20}=([""].*?[""]|['].*?['])).*?(>|\/>)",
             RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         /// <summary>
