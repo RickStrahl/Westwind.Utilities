@@ -71,13 +71,24 @@ namespace Westwind.Utilities.Tests
         [TestMethod]
         public void IncorrectOnParsingBugTest()
         {
-            string html = "<div><a href=\"https://west-wind.com\">This</a> is on ss <a href=\"https://markdownmonster.west-wind.com\">time</a> train.";
+            string html = "<div><a href=\"https://west-wind.com\">This</a> is on <a href=\"https://markdownmonster.west-wind.com\">time</a> train.";
 
             var result = HtmlUtils.SanitizeHtml(html);
 
             Console.WriteLine(result);
-            
+            Assert.IsTrue(result.Contains("on <"), "On shouldn't be transformed or removed: " + result);
+        }
 
+
+        [TestMethod]
+        public void IncorrectOnEventParsingWithFakeEventInBodyTest()
+        {
+            string html = "<div><a href=\"https://west-wind.com\">This</a> is onchange=\"this should stay\" <a href=\"https://markdownmonster.west-wind.com\">time</a> train.";
+
+            var result = HtmlUtils.SanitizeHtml(html);
+
+            Console.WriteLine(result);
+            Assert.IsTrue(result.Contains("onchange="), "OnChange should not  be removed: " + result);
         }
     }
 }
