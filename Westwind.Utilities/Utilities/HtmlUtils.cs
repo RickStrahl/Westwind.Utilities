@@ -261,12 +261,12 @@ namespace Westwind.Utilities
         // href='javascript:alert(\"gotcha\")'
         // href='&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;:alert(\"gotcha\");'
         static Regex _RegExJavaScriptHref = new Regex(
-            @"<.*?\s(href|src|dynsrc|lowsrc)=.{0,20}((javascript:)|(&#)).*?>",
-            RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            @"<[^>]*?\s(href|src|dynsrc|lowsrc)=.{0,20}((javascript:)|(&#)).*?>",
+            RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
         static Regex _RegExOnEventAttributes = new Regex(
             @"<[^>]*?\s(on[^\s\\]{0,20}=([""].*?[""]|['].*?['])).*?(>|\/>)",
-            RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
         /// <summary>
         /// Sanitizes HTML to some of the most of 

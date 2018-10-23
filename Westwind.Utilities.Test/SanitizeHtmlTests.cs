@@ -7,8 +7,6 @@ namespace Westwind.Utilities.Tests
     [TestClass]
     public class SanitizeHtmlTests
     {
-
-#if NETFULL
         [TestMethod]
         public void HtmlSanitizeScriptTags()
         {
@@ -19,7 +17,6 @@ namespace Westwind.Utilities.Tests
             Console.WriteLine(result);
             Assert.IsTrue(!result.Contains("<ScRipt>"));
         }
-#endif
 
         [TestMethod]
         public void HtmlSanitizeJavaScriptTags()
@@ -44,6 +41,17 @@ namespace Westwind.Utilities.Tests
         }
 
         [TestMethod]
+        public void HtmlSanitizeJavaScriptTagsSingleQuotesWithLineBreaksInTag()
+        {
+            string html = "<div>User input with <a \r\n  href='javascript: alert(\"Gotcha\");'>Don't hurt me!<a/></div>";
+
+            var result = HtmlUtils.SanitizeHtml(html);
+            
+            Console.WriteLine(result);
+            Assert.IsTrue(!result.Contains("javascript:"));
+        }
+
+        [TestMethod]
         public void HtmlSanitizeJavaScriptTagsWithUnicodeQuotes()
         {
             string html = "<div>User input with <a href='&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;:alert(\"javascript active\");'>Don't hurt me!<a/></div>";
@@ -60,6 +68,20 @@ namespace Westwind.Utilities.Tests
         {
             string html = "<div onmouseover=\"alert('Gotcha!')\">User input with " +
                           "<div onclick='alert(\"Gotcha!\");'>Don't hurt me!<div/>" +
+                          "</div>";
+
+            var result = HtmlUtils.SanitizeHtml(html);
+
+            Console.WriteLine(result);
+            Assert.IsTrue(!result.Contains("onmouseover:") && !result.Contains("onclick"));
+        }
+
+
+        [TestMethod]
+        public void HtmlSanitizeEventAttributesWithLineBreaks()
+        {
+            string html = "<div\r\n   onmouseover=\"alert('Gotcha!')\">User input with " +
+                          "<div \r\n  onclick='alert(\"Gotcha!\");'>Don't hurt me!<div/>" +
                           "</div>";
 
             var result = HtmlUtils.SanitizeHtml(html);
