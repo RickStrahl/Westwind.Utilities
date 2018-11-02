@@ -31,7 +31,7 @@ namespace Westwind.Utilities.Data.Tests
                 Assert.IsNotNull(entry.Message, "Entry Message should not be null");
                 Assert.IsTrue(entry.ErrorLevel != ErrorLevels.None, "Entry Error level should not be None (error)");
             }
-        } 
+        }
 
         [TestMethod]
         public void DataReaderToIEnumerableObjectTest()

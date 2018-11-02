@@ -1,7 +1,13 @@
 ﻿# Westwind.Utilities Changelog
 
+### 3.0.22
+*not released yet*
+
+* **Fix: HtmlUtils.SanitizeHtml() for multi-line**  
+Fix SanitizeHtml() function to work across line breaks for a tag.
+
 ### 3.0.20
-*September 6th, 2018**
+*September 6th, 2018*
 
 * **HtmlUtils.SanitizeHtml()**  
 RegEx based HTML sanitation that handles the most common script injection scenarios for `<script>`,`<iframe>`,`<form>` etc. tags, `javascript:` script embeds and `onXXX` DOM element event handlers.
