@@ -654,15 +654,15 @@ namespace Westwind.Utilities
 #if NETFULL
             return DbProviderFactories.GetFactory(providerName);
 #else
-            var providername = providerName.ToLower();
+            var lowerProvider = providerName.ToLower();
 
-            if (providerName == "system.data.sqlclient")
+            if (lowerProvider == "system.data.sqlclient")
                 return GetDbProviderFactory(DataAccessProviderTypes.SqlServer);
-            if (providerName == "system.data.sqlite" || providerName == "microsoft.data.sqlite")
+            if (lowerProvider == "system.data.sqlite" || lowerProvider == "microsoft.data.sqlite")
                 return GetDbProviderFactory(DataAccessProviderTypes.SqLite);
-            if (providerName == "mysql.data.mysqlclient" || providername == "mysql.data")
+            if (lowerProvider == "mysql.data.mysqlclient" || lowerProvider == "mysql.data")
                 return GetDbProviderFactory(DataAccessProviderTypes.MySql);            
-            if (providerName == "npgsql")
+            if (lowerProvider == "npgsql")
                 return GetDbProviderFactory(DataAccessProviderTypes.PostgreSql);            
 
             throw new NotSupportedException(string.Format(Resources.UnsupportedProviderFactory,providerName));
