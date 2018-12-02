@@ -99,7 +99,31 @@ namespace Westwind.Utilities.Tests
 			Assert.IsTrue(isLive.Value);
 
 		}
-	}
+
+        [TestMethod]
+        public void XmlStringForElement()
+        {
+            var text = "Characters: <doc> \" ' &" + (char)10;
+
+            var xmlString = XmlUtils.XmlString(text);
+
+            Assert.IsTrue(xmlString.Contains("&lt;doc&gt;"));
+            Assert.IsTrue(xmlString.Contains("&amp;"));
+            Assert.IsFalse(xmlString.Contains("&apos;") || xmlString.Contains("&quot;"));
+        }
+
+        [TestMethod]
+        public void XmlStringForAttributes()
+        {
+            var text = "Characters: <doc> \" ' &" + (char)10;
+
+            var xmlString = XmlUtils.XmlString(text,true);
+
+            Assert.IsTrue(xmlString.Contains("&lt;doc&gt;"));
+            Assert.IsTrue(xmlString.Contains("&amp;"));
+            Assert.IsTrue(xmlString.Contains("&apos;") || xmlString.Contains("&quot;"),"Missing quotes.");
+        }
+    }
 
 	public enum TestKeyValues
 	{

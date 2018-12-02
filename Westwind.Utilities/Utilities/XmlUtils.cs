@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          © West Wind Technologies, 2008 - 2009
+ *          Â© West Wind Technologies, 2008 - 2009
  *          http://www.west-wind.com/
  * 
  * Created: 09/08/2008
@@ -33,7 +33,9 @@
 
 using System;
 using System.Globalization;
+using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using Westwind.Utilities.Properties;
 
 
@@ -45,14 +47,70 @@ namespace Westwind.Utilities
     public static class XmlUtils
     {
 
-	    /// <summary>
-	    /// Retrieves a result string from an XPATH query. Null if not found.
-	    /// </summary>
-	    /// <param name="node"></param>
-	    /// <param name="xPath"></param>
-	    /// <param name="ns"></param>
-	    /// <returns></returns>
-	    public static XmlNode GetXmlNode(XmlNode node, string xPath, XmlNamespaceManager ns = null)
+
+        ///  <summary>
+        ///  Turns a string into a properly XML Encoded string.
+        ///  Uses simple string replacement.
+        /// 
+        ///  Also see XmlUtils.XmlString() which uses XElement
+        ///  to handle additional extended characters.
+        ///  </summary>
+        ///  <param name="text">Plain text to convert to XML Encoded string</param>
+        /// <param name="encodeQuotes">
+        /// If true encodes single and double quotes.
+        /// When embedding element values quotes don't need to be encoded.
+        /// When embedding attributes quotes need to be encoded.
+        /// </param>
+        /// <returns>XML encoded string</returns>
+        ///  <exception cref="InvalidOperationException">Invalid character in XML string</exception>
+        public static string XmlString(string text, bool encodeQuotes = false)
+        {
+            var sb = new StringBuilder(text.Length);
+
+            foreach (var chr in text)
+            {
+                if (chr == '<')
+                    sb.Append("&lt;");
+                else if (chr == '>')
+                    sb.Append("&gt;");
+                else if (chr == '&')
+                    sb.Append("&amp;");
+
+                // special handling for quotes
+                else if (encodeQuotes && chr == '\"')
+                    sb.Append("&quot;");
+                else if (encodeQuotes && chr == '\'')
+                    sb.Append("&apos;");
+
+                // Legal sub-chr32 characters
+                else if (chr == '\n')
+                    sb.Append("\n");
+                else if (chr == '\r')
+                    sb.Append("\r");
+                else if (chr == '\t')
+                    sb.Append("\t");
+
+                else
+                {
+                    if (chr < 32)
+                        throw new InvalidOperationException("Invalid character in Xml String. Chr " +
+                                                            Convert.ToInt16(chr) + " is illegal.");
+                    sb.Append(chr);
+                }
+            }
+
+            return sb.ToString();
+        }
+
+
+        /// <summary>
+        /// Retrieves a result string from an XPATH query. Null if not found.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="xPath"></param>
+        /// <param name="ns"></param>
+        /// <returns></returns>
+        public static XmlNode GetXmlNode(XmlNode node, string xPath, XmlNamespaceManager ns = null)
 	    {
 		    return  node.SelectSingleNode(xPath, ns);		    
 	    }
