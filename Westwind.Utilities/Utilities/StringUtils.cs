@@ -1061,6 +1061,8 @@ namespace Westwind.Utilities
             return StringUtils.ExtractString(propertyString, "<" + key + ">", "</" + key + ">");
         }
 
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -1085,31 +1087,6 @@ namespace Westwind.Utilities
 
             // add new
             return propertyString + xmlLine + "\r\n";
-        }
-
-        #endregion
-
-        #region Obsolete
-        /// <summary>
-        /// Determines whether a string is empty (null or zero length)
-        /// </summary>
-        /// <param name="text">Input string</param>
-        /// <returns>true or false</returns>
-        [Obsolete("Use string.IsNullOrEmpty() instead")]
-        public static bool Empty(string text)
-        {
-            return string.IsNullOrEmpty(text);
-        }
-
-        /// <summary>
-        /// Determines wheter a string is empty (null or zero length)
-        /// </summary>
-        /// <param name="text">Input string (in object format)</param>
-        /// <returns>true or false</returns>        
-        [Obsolete("Use string.IsNullOrEmpty() instead")]
-        public static bool Empty(object text)
-        {
-            return string.IsNullOrEmpty(text as string);
         }
 
         #endregion
