@@ -6,21 +6,26 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.CSharp" Version="4.4.0" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
 		
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="1.2.0" />
-		<PackageReference Include="MSTest.TestFramework" Version="1.2.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-		<PackageReference Include="System.Data.SQLite" Version="1.0.109.2" />	  	  
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
+		<PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+	  <PackageReference Include="System.Data.SQLite" Version="1.0.109.2" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />
-	  <PackageReference Include="Microsoft.Data.SQLite" Version="2.0.0" />
+		<ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />    
 	</ItemGroup>
+
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0'">
+      <PackageReference Include="Microsoft.Data.SqLite" Version="2.1.0"/>
+  </ItemGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0'">
 		<DefineConstants>NETSTANDARD2_0;NETCORE;NETSTANDARD;</DefineConstants>
+	  
 	</PropertyGroup>
 
 
@@ -36,8 +41,7 @@
 		<Reference Include="System.Xml" />
 		<Reference Include="System.Web" />		
 		<Reference Include="System.Configuration" />
-		<Reference Include="System.ComponentModel.Annotations" />    
-    <PackageReference Include="System.Data.SQLite" version="1.0.106.0" />
+		<Reference Include="System.ComponentModel.Annotations" />
     <!--<PackageReference Include="MySql.Data" Version="6.10.4" />-->
   </ItemGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net452'">
