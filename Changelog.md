@@ -6,6 +6,10 @@
 * **Fix: HtmlUtils.SanitizeHtml() for multi-line**  
 Fix SanitizeHtml() function to work across line breaks for a tag.
 
+* **XmlUtils.XmlString()**  
+Create an XML encode string for elements or attributes.
+
+
 ### 3.0.20
 *September 6th, 2018*
 
