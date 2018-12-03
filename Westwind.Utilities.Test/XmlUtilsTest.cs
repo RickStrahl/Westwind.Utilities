@@ -103,7 +103,7 @@ namespace Westwind.Utilities.Tests
         [TestMethod]
         public void XmlStringForElement()
         {
-            var text = "Characters: <doc> \" ' &" + (char)10;
+            var text = "Characters: <doc> \" ' & \r\n break and a \t tab too.";
 
             var xmlString = XmlUtils.XmlString(text);
 
@@ -115,13 +115,15 @@ namespace Westwind.Utilities.Tests
         [TestMethod]
         public void XmlStringForAttributes()
         {
-            var text = "Characters: <doc> \" ' &" + (char)10;
+            var text = "Characters: <doc> \" ' & \r\n break and a \t tab too.";
 
             var xmlString = XmlUtils.XmlString(text,true);
 
             Assert.IsTrue(xmlString.Contains("&lt;doc&gt;"));
             Assert.IsTrue(xmlString.Contains("&amp;"));
             Assert.IsTrue(xmlString.Contains("&apos;") || xmlString.Contains("&quot;"),"Missing quotes.");
+
+            Console.WriteLine(xmlString);
         }
     }
 
