@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45;net40</TargetFrameworks>
-    <Version>3.0.20.10</Version>
+    <TargetFrameworks>netstandard2.0;net46;net40</TargetFrameworks>
+    <Version>3.0.22</Version>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
     <Authors>Rick Strahl</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
@@ -46,14 +46,14 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
 
   
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -65,7 +65,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
   </ItemGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45'">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net46'">
     <DefineConstants>NET45;NETFULL</DefineConstants>
   </PropertyGroup>
 

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netcoreapp2.0;net452</TargetFrameworks>
+		<TargetFrameworks>netcoreapp2.2;net46</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
@@ -20,17 +20,17 @@
 	</ItemGroup>
 
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0'">
-      <PackageReference Include="Microsoft.Data.SqLite" Version="2.1.0"/>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2'">
+      <!--<PackageReference Include="Microsoft.Data.SqLite" Version="2.1.0"/>-->
   </ItemGroup>
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0'">
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2'">
 		<DefineConstants>NETSTANDARD2_0;NETCORE;NETSTANDARD;</DefineConstants>
 	  
 	</PropertyGroup>
 
 
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
 		<Reference Include="mscorlib" />
 		<Reference Include="System" />
 		<Reference Include="System.Core" />		
@@ -44,7 +44,7 @@
 		<Reference Include="System.ComponentModel.Annotations" />
     <!--<PackageReference Include="MySql.Data" Version="6.10.4" />-->
   </ItemGroup>
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'net452'">
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net46'">
 		<DefineConstants>NET45;NETFULL</DefineConstants>
 	</PropertyGroup>
 

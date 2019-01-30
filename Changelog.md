@@ -9,6 +9,11 @@ Fix SanitizeHtml() function to work across line breaks for a tag.
 * **XmlUtils.XmlString()**  
 Create an XML encode string for elements or attributes.
 
+* **FileUtils.DeleteFiles()**  
+Added routine that deletes files in a folder based on a path spec, optionally recursively.
+
+* **DebugUtils.GetCodeWithLineNumbers()**  
+Add method that creates lines with linenumbers appended. Useful for displaying source code.
 
 ### 3.0.20
 *September 6th, 2018*

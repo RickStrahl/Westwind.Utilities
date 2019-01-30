@@ -376,6 +376,46 @@ namespace Westwind.Utilities
                 File.Copy(newPath, newPath.Replace(sourcePath, targetPath), true);
         }
 
+
+        /// <summary>
+        /// Deletes files in a folder based on a file spec recursively
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="filespec"></param>
+        /// <param name="recursive"></param>
+        /// <returns>0 when no errors, otherwise number of files that have failed to delete (usually locked)</returns>
+        public static int DeleteFiles(string path, string filespec, bool recursive)
+        {
+            int failed = 0;
+            path = Path.GetFullPath(path);
+            string spec = Path.GetFileName(filespec);
+            string[] files = Directory.GetFiles(path, spec);
+
+            foreach (string file in files)
+            {
+                try
+                {
+                    File.Delete(file);
+                }
+                catch
+                {
+                    failed++;
+                } // ignore locked files
+            }
+
+            if (recursive)
+            {
+                var dirs = Directory.GetDirectories(path);
+                foreach (string dir in dirs)
+                {
+                    failed = failed + DeleteFiles(dir, filespec, recursive);
+                }
+            }
+
+
+            return failed;
+        }
+
         /// <summary>
         /// Deletes files based on a file spec and a given timeout.
         /// This routine is useful for cleaning up temp files in 

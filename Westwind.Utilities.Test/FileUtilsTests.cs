@@ -146,5 +146,30 @@ namespace Westwind.Utilities.Test
             Assert.IsFalse(result.Contains("%appdata%"));
             Assert.IsTrue(result.ToLower().Contains("appdata"));
         }
+
+        [TestMethod]
+        public void DeleteFilesTest()
+        {
+            string source = Path.Combine(Path.GetTempPath(), "_TestFolders");           
+            try
+            {
+                Directory.Delete(source, true);
+            }
+            catch { }
+
+            Directory.CreateDirectory(source);
+            Directory.CreateDirectory(Path.Combine(source, "SubFolder1"));
+            Directory.CreateDirectory(Path.Combine(source, "SubFolder2"));
+            File.WriteAllText(Path.Combine(source, "test.txt"), "Hello cruel world");
+            File.WriteAllText(Path.Combine(source, "SubFolder1", "test.txt"), "Hello cruel world");
+            File.WriteAllText(Path.Combine(source, "SubFolder2", "test.txt"), "Hello cruel world");
+
+            Console.WriteLine(source);
+            int fails = FileUtils.DeleteFiles(source, "test.txt", recursive:true);
+
+            Directory.Delete(source, true);
+
+            Assert.IsTrue(fails == 0, "Failed to delete all files");
+        }
     }
 }
