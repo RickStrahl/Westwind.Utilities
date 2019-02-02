@@ -406,7 +406,10 @@ namespace Westwind.Utilities.Data
         /// properly into the command's Parameters collection.
         /// </summary>
         /// <param name="command">A preconfigured DbCommand object that should have all connection information set</param>
-        /// <param name="parameters">Either values mapping to @0,@1,@2 etc. or DbParameter objects created with CreateParameter()</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
         protected void AddParameters(DbCommand command, object[] parameters)
         {
             if (parameters != null)
@@ -611,18 +614,22 @@ namespace Westwind.Utilities.Data
 
             return RecordCount;
         }
-        
+
 
         /// <summary>
         /// Executes a command that doesn't return any data. The result
         /// returns the number of records affected or -1 on error.
         /// </summary>
         /// <param name="sql">SQL statement as a string</param>
-        /// <param name="parameters">Any number of SQL named parameters</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns></returns>
         /// <summary>
         /// Executes a command that doesn't return a data result. You can return
         /// output parameters and you do receive an AffectedRecords counter.
+        /// .setItem("list_html", JSON.stringify(data));
         /// </summary>        
         public virtual int ExecuteNonQuery(string sql, params object[] parameters)
         {
@@ -795,7 +802,10 @@ namespace Westwind.Utilities.Data
         /// Executes a SQL command against the server and returns a DbDataReader
         /// </summary>
         /// <param name="sql">Sql String</param>
-        /// <param name="parameters">Any SQL parameters </param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns></returns>
         public virtual DbDataReader ExecuteReader(string sql, params object[] parameters)
         {
@@ -857,7 +867,7 @@ namespace Westwind.Utilities.Data
 		    return Query<T>(command, parameters);
 	    }
 
-	    /// <summary>
+        /// <summary>
         /// Executes a SQL statement and creates an object list using
         /// optimized Reflection.
         /// 
@@ -866,7 +876,10 @@ namespace Westwind.Utilities.Data
         /// </summary>
         /// <typeparam name="T">Entity type to create from DataReader data</typeparam>
         /// <param name="sql">Sql string to execute</param>        
-        /// <param name="parameters">DbParameters to fill the SQL statement</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns>List of objects or null. Null is returned if there are no matches</returns>       
         public virtual IEnumerable<T> Query<T>(string sql, params object[] parameters)            
             where T : class, new()
@@ -917,9 +930,12 @@ namespace Westwind.Utilities.Data
         /// Returns list of objects from a query.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="sql"></param>
+        /// <param name="sql">Sql Statement string</param>
         /// <param name="propertiesToSkip">Comma delimited list of property names to skip</param>
-        /// <param name="parameters"></param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns></returns>
         public virtual List<T> QueryListWithExclusions<T>(string sql, string propertiesToSkip, params object[] parameters)
                 where T : class, new()
@@ -1194,7 +1210,10 @@ namespace Westwind.Utilities.Data
         /// Executes a SQL command against the server and returns a DataSet of the result
         /// </summary>
         /// <param name="command"></param>
-        /// <param name="parameters"></param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns></returns>
         public virtual DataSet ExecuteDataSet(string tablename, string sql, params object[] parameters)
         {
@@ -1340,7 +1359,10 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="sql"></param>        
-        /// <param name="parameters"></param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns></returns>
         public bool GetEntity(object entity, string sql, object[] parameters)
         {
@@ -1403,7 +1425,10 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// amount of data returned from the underlying query even though
         /// a full list returns the same result.
         /// </param>
-        /// <param name="parameters">SQL parameter values to pass.</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns></returns>
         public virtual T Find<T>(string sql, params object[] parameters)
             where T : class,new()
@@ -1421,7 +1446,10 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <typeparam name="T">Entity type to return</typeparam>
         /// <param name="sql">Sql string to execute. Use @0,@1,@2 for positional parameters</param>
         /// <param name="propertiesToSkip">fields to not update from the resultset</param>
-        /// <param name="parameters">Parameters to pass to SQL statement</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns></returns>
         public virtual T FindEx<T>(string sql, string propertiesToSkip, params object[] parameters)
             where T : class,new()
