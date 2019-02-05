@@ -122,6 +122,9 @@ namespace Westwind.Utilities
                     case '&':
                         sb.Append("&amp;");
                         break;
+                    case '\'':
+                        sb.Append("&#39;");
+                        break;				
                     default:
                         if (text[i] > 159)
                         {
