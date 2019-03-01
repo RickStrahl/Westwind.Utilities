@@ -67,7 +67,7 @@
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="text" type="xsd:string" minOccurs="0" />
               </xsd:sequence>
               <xsd:attribute name="name" use="required" type="xsd:string" />
               <xsd:attribute name="type" type="xsd:string" />
@@ -84,7 +84,7 @@
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="text" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
                 <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
               <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
@@ -96,7 +96,7 @@
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="text" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
               </xsd:sequence>
               <xsd:attribute name="name" type="xsd:string" use="required" />
             </xsd:complexType>
@@ -106,96 +106,96 @@
     </xsd:element>
   </xsd:schema>
   <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
+    <text>text/microsoft-resx</text>
   </resheader>
   <resheader name="version">
-    <value>2.0</value>
+    <text>2.0</text>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <text>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</text>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <text>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</text>
   </resheader>
   <data name="UnableToReadConfigDataFromString" xml:space="preserve">
-    <value>Unable to read config information from string.</value>
+    <text>Unable to read config information from string.</text>
   </data>
   <data name="UnableToExtractKeys" xml:space="preserve">
-    <value>Unable to read configuration string from Sql Server field.</value>
+    <text>Unable to read configuration string from Sql Server field.</text>
   </data>
   <data name="ConfigurationMethodNoLongerSupported" xml:space="preserve">
-    <value>This Configuration method is no longer supported. Use a Provider configuration instead.</value>
+    <text>This Configuration method is no longer supported. Use a Provider configuration instead.</text>
   </data>
   <data name="StringToTypedValueValueTypeConversionFailed" xml:space="preserve">
-    <value>Type Conversion not handled in StringToTypedValue for </value>
+    <text>Type Conversion not handled in StringToTypedValue for </text>
   </data>
   <data name="InvalidTypeForXmlTypeToNETTypeConversion" xml:space="preserve">
-    <value>Invalid type for XmlType to .NET Type conversion.</value>
+    <text>Invalid type for XmlType to .NET Type conversion.</text>
   </data>
   <data name="DataReaderPassedToDataReaderToObjectCannot" xml:space="preserve">
-    <value>DataReader passed to DataReaderToObject cannot be closed</value>
+    <text>DataReader passed to DataReaderToObject cannot be closed</text>
   </data>
   <data name="ByteValueGreaterThan20megsAreNotSupported" xml:space="preserve">
-    <value>Byte[] value greater than 20megs are not supported</value>
+    <text>Byte[] text greater than 20megs are not supported</text>
   </data>
   <data name="AConnectionStringMustBePassedToTheConstructor" xml:space="preserve">
-    <value>A connection string must be passed to the constructor</value>
+    <text>A connection string must be passed to the constructor</text>
   </data>
   <data name="InvalidConnectionStringName" xml:space="preserve">
-    <value>Invalid Connection string name.</value>
+    <text>Invalid Connection string name.</text>
   </data>
   <data name="InvalidHexStringLength" xml:space="preserve">
-    <value>Invalid hex string length: {0}</value>
+    <text>Invalid hex string length: {0}</text>
   </data>
   <data name="InvalidHexDigit" xml:space="preserve">
-    <value>Invalid hex digit: </value>
+    <text>Invalid hex digit: </text>
   </data>
   <data name="InvalidConnectionString" xml:space="preserve">
-    <value>Invalid Connection String.</value>
+    <text>Invalid Connection String.</text>
   </data>
   <data name="ObjectCouldNotBeDeserializedFromXml" xml:space="preserve">
-    <value>Object could not be deserialized from Xml.</value>
+    <text>Object could not be deserialized from Xml.</text>
   </data>
   <data name="An_error_occurred_in_your_Application" xml:space="preserve">
-    <value>An error occurred in your Application</value>
+    <text>An error occurred in your Application</text>
   </data>
   <data name="ErrorColon" xml:space="preserve">
-    <value>Error: </value>
+    <text>Error: </text>
   </data>
   <data name="CouldntLoadEntityInvalidKeyProvided" xml:space="preserve">
-    <value>Couldn't load entity - invalid key provided.</value>
+    <text>Couldn't load entity - invalid key provided.</text>
   </data>
   <data name="InvalidEncryptionPropertyName" xml:space="preserve">
-    <value>Invalid encryptipon property name</value>
+    <text>Invalid encryptipon property name</text>
   </data>
   <data name="InvalidXMLConfigurationFileFormat" xml:space="preserve">
-    <value>Invalid XML configuration file format in {0}.</value>
+    <text>Invalid XML configuration file format in {0}.</text>
   </data>
   <data name="JSON_NET_library_not_avaiable" xml:space="preserve">
-    <value>JSON.NET library not avaiable. Please add the Newtonsoft.Json package to your project.</value>
+    <text>JSON.NET library not avaiable. Please add the Newtonsoft.Json package to your project.</text>
   </data>
   <data name="NoActiveTransactionToCommit" xml:space="preserve">
-    <value>No active Transaction to commit.</value>
+    <text>No active Transaction to commit.</text>
   </data>
   <data name="MissingEncryptionKey" xml:space="preserve">
-    <value>Missing encryption key.</value>
+    <text>Missing encryption key.</text>
   </data>
   <data name="ConnectionOpeningFailure" xml:space="preserve">
-    <value>Connection opening failure: {0}</value>
+    <text>Connection opening failure: {0}</text>
   </data>
   <data name="SqlServerCompactDataProviderNotSupportedOnNetCore" xml:space="preserve">
-    <value>The Sql Server Compact data provider is not supported on .NET Core</value>
+    <text>The Sql Server Compact data provider is not supported on .NET Core</text>
   </data>
   <data name="UnableToRetrieveDbProviderFactoryForm" xml:space="preserve">
-    <value>Unable to retrieve DbProviderFactory for: {0}</value>
+    <text>Unable to retrieve DbProviderFactory for: {0}</text>
   </data>
   <data name="UnsupportedProviderFactory" xml:space="preserve">
-    <value>Unsupported Provider Factory specified: {0}</value>
+    <text>Unsupported Provider Factory specified: {0}</text>
   </data>
   <data name="Today" xml:space="preserve">
-    <value>Today</value>
+    <text>Today</text>
   </data>
   <data name="Yesterday" xml:space="preserve">
-    <value>Yesterday</value>
+    <text>Yesterday</text>
   </data>
 </root>
