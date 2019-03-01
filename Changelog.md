@@ -1,7 +1,7 @@
 ﻿# Westwind.Utilities Changelog
 
-### 3.0.22
-*not released yet*
+### 3.0.24
+*February 28th, 2019*
 
 * **Fix: HtmlUtils.SanitizeHtml() for multi-line**  
 Fix SanitizeHtml() function to work across line breaks for a tag.
@@ -14,6 +14,9 @@ Added routine that deletes files in a folder based on a path spec, optionally re
 
 * **DebugUtils.GetCodeWithLineNumbers()**  
 Add method that creates lines with linenumbers appended. Useful for displaying source code.
+
+* **StringUtils.Truncate()**  
+Added method that truncates a string if it exceeds a certain number of characters.
 
 ### 3.0.20
 *September 6th, 2018*
