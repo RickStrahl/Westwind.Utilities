@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          © West Wind Technologies, 2011
+ *          (c) West Wind Technologies, 2011
  *          http://www.west-wind.com/
  * 
  * Created: 06/12/2011
@@ -35,7 +35,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-
 namespace Westwind.Utilities
 {
 	/// <summary>
@@ -49,6 +48,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="ex"></param>
         /// <returns></returns>
+        [Obsolete("Use Exception.GetBaseException() instead")]
         public static Exception GetInnerMostException(Exception ex)
         {
             Exception currentEx = ex;
@@ -117,7 +117,6 @@ namespace Westwind.Utilities
             }
 
             return sb.ToString();
-
         }
 
     }
