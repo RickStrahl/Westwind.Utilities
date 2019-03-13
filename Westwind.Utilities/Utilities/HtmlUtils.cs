@@ -97,6 +97,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="text">The text string to encode. </param>
         /// <returns>The HTML-encoded text.</returns>
+        [Obsolete("Using System.Net.WebUtility.HtmlEncode() instead.")]
         public static string HtmlEncode(string text)
         {
             if (text == null)

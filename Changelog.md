@@ -3,6 +3,8 @@
 ### 3.0.26
 *not released yet*
 
+* **Fix: HtmlUtils.HtmlEncode()**  
+Handle encoding of single quotes `'` as well as double quotes.
 
 ### 3.0.24
 *February 28th, 2019*
@@ -17,7 +19,7 @@ Create an XML encode string for elements or attributes.
 Added routine that deletes files in a folder based on a path spec, optionally recursively.
 
 * **DebugUtils.GetCodeWithLineNumbers()**  
-Add method that creates lines with linenumbers appended. Useful for displaying source code.
+Add method that creates lines with line numbers appended. Useful for displaying source code.
 
 * **StringUtils.Truncate()**  
 Added method that truncates a string if it exceeds a certain number of characters.
