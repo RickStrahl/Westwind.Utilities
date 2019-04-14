@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net46;net40</TargetFrameworks>
-    <Version>3.0.24</Version>
+    <Version>3.0.25</Version>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
     <Authors>Rick Strahl</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
