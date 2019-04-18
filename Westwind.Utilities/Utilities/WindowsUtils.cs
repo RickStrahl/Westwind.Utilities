@@ -158,7 +158,7 @@ namespace Westwind.Utilities
 
             // https://msdn.microsoft.com/en-us/library/hh925568(v=vs.110).aspx
             // RegEdit paste: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full
-            if (releaseKey >= 528000)  // TODO: verify upon installation
+            if (releaseKey >= 528040)  
                 DotnetVersion = "4.8";
             else if (releaseKey >= 461808)
                 DotnetVersion = "4.7.2";
