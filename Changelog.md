@@ -6,9 +6,11 @@
 * **Fix: HtmlUtils.HtmlEncode()**  
 Handle encoding of single quotes `'` as well as double quotes. Also marked this method as obsolete (despite the PR fix :-)) since this is handled by `System.Net.WebUtility` class now (since .NET 4.0).
 
+* **Fix: ReflectionUtils.CallMethodExCom()**  
+Fix bug when traversing object hierarchy.
+
 * **Add .NET 4.8 to WindowsUtilities.GetDotnetVersion()**  
 Add support for .NET 4.8 and also fix an errant `Debug.Writeline()` in this method.
-
 
 ### 3.0.24
 *February 28th, 2019*
