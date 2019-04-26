@@ -60,6 +60,9 @@ namespace Westwind.Utilities
             BindingFlags.Public | BindingFlags.NonPublic |
             BindingFlags.Static | BindingFlags.Instance | BindingFlags.IgnoreCase;
 
+        public const BindingFlags MemberAccessCom =
+            BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase;
+
         #region Type and Assembly Creation
         /// <summary>
         /// Creates an instance from a type by calling the parameterless constructor.
@@ -899,10 +902,9 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static object GetPropertyCom(object instance, string property)
         {
-            return instance.GetType().InvokeMember(property, ReflectionUtils.MemberAccess | BindingFlags.GetProperty | BindingFlags.GetField, null,
-                                                instance, null);
+                return instance.GetType().InvokeMember(property, ReflectionUtils.MemberAccessCom | BindingFlags.GetProperty, null,
+                                                    instance, null);
         }
-
 
         /// <summary>
         /// Returns a property or field value using a base object and sub members including . syntax.
@@ -923,7 +925,7 @@ namespace Westwind.Utilities
                     return parent;
 
                 // Get the member
-                return parent.GetType().InvokeMember(property, ReflectionUtils.MemberAccess | BindingFlags.GetProperty | BindingFlags.GetField, null,
+                return parent.GetType().InvokeMember(property, ReflectionUtils.MemberAccessCom | BindingFlags.GetProperty , null,
                     parent, null);
             }
 
@@ -931,7 +933,7 @@ namespace Westwind.Utilities
             string Main = property.Substring(0, lnAt);
             string Subs = property.Substring(lnAt + 1);
 
-            object Sub = parent.GetType().InvokeMember(Main, ReflectionUtils.MemberAccess | BindingFlags.GetProperty | BindingFlags.GetField, null,
+            object Sub = parent.GetType().InvokeMember(Main, ReflectionUtils.MemberAccessCom | BindingFlags.GetProperty , null,
                 parent, null);
 
             // Recurse further into the sub-properties (Subs)
@@ -941,12 +943,12 @@ namespace Westwind.Utilities
         /// <summary>
         /// Sets the property on an object.
         /// </summary>
-        /// <param name="Object">Object to set property on</param>
+        /// <param name="inst">Object to set property on</param>
         /// <param name="Property">Name of the property to set</param>
         /// <param name="Value">value to set it to</param>
-        public static void SetPropertyCom(object Object, string Property, object Value)
+        public static void SetPropertyCom(object inst, string Property, object Value)
         {
-            Object.GetType().InvokeMember(Property, ReflectionUtils.MemberAccess | BindingFlags.SetProperty | BindingFlags.SetField, null, Object, new object[1] { Value });
+            inst.GetType().InvokeMember(Property, ReflectionUtils.MemberAccessCom | BindingFlags.SetProperty, null, inst, new object[1] { Value });
         }
 
         /// <summary>
@@ -976,7 +978,7 @@ namespace Westwind.Utilities
             if (lnAt < 0)
             {
                 // Set the member
-                parent.GetType().InvokeMember(property, ReflectionUtils.MemberAccess | BindingFlags.SetProperty | BindingFlags.SetField, null,
+                parent.GetType().InvokeMember(property, ReflectionUtils.MemberAccessCom | BindingFlags.SetProperty , null,
                     parent, new object[1] { value });
 
                 return null;
@@ -987,7 +989,7 @@ namespace Westwind.Utilities
             string Subs = property.Substring(lnAt + 1);
 
 
-            object Sub = parent.GetType().InvokeMember(Main, ReflectionUtils.MemberAccess | BindingFlags.GetProperty | BindingFlags.GetField, null,
+            object Sub = parent.GetType().InvokeMember(Main, ReflectionUtils.MemberAccessCom | BindingFlags.GetProperty , null,
                 parent, null);
 
             return SetPropertyExCom(Sub, Subs, value);
@@ -999,11 +1001,12 @@ namespace Westwind.Utilities
         /// on a COM object
         /// </summary>
         /// <param name="params"></param>
+        /// <param name="instance"></param>
         /// 1st - Method name, 2nd - 1st parameter, 3rd - 2nd parm etc.
         /// <returns></returns>
         public static object CallMethodCom(object instance, string method, params object[] parms)
         {
-            return instance.GetType().InvokeMember(method, ReflectionUtils.MemberAccess | BindingFlags.InvokeMethod, null, instance, parms);
+            return instance.GetType().InvokeMember(method, ReflectionUtils.MemberAccessCom | BindingFlags.InvokeMethod, null, instance, parms);
         }
 
         /// <summary>
@@ -1021,18 +1024,18 @@ namespace Westwind.Utilities
             int at = method.IndexOf(".");
             if (at < 0)
             {
-                return ReflectionUtils.CallMethod(parent, method, parms);
+                return ReflectionUtils.CallMethodCom(parent, method, parms);
             }
 
             // Walk the . syntax - split into current object (Main) and further parsed objects (Subs)
             string Main = method.Substring(0, at);
             string Subs = method.Substring(at + 1);
 
-            object Sub = parent.GetType().InvokeMember(Main, ReflectionUtils.MemberAccess | BindingFlags.GetProperty | BindingFlags.GetField, null,
+            object Sub = parent.GetType().InvokeMember(Main, ReflectionUtils.MemberAccessCom | BindingFlags.GetProperty, null,
                 parent, null);
 
             // Recurse until we get the lowest ref
-            return CallMethodEx(Sub, Subs, parms);
+            return CallMethodExCom(Sub, Subs, parms);
         }
         #endregion
 
