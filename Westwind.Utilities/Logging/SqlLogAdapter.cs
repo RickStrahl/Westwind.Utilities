@@ -126,17 +126,17 @@ select CAST(scope_identity() as integer)
 
                 object result = data.ExecuteScalar(sql,
                     data.CreateParameter("@Entered", entry.Entered, DbType.DateTime),
-                    data.CreateParameter("@Message", StringUtils.TrimTo(entry.Message, 255), 255),
+                    data.CreateParameter("@Message", StringUtils.Truncate(entry.Message, 255), 255),
                     data.CreateParameter("@ErrorLevel", entry.ErrorLevel),
-                    data.CreateParameter("@Details", StringUtils.TrimTo(entry.Details, 4000), 4000),
+                    data.CreateParameter("@Details", StringUtils.Truncate(entry.Details, 4000), 4000),
                     data.CreateParameter("@ErrorType", entry.ErrorType),
-                    data.CreateParameter("@StackTrace", StringUtils.TrimTo(entry.StackTrace, 1500), 1500),
+                    data.CreateParameter("@StackTrace", StringUtils.Truncate(entry.StackTrace, 1500), 1500),
                     data.CreateParameter("@IpAddress", entry.IpAddress),
-                    data.CreateParameter("@UserAgent", StringUtils.TrimTo(entry.UserAgent, 255)),
+                    data.CreateParameter("@UserAgent", StringUtils.Truncate(entry.UserAgent, 255)),
                     data.CreateParameter("@Url", entry.Url),
-                    data.CreateParameter("@QueryString", StringUtils.TrimTo(entry.QueryString, 255)),
+                    data.CreateParameter("@QueryString", StringUtils.Truncate(entry.QueryString, 255)),
                     data.CreateParameter("@Referrer", entry.Referrer),
-                    data.CreateParameter("@PostData", StringUtils.TrimTo(entry.PostData, 2048), 2048),
+                    data.CreateParameter("@PostData", StringUtils.Truncate(entry.PostData, 2048), 2048),
                     data.CreateParameter("@RequestDuration", entry.RequestDuration)
                 );
 
