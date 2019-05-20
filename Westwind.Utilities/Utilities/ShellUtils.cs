@@ -58,7 +58,12 @@ namespace Westwind.Utilities
             if (Directory.Exists(filename))
                 ShellUtils.GoUrl(filename);
             else
+            {
+                if (!File.Exists(filename))
+                    filename = Path.GetDirectoryName(filename);
+    
                 Process.Start("explorer.exe", $"/select,\"{filename}\"");
+            }
         }
 
 
