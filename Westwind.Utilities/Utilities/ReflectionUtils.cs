@@ -444,7 +444,7 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static object GetField(object Object, string Property)
         {
-            return Object.GetType().GetField(Property, ReflectionUtils.MemberAccess).GetValue(Object);
+            return Object.GetType().GetField(Property, ReflectionUtils.MemberAccess | BindingFlags.GetField).GetValue(Object);
         }
 
         /// <summary>
