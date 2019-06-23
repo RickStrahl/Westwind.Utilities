@@ -57,7 +57,7 @@ namespace Westwind.Utilities
         public const BindingFlags MemberPublicInstanceAccess =
             BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase;
 
-
+        #region Unique Ids and Random numbers
         /// <summary>
         /// Generates a unique Id as a string of up to 16 characters.
         /// Based on a GUID and the size takes that subset of a the
@@ -117,6 +117,69 @@ namespace Westwind.Utilities
         {
             return rnd.Next(min, max + 1);
         }
+
+        #endregion
+
+        #region Byte Data
+
+        /// <summary>
+        /// Returns an index into a byte array to find sequence of
+		/// of bytes.
+		/// Note: You can use Span.IndexOf() where available instead.		
+        /// </summary>
+        /// <param name="buffer">byte array to be searched</param>
+        /// <param name="bufferToFind">bytes to find</param>
+        /// <returns></returns>
+        public static int IndexOfByteArray(byte[] buffer, byte[] bufferToFind)
+        {
+            if (buffer.Length == 0 || bufferToFind.Length == 0)
+                return -1;
+
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                if (buffer[i] == bufferToFind[0])
+                {
+                    bool innerMatch = true;
+                    for (int j = 1; j < bufferToFind.Length; j++)
+                    {
+                        if (buffer[i + j] != bufferToFind[j])
+                        {
+                            innerMatch = false;
+                            break;
+                        }
+                    }
+                    if (innerMatch)
+                        return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        /// Returns an index into a byte array to find a string in the byte array.
+        /// Exact match using the encoding provided or UTF-8 by default.
+        /// </summary>
+        /// <param name="buffer">Source buffer to look for string</param>
+        /// <param name="stringToFind">string to search for (case sensitive)</param>
+        /// <param name="encoding">Optional encoding to use - defaults to UTF-8 if null</param>
+        /// <returns></returns>
+        public static int IndexOfByteArray(byte[] buffer, string stringToFind, Encoding encoding = null)
+        {
+            if (encoding == null)
+                encoding = Encoding.UTF8;
+
+            if (buffer.Length == 0 || string.IsNullOrEmpty(stringToFind))
+                return -1;
+
+            var bytes = encoding.GetBytes(stringToFind);
+
+            return IndexOfByteArray(buffer, bytes);
+        }
+
+        #endregion
+
+        #region Copying Objects and Data
 
         /// <summary>
         /// Copies the content of a data row to another. Runs through the target's fields
@@ -322,7 +385,9 @@ namespace Westwind.Utilities
                 }
             }
         }
+        #endregion
 
+        #region DataTable and DataReader
 
         /// <summary>
         /// Coverts a DataTable to a typed list of items
@@ -535,6 +600,7 @@ namespace Westwind.Utilities
             return;
         }
 
+        
         /// <summary>
         /// The default SQL date used by InitializeDataRowWithBlanks. Considered a blank date instead of null.
         /// </summary>
@@ -582,6 +648,8 @@ namespace Westwind.Utilities
             }
         }
 
+        #endregion
+
         #region Provider Factories
 
         /// <summary>
@@ -605,7 +673,6 @@ namespace Westwind.Utilities
 
             return instance as DbProviderFactory;
         }
-
 
         /// <summary>
         /// This method loads various providers dynamically similar to the 
