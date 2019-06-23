@@ -66,7 +66,6 @@ namespace Westwind.Utilities
             }
         }
 
-
         /// <summary>
         /// Executes a Windows process with given command line parameters
         /// </summary>
@@ -90,20 +89,6 @@ namespace Westwind.Utilities
                         process.StartInfo.CreateNoWindow = true;
 
                     process.StartInfo.UseShellExecute = false;
-
-
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.RedirectStandardError = true;
-
-                    process.OutputDataReceived += (sender, args) =>
-                    {
-                        Console.WriteLine(args.Data);
-                    };
-                    process.ErrorDataReceived += (sender, args) =>
-                    {
-                        Console.WriteLine(args.Data);
-                    };
-
                     process.Start();
 
                     if (timeoutMs < 0)
@@ -126,6 +111,93 @@ namespace Westwind.Utilities
             catch (Exception ex)
             {
                 Console.WriteLine("Error executing process: " + ex.Message);
+                return -1; // unhandled error
+            }
+        }
+
+
+        /// <summary>
+        /// Executes a Windows process with given command line parameters
+        /// and captures console output into a string.
+        ///
+        /// Writes original output into the application Console which you can
+        /// optionally redirect to capture output from the command line
+        /// operation using `Console.SetOut` or `Console.SetError`.
+        /// </summary>
+        /// <param name="executable">Executable to run</param>
+        /// <param name="arguments"></param>
+        /// <param name="timeoutMs">Timeout of the process in milliseconds. Pass -1 to wait forever. Pass 0 to not wait.</param>
+        /// <param name="output">Pass in a string reference that will receive StdOut and StdError output</param>
+        /// <param name="windowStyle"></param>
+        /// <returns></returns>
+        public static int ExecuteProcess(string executable,
+                                        string arguments,
+                                        int timeoutMs,
+                                        out string output,
+                                        Action<string> writeDelegate = null,
+                                        ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden)
+        {
+            Process process;
+
+            try
+            {
+                using (process = new Process())
+                {
+                    process.StartInfo.FileName = executable;
+                    process.StartInfo.Arguments = arguments;
+                    process.StartInfo.WindowStyle = windowStyle;
+                    if (windowStyle == ProcessWindowStyle.Hidden)
+                        process.StartInfo.CreateNoWindow = true;
+
+                    process.StartInfo.UseShellExecute = false;
+
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
+
+                    StringBuilder sb = new StringBuilder();
+
+                    process.OutputDataReceived += (sender, args) =>
+                    {
+                        sb.AppendLine(args.Data);
+                        writeDelegate?.Invoke(args.Data);
+                    };
+                    process.ErrorDataReceived += (sender, args) =>
+                    {
+                        sb.AppendLine(args.Data);
+                        writeDelegate?.Invoke(args.Data);
+                    };
+                    process.Start();
+
+                    process.BeginErrorReadLine();
+                    process.BeginOutputReadLine();
+
+                    if (timeoutMs < 0)
+                        timeoutMs = 99999999; // indefinitely
+
+                    if (timeoutMs > 0)
+                    {
+                        if (!process.WaitForExit(timeoutMs))
+                        {
+                            Console.WriteLine("Process timed out.");
+                            output = null;
+                            return 1460;
+                        }
+                    }
+                    else
+                    {
+                        // no exit code
+                        output = sb.ToString();
+                        return 0;
+                    }
+
+                    output = sb.ToString();
+                    return process.ExitCode;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error executing process: " + ex.Message);
+                output = null;
                 return -1; // unhandled error
             }
         }
