@@ -1,7 +1,13 @@
 ﻿# Westwind.Utilities Changelog
 
-### 3.0.26
-*not released yet*
+### 3.0.28
+*June 23rd, 2019*
+
+* **Update: ShellUtils.ExecuteProcess with Output Capture**  
+Add overload for `ShellUtils.ExecuteProcess()` that allows passing in a string that is filled with the output generated from execution of a command line tool.
+
+* **New: DataUtils.IndexOfByteArray()**  
+Small helper that finds a array of bytes or a string in an buffer of bytes and returns an index. Similar to `Span.IndexOf` but works in environments where not available, and also supports searching for decoded strings.
 
 * **Fix: HtmlUtils.HtmlEncode()**  
 Handle encoding of single quotes `'` as well as double quotes. Also marked this method as obsolete (despite the PR fix :-)) since this is handled by `System.Net.WebUtility` class now (since .NET 4.0).
