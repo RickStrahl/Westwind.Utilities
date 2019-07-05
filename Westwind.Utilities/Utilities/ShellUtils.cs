@@ -70,11 +70,14 @@ namespace Westwind.Utilities
         /// Executes a Windows process with given command line parameters
         /// </summary>
         /// <param name="executable">Executable to run</param>
-        /// <param name="arguments"></param>
+        /// <param name="arguments">Command Line Parameters passed to executable</param>
         /// <param name="timeoutMs">Timeout of the process in milliseconds. Pass -1 to wait forever. Pass 0 to not wait.</param>
-        /// <param name="windowStyle"></param>
-        /// <returns></returns>
-        public static int ExecuteProcess(string executable, string arguments = null, int timeoutMs = 0, ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden)
+        /// <param name="windowStyle">Hidden, Normal etc.</param>
+        /// <returns>process exit code or 0 if run and forget. 1460 for time out. -1 on error</returns>
+        public static int ExecuteProcess(string executable, 
+                                        string arguments = null, 
+                                        int timeoutMs = 0, 
+                                        ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden)
         {
             Process process;
 
@@ -102,7 +105,7 @@ namespace Westwind.Utilities
                             return 1460;
                         }
                     }
-                    else
+                    else // run and don't wait - no exit code
                         return 0;
 
                     return process.ExitCode;
@@ -113,6 +116,51 @@ namespace Westwind.Utilities
                 Console.WriteLine("Error executing process: " + ex.Message);
                 return -1; // unhandled error
             }
+        }
+
+        /// <summary>
+        /// Executes a Windows process with given command line parameters
+        /// and captures console output into a string.
+        ///
+        /// Writes command output to the output StringBuilder
+        /// from StdOut and StdError.
+        /// </summary>
+        /// <param name="executable">Executable to run</param>
+        /// <param name="arguments">Command Line Parameters passed to executable</param>
+        /// <param name="timeoutMs">Timeout of the process in milliseconds. Pass -1 to wait forever. Pass 0 to not wait.</param>
+        /// <param name="output">Pass in a string reference that will receive StdOut and StdError output</param>
+        /// <param name="windowStyle">Hidden, Normal, etc.</param>
+        /// <returns>process exit code or 0 if run and forget. 1460 for time out. -1 on error</returns>
+        public static int ExecuteProcess(string executable,
+            string arguments,
+            int timeoutMs,
+            out StringBuilder output,
+            ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden)
+        {
+            return ExecuteProcess(executable, arguments, timeoutMs, out output, null, windowStyle);
+        }
+
+
+        /// <summary>
+        /// Executes a Windows process with given command line parameters
+        /// and captures console output into a string.
+        ///
+        /// Pass in a String Action that receives output from
+        /// StdOut and StdError as it is written (one line at a time).
+        /// </summary>
+        /// <param name="executable">Executable to run</param>
+        /// <param name="arguments">Command Line Parameters passed to executable</param>
+        /// <param name="timeoutMs">Timeout of the process in milliseconds. Pass -1 to wait forever. Pass 0 to not wait.</param>
+        /// <param name="writeDelegate">Delegate to let you capture streaming output of the executable to stdout and stderror.</param>
+        /// <param name="windowStyle">Hidden, Normal etc.</param>
+        /// <returns>process exit code or 0 if run and forget. 1460 for time out. -1 on error</returns>
+        public static int ExecuteProcess(string executable,
+            string arguments,
+            int timeoutMs,
+            Action<string> writeDelegate,
+            ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden)
+        {
+            return ExecuteProcess(executable, arguments, timeoutMs, out StringBuilder output, writeDelegate, windowStyle);
         }
 
 
@@ -127,13 +175,14 @@ namespace Westwind.Utilities
         /// <param name="executable">Executable to run</param>
         /// <param name="arguments"></param>
         /// <param name="timeoutMs">Timeout of the process in milliseconds. Pass -1 to wait forever. Pass 0 to not wait.</param>
-        /// <param name="output">Pass in a string reference that will receive StdOut and StdError output</param>
+        /// <param name="output">StringBuilder that will receive StdOut and StdError output</param>
+        /// <param name="writeDelegate">Action to capture stdout and stderror output for you to handle</param>
         /// <param name="windowStyle"></param>
-        /// <returns></returns>
-        public static int ExecuteProcess(string executable,
+        /// <returns>process exit code or 0 if run and forget. 1460 for time out. -1 on error</returns>
+        private static int ExecuteProcess(string executable,
                                         string arguments,
                                         int timeoutMs,
-                                        out string output,
+                                        out StringBuilder output,
                                         Action<string> writeDelegate = null,
                                         ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden)
         {
@@ -154,22 +203,28 @@ namespace Westwind.Utilities
                     process.StartInfo.RedirectStandardOutput = true;
                     process.StartInfo.RedirectStandardError = true;
 
-                    StringBuilder sb = new StringBuilder();
+                    var sb  = new StringBuilder();
 
                     process.OutputDataReceived += (sender, args) =>
                     {
-                        sb.AppendLine(args.Data);
-                        writeDelegate?.Invoke(args.Data);
+                        if (writeDelegate != null)
+                            writeDelegate.Invoke(args.Data);
+                        else
+                            sb.AppendLine(args.Data);
                     };
                     process.ErrorDataReceived += (sender, args) =>
                     {
-                        sb.AppendLine(args.Data);
-                        writeDelegate?.Invoke(args.Data);
+                        if (writeDelegate != null)
+                            writeDelegate.Invoke(args.Data);
+                        else
+                            sb.AppendLine(args.Data);
                     };
+
                     process.Start();
 
                     process.BeginErrorReadLine();
                     process.BeginOutputReadLine();
+
 
                     if (timeoutMs < 0)
                         timeoutMs = 99999999; // indefinitely
@@ -186,17 +241,17 @@ namespace Westwind.Utilities
                     else
                     {
                         // no exit code
-                        output = sb.ToString();
+                        output = sb;
                         return 0;
                     }
 
-                    output = sb.ToString();
+                    output = sb;
                     return process.ExitCode;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error executing process: " + ex.Message);
+                Console.WriteLine($"Error executing process: {ex.Message}");
                 output = null;
                 return -1; // unhandled error
             }
@@ -392,6 +447,7 @@ namespace Westwind.Utilities
     public enum TerminalModes
     {
         Powershell,
-        Command
+        Command,
+        Bash
     }
 }
