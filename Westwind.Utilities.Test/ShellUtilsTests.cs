@@ -16,7 +16,7 @@ namespace Westwind.Utilities.Test
         public void ExecuteProcessAndGetOutput()
         {
             int result = ShellUtils.ExecuteProcess("ipconfig.exe", null, 3000, out string output,
-                ProcessWindowStyle.Normal);
+                windowStyle: ProcessWindowStyle.Normal);
 
             Assert.IsTrue(result == 0, "Process should exit with 0");
             Assert.IsNotNull(output,"Output should not be empty");
