@@ -1,12 +1,21 @@
 ﻿# Westwind.Utilities Changelog
 
+### 3.0.30
+*August 28th, 2019*
+
+* **Add some Async Methods to DataAccessBase**  
+Add `ExecuteNonQueryAsync`, `ExecuteScalarAsync`, `InsertEntityAsync` methods. More to come in future updates.
+
+* **StringUtils.Right() Method**  
+Add method to retrieve the rightmost characters from a string.
+
+* **Update: ShellUtils.ExecuteProcess with Output Capture**  
+Add overload for `ShellUtils.ExecuteProcess()` that allows passing in a string that is filled with the output generated from execution of a command line tool or an optional `Action<string>` that can intercept output as it's generated and fire your own capture code.
+
 ### 3.0.28
 *June 23rd, 2019*
 
-* **Update: ShellUtils.ExecuteProcess with Output Capture**  
-Add overload for `ShellUtils.ExecuteProcess()` that allows passing in a string that is filled with the output generated from execution of a command line tool.
-
-* **New: DataUtils.IndexOfByteArray()**  
+* **DataUtils.IndexOfByteArray()**  
 Small helper that finds a array of bytes or a string in an buffer of bytes and returns an index. Similar to `Span.IndexOf` but works in environments where not available, and also supports searching for decoded strings.
 
 * **Fix: HtmlUtils.HtmlEncode()**  
