@@ -44,6 +44,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities.Data
@@ -640,6 +641,73 @@ namespace Westwind.Utilities.Data
             return ExecuteNonQuery(command);
         }
 
+
+#if !NET40
+        /// <summary>
+        /// Executes a non-query command and returns the affected records
+        /// </summary>
+        /// <param name="Command">Command should be created with GetSqlCommand to have open connection</param>       
+        /// <returns>Affected Record count or -1 on error</returns>
+        public virtual async Task<int> ExecuteNonQueryAsync(DbCommand Command)
+        {
+            SetError();
+
+            int RecordCount = 0;
+
+            try
+            {
+                LastSql = Command.CommandText;
+
+                RecordCount = await Command.ExecuteNonQueryAsync();
+                if (RecordCount == -1)
+                    RecordCount = 0;
+            }
+            catch (DbException ex)
+            {
+                RecordCount = -1;
+                SetError(ex); ;
+            }
+            catch (Exception ex)
+            {
+                RecordCount = -1;
+                SetError(ex);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+
+            return RecordCount;
+        }
+
+
+        /// <summary>
+        /// Executes a command that doesn't return any data. The result
+        /// returns the number of records affected or -1 on error.
+        /// </summary>
+        /// <param name="sql">SQL statement as a string</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
+        /// <returns></returns>
+        /// <summary>
+        /// Executes a command that doesn't return a data result. You can return
+        /// output parameters and you do receive an AffectedRecords counter.
+        /// .setItem("list_html", JSON.stringify(data));
+        /// </summary>        
+        public virtual async Task<int> ExecuteNonQueryAsync(string sql, params object[] parameters)
+        {
+            DbCommand command = CreateCommand(sql, parameters);
+            if (command == null)
+                return -1;
+
+            int result = await ExecuteNonQueryAsync(command);
+            return result;
+        }
+#endif
+
+
         /// <summary>
         /// Executes a command and returns a scalar value from it
         /// </summary>
@@ -691,6 +759,61 @@ namespace Westwind.Utilities.Data
 
             return ExecuteScalar(command, null);
         }
+
+#if !NET40
+        /// <summary>
+        /// Executes a command and returns a scalar value from it
+        /// </summary>
+        /// <param name="command">DbCommand containing command to run</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        ///  or use @0,@1 parms in SQL and plain values
+        /// </param>
+        /// <returns>value or null on failure</returns>        
+        public virtual async Task<object> ExecuteScalarAsync(DbCommand command, params object[] parameters)
+        {
+            SetError();
+
+            AddParameters(command, parameters);
+
+            object Result = null;
+            try
+            {
+                LastSql = command.CommandText;
+                Result = await command.ExecuteScalarAsync();
+            }
+            catch (Exception ex)
+            {
+                SetError(ex.GetBaseException());
+            }
+            finally
+            {
+                CloseConnection();
+            }
+
+            return Result;
+        }
+
+        /// <summary>
+        /// Executes a Sql command and returns a single value from it.
+        /// </summary>
+        /// <param name="Sql">Sql string to execute</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
+        /// <returns>Result value or null. Check ErrorMessage on Null if unexpected</returns>
+        public virtual async Task<object> ExecuteScalarAsync(string sql, params object[] parameters)
+        {
+            SetError();
+
+            DbCommand command = CreateCommand(sql, parameters);
+            if (command == null)
+                return null;
+
+            return await ExecuteScalarAsync(command, null);
+        }
+#endif
 
         /// <summary>
         /// Executes a long SQL script that contains batches (GO commands). This code
@@ -1477,6 +1600,37 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         {
             SetError();
 
+            var Command = GetUpdateEntityCommand(entity, table, keyField, propertiesToSkip);
+            if (Command == null)
+                return false;
+
+            bool result;
+            using (Command)
+            {
+                result = ExecuteNonQuery(Command) > -1;
+                CloseConnection(Command);
+            }
+
+            return result;
+        }
+
+
+
+        /// <summary>
+        /// Updates an entity object that has matching fields in the database for each
+        /// public property. Kind of a poor man's quick entity update mechanism.
+        /// 
+        /// Note this method will not save if the record doesn't already exist in the db.
+        /// </summary>        
+        /// <param name="entity">entity to update</param>
+        /// <param name="table">the table name to update</param>
+        /// <param name="keyField">keyfield used to find entity</param>
+        /// <param name="propertiesToSkip"></param>
+        /// <returns></returns>
+        public virtual DbCommand GetUpdateEntityCommand(object entity, string table, string keyField, string propertiesToSkip = null)
+        {
+            SetError();
+
             if (string.IsNullOrEmpty(propertiesToSkip))
                 propertiesToSkip = string.Empty;
             else
@@ -1522,12 +1676,10 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             Command.Parameters.Add(CreateParameter(ParameterPrefix + "__PK", pkValue));
             Command.CommandText = CommandText;
 
-            bool Result = ExecuteNonQuery(Command) > -1;
-            CloseConnection(Command);
-
-            return Result;
+            return Command;
         }
-        
+
+
         /// <summary>
         /// This version of UpdateEntity allows you to specify which fields to update and
         /// so is a bit more efficient as it only checks for specific fields in the database
@@ -1545,54 +1697,90 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         {
             SetError();
 
+            var Command = GetUpdateEntityCommand(entity, table, keyField, propertiesToSkip, fieldsToUpdate);
+            if (Command == null)
+                return false;
+
+            bool result;
+            using (Command) {
+                result = ExecuteNonQuery(Command) > -1;
+                CloseConnection(Command);
+            }
+
+            return result;
+        }
+
+
+
+        /// <summary>
+        /// Gets a DbCommand that creates an update statement.
+        /// that allows you to specify which fields to update and
+        /// so is a bit more efficient as it only checks for specific fields in the database
+        /// and the underlying table.
+        /// </summary>
+        /// <seealso cref="SaveEntity"/>
+        /// <seealso cref="InsertEntity"/>
+        /// <param name="entity">Entity to update</param>
+        /// <param name="table">DB Table to udpate</param>
+        /// <param name="keyField">The keyfield to query on</param>
+        /// <param name="propertiesToSkip">fields to skip in update</param>
+        /// <param name="fieldsToUpdate">fields that should be updated</param>
+        /// <returns></returns>
+        public virtual DbCommand GetUpdateEntityCommand(object entity, string table, 
+            string keyField, string propertiesToSkip, string fieldsToUpdate)
+        {
+            SetError();
+
             if (propertiesToSkip == null)
                 propertiesToSkip = string.Empty;
             else
                 propertiesToSkip = "," + propertiesToSkip.ToLower() + ",";
 
-            bool Result;
-            
-            using (DbCommand Command = CreateCommand(string.Empty))
+
+            DbCommand Command = CreateCommand(string.Empty);
+            if (Command == null)
             {
-                Type ObjType = entity.GetType();
-
-                StringBuilder sb = new StringBuilder();
-                sb.Append("update " + table + " set ");
-
-                string[] Fields = fieldsToUpdate.Split(',');
-                foreach (string Name in Fields)
-                {
-                    if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
-                        continue;
-
-                    PropertyInfo Property = ObjType.GetProperty(Name);
-                    if (Property == null)
-                        continue;
-
-                    object Value = Property.GetValue(entity, null);
-                                        
-                    string parmString = UsePositionalParameters ? ParameterPrefix : ParameterPrefix + Name;
-                    sb.Append(" " + LeftFieldBracket + Name + RightFieldBracket + "=" + parmString + ",");
-
-                    if (Value == null && Property.PropertyType == typeof (byte[]))
-                        Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, DBNull.Value,
-                            DataUtils.DotNetTypeToDbType(Property.PropertyType)));
-                    else
-                        Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value ?? DBNull.Value));
-                }
-                object pkValue = ReflectionUtils.GetProperty(entity, keyField);
-
-                // check to see if 
-                string commandText = sb.ToString().TrimEnd(',') + 
-                   " where " + LeftFieldBracket + keyField + RightFieldBracket + "=" + ParameterPrefix + (UsePositionalParameters ? "" : "__PK");
-                Command.Parameters.Add(CreateParameter(ParameterPrefix + "__PK", pkValue));
-                Command.CommandText = commandText;        
-                Result = ExecuteNonQuery(Command) > -1;
-
-                CloseConnection(Command);
+                SetError("Unable to create command.");
+                return null;
             }
 
-            return Result;
+            Type ObjType = entity.GetType();
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("update " + table + " set ");
+
+            string[] Fields = fieldsToUpdate.Split(',');
+            foreach (string Name in Fields)
+            {
+                if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
+                    continue;
+
+                PropertyInfo Property = ObjType.GetProperty(Name);
+                if (Property == null)
+                    continue;
+
+                object Value = Property.GetValue(entity, null);
+
+                string parmString = UsePositionalParameters ? ParameterPrefix : ParameterPrefix + Name;
+                sb.Append(" " + LeftFieldBracket + Name + RightFieldBracket + "=" + parmString + ",");
+
+                if (Value == null && Property.PropertyType == typeof(byte[]))
+                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, DBNull.Value,
+                        DataUtils.DotNetTypeToDbType(Property.PropertyType)));
+                else
+                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value ?? DBNull.Value));
+            }
+
+            object pkValue = ReflectionUtils.GetProperty(entity, keyField);
+
+            // check to see if 
+            string commandText = sb.ToString().TrimEnd(',') +
+                                 " where " + LeftFieldBracket + keyField + RightFieldBracket + "=" + ParameterPrefix +
+                                 (UsePositionalParameters ? "" : "__PK");
+            Command.Parameters.Add(CreateParameter(ParameterPrefix + "__PK", pkValue));
+            Command.CommandText = commandText;
+
+            return Command;
         }
 
 
@@ -1614,16 +1802,93 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         public object InsertEntity(object entity, string table, string propertiesToSkip = null, bool returnIdentityKey = true)
         {
             SetError();
+            DbCommand Command = GetInsertEntityCommand(entity, table, propertiesToSkip);
+
+            using (Command)
+            {
+                if (returnIdentityKey)
+                {
+                    Command.CommandText += ";\r\n" + "select SCOPE_IDENTITY()";
+                    return ExecuteScalar(Command);
+                }
+
+                int res = ExecuteNonQuery(Command);
+                if (res < 0)
+                    return null;
+
+                return res;
+            }
+        }
+
+
+#if !NET40
+        /// <summary>
+        /// Inserts an object into the database based on its type information.
+        /// The properties must match the database structure and you can skip
+        /// over fields in the propertiesToSkip list.        
+        /// </summary>        
+        /// <seealso cref="SaveEntity" />        
+        /// <param name="entity"></param>
+        /// <param name="table"></param>
+        /// <param name="KeyField"></param>
+        /// <param name="propertiesToSkip"></param>
+        /// <returns>
+        /// Scope Identity or Null (when returnIdentityKey is true
+        /// Otherwise affected records
+        /// </returns>
+        public async Task<object> InsertEntityAsync(object entity, string table, string propertiesToSkip = null, bool returnIdentityKey = true)
+        {
+            SetError();
+            DbCommand Command = GetInsertEntityCommand(entity, table, propertiesToSkip);
+
+            using (Command)
+            {
+                if (returnIdentityKey)
+                {
+                    Command.CommandText += ";\r\n" + "select SCOPE_IDENTITY()";
+                    return await ExecuteScalarAsync(Command);
+                }
+
+                int res = await ExecuteNonQueryAsync(Command);
+                if (res < 0)
+                    return null;
+
+                return res;
+            }
+        }
+#endif
+
+
+
+        /// <summary>
+        /// Gets the DbCommand used to insert an object into the database based on its type information.
+        /// The properties must match the database structure and you can skip
+        /// over fields in the propertiesToSkip list.        
+        /// </summary>        
+        /// <seealso cref="SaveEntity" />        
+        /// <param name="entity"></param>
+        /// <param name="table"></param>
+        /// <param name="KeyField"></param>
+        /// <returns>
+        /// Scope Identity or Null (when returnIdentityKey is true
+        /// Otherwise affected records
+        /// </returns>
+        public DbCommand GetInsertEntityCommand(object entity, string table, string propertiesToSkip = null)
+        {
+            SetError();
 
             if (string.IsNullOrEmpty(propertiesToSkip))
                 propertiesToSkip = string.Empty;
             else
                 propertiesToSkip = "," + propertiesToSkip.ToLower() + ",";
 
-            
+
             DbCommand Command = CreateCommand(string.Empty);
             if (Command == null)
+            {
+                SetError("Unable to create DbCommand instance");
                 return null;
+            }
 
             Type ObjType = entity.GetType();
 
@@ -1645,15 +1910,15 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
                 object Value = Property.GetValue(entity, null);
 
-                FieldList.Append(" " + LeftFieldBracket + Name + RightFieldBracket +",");
+                FieldList.Append(" " + LeftFieldBracket + Name + RightFieldBracket + ",");
 
                 string parmString = ParameterPrefix;
                 if (!UsePositionalParameters)
                     parmString += Name;
-                                
+
                 DataList.Append(parmString + ",");
 
-                if (Value == null && Property.PropertyType == typeof (byte[]))
+                if (Value == null && Property.PropertyType == typeof(byte[]))
                     Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, DBNull.Value,
                         DataUtils.DotNetTypeToDbType(Property.PropertyType)));
                 else
@@ -1663,18 +1928,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             Command.CommandText = FieldList.ToString().TrimEnd(',') + ") " +
                                  DataList.ToString().TrimEnd(',') + ")";
 
-
-            if (returnIdentityKey)
-            {
-                Command.CommandText += ";\r\n" + "select SCOPE_IDENTITY()";
-                return ExecuteScalar(Command);
-            }
-
-            int res = ExecuteNonQuery(Command);
-            if (res < 0)
-                return null;
-
-            return res;
+            return Command;
         }
 
 
@@ -1709,10 +1963,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
             return true;
         }
-
-
-
-#endregion
+        #endregion
 
 #region Error Handling
 
