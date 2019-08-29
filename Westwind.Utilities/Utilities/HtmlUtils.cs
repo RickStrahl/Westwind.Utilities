@@ -257,9 +257,9 @@ namespace Westwind.Utilities
         }
 
 
-        static string HtmlSanitizeTagBlackList { get; } = "script|iframe|object|embed|form";
+        static string DefaultHtmlSanitizeTagBlackList { get; } = "script|iframe|object|embed|form";
 
-        static Regex _RegExScript = new Regex($@"(<({HtmlSanitizeTagBlackList})\b[^<]*(?:(?!<\/({HtmlSanitizeTagBlackList}))<[^<]*)*<\/({HtmlSanitizeTagBlackList})>)",
+        static Regex _RegExScript = new Regex($@"(<({DefaultHtmlSanitizeTagBlackList})\b[^<]*(?:(?!<\/({DefaultHtmlSanitizeTagBlackList}))<[^<]*)*<\/({DefaultHtmlSanitizeTagBlackList})>)",
         RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         // strip javascript: and unicode representation of javascript:
@@ -289,15 +289,16 @@ namespace Westwind.Utilities
             if (string.IsNullOrEmpty(html))
                 return html;
 
-            if (!string.IsNullOrEmpty(htmlTagBlacklist) || htmlTagBlacklist == HtmlSanitizeTagBlackList)
+            if (string.IsNullOrEmpty(htmlTagBlacklist) || htmlTagBlacklist == DefaultHtmlSanitizeTagBlackList)
             {
-                // Replace Script tags - reused expr is more efficient
+                // Use the default list of tags Replace Script tags - reused expr is more efficient
                 html = _RegExScript.Replace(html, string.Empty);
             }
             else
             {
+                // create a custom list including provided tags
                 html = Regex.Replace(html,
-                                        $@"(<({htmlTagBlacklist})\b[^<]*(?:(?!<\/({HtmlSanitizeTagBlackList}))<[^<]*)*<\/({htmlTagBlacklist})>)",
+                                        $@"(<({htmlTagBlacklist})\b[^<]*(?:(?!<\/({DefaultHtmlSanitizeTagBlackList}))<[^<]*)*<\/({htmlTagBlacklist})>)",
                                         "", RegexOptions.IgnoreCase | RegexOptions.Multiline);
             }
 
