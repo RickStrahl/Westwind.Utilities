@@ -47,6 +47,7 @@ namespace Westwind.Utilities.Test
             Assert.AreEqual(state.Email, state2.Email);
             Assert.AreEqual(state.UserId, state2.UserId);
             Assert.AreEqual(state.Name, state2.Name);
+            Assert.IsNull(state.NullString);
 
             // exact date is not lined up to ticks so compare minutes
             Assert.AreEqual(state.Date.Minute, state2.Date.Minute);
@@ -195,6 +196,11 @@ namespace Westwind.Utilities.Test
             /// The users admin status
             /// </summary>
             public bool IsAdmin { get; set; }
+
+            /// <summary>
+            /// Null string
+            /// </summary>
+            public string NullString { get; set; }
 
             /// <summary>
             /// 

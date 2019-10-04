@@ -138,7 +138,7 @@ namespace Westwind.Utilities
                     }
                     catch (InvalidCastException)
                     {
-                        // skip over unsupported types 
+                        // DANGER: skip over unsupported types 
                     }
                 }
 
