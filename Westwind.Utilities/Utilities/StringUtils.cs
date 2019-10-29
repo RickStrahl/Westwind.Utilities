@@ -299,8 +299,8 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static string FromCamelCase(string camelCase)
         {
-            if (camelCase == null)
-                throw new ArgumentException("Null is not allowed for StringUtils.FromCamelCase");
+            if (string.IsNullOrEmpty(camelCase))
+                return camelCase;
 
             StringBuilder sb = new StringBuilder(camelCase.Length + 10);
             bool first = true;

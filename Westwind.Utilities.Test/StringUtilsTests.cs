@@ -85,20 +85,9 @@ namespace Westwind.Utilities.Tests
             string actual = StringUtils.FromCamelCase(original);
             Assert.AreEqual(expected, actual, "Failed Simple Test");
 
-            expected = "not hit";
+            expected = null;
             original = null;
-            actual = expected;
-
-            try
-            {
-                // null should throw ArgumentException
-                actual = StringUtils.FromCamelCase(original);
-            }
-            catch (Exception ex)
-            {
-                Assert.IsTrue(ex is ArgumentException, "Failed Null Test");
-            }
-
+            actual = StringUtils.FromCamelCase(original);
             Assert.AreEqual(expected, actual, "Failed null test - exception should have been thrown.");
 
             expected = "Pronto 123";
@@ -106,10 +95,42 @@ namespace Westwind.Utilities.Tests
             actual = StringUtils.FromCamelCase(original);
             Assert.AreEqual(expected, actual, "Failed Embedded Numbers Test");
 
+
+            expected = "The Mountains Are Beautiful";
+            original = "TheMountainsAreBeautiful";
+            actual = StringUtils.FromCamelCase(original);
+            Assert.AreEqual(expected, actual, "Failed Long String Of Text");
+
+
             expected = "None";
             original = "None";
             actual = StringUtils.FromCamelCase(original);
             Assert.AreEqual(expected, actual, "Failed No CamelCase Test");
+
+        }
+
+        [TestMethod]
+        public void ToCamelCaseUpperCasingTest()
+        {
+
+            var original = "ABCCompany";
+            var expected = "A B C Company";
+            var actual = StringUtils.FromCamelCase(original);
+            Console.WriteLine(actual);
+            Assert.AreEqual(expected, actual, "Failed UpperCase Letters CamelCase Test");
+
+            original = "ThisIsATest";
+            expected = "This Is A Test";
+            actual = StringUtils.FromCamelCase(original);
+            Console.WriteLine(actual);
+            Assert.AreEqual(expected, actual, "Failed UpperCase Letters CamelCase Test");
+
+            original = "ABCdef";
+            expected = "A B Cdef";
+            actual = StringUtils.FromCamelCase(original);
+            Console.WriteLine(actual);
+            Assert.AreEqual(expected, actual, "Failed UpperCase Letters CamelCase Test");
+
         }
 
         [TestMethod]
