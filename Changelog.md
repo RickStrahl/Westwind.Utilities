@@ -1,6 +1,6 @@
 ﻿# Westwind.Utilities Changelog
 
-### 3.0.33
+### 3.0.34
 *not released yet*
 
 * **FileUtils.ShortFilename**  
