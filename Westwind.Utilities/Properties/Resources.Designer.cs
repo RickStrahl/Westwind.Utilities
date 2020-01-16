@@ -19,7 +19,7 @@ namespace Westwind.Utilities.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -70,7 +70,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error occurred in your Application.
+        ///   Looks up a localized string similar to An error occurred in your application.
         /// </summary>
         public static string An_error_occurred_in_your_Application {
             get {
@@ -79,7 +79,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Byte[] value greater than 20megs are not supported.
+        ///   Looks up a localized string similar to Byte value greater than 20mb are not supported.
         /// </summary>
         public static string ByteValueGreaterThan20megsAreNotSupported {
             get {
@@ -88,7 +88,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This Configuration method is no longer supported. Use a Provider configuration instead..
+        ///   Looks up a localized string similar to Configuration method no longer supported.
         /// </summary>
         public static string ConfigurationMethodNoLongerSupported {
             get {
@@ -97,7 +97,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Connection opening failure: {0}.
+        ///   Looks up a localized string similar to Connection opening failure..
         /// </summary>
         public static string ConnectionOpeningFailure {
             get {
@@ -106,7 +106,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Couldn&apos;t load entity - invalid key provided..
+        ///   Looks up a localized string similar to Couldn&apos;t load entity. Invalid key provided..
         /// </summary>
         public static string CouldntLoadEntityInvalidKeyProvided {
             get {
@@ -115,7 +115,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DataReader passed to DataReaderToObject cannot be closed.
+        ///   Looks up a localized string similar to Data reader passed to object failure..
         /// </summary>
         public static string DataReaderPassedToDataReaderToObjectCannot {
             get {
@@ -124,7 +124,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error: .
+        ///   Looks up a localized string similar to Error:.
         /// </summary>
         public static string ErrorColon {
             get {
@@ -133,7 +133,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid Connection String..
+        ///   Looks up a localized string similar to Invalid Connection String.
         /// </summary>
         public static string InvalidConnectionString {
             get {
@@ -142,7 +142,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid Connection string name..
+        ///   Looks up a localized string similar to Invalid connection string name..
         /// </summary>
         public static string InvalidConnectionStringName {
             get {
@@ -151,7 +151,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid encryptipon property name.
+        ///   Looks up a localized string similar to Invalid encryption property name.
         /// </summary>
         public static string InvalidEncryptionPropertyName {
             get {
@@ -160,7 +160,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid hex digit: .
+        ///   Looks up a localized string similar to Invalid hex digit.
         /// </summary>
         public static string InvalidHexDigit {
             get {
@@ -169,7 +169,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid hex string length: {0}.
+        ///   Looks up a localized string similar to Invalid hex string length..
         /// </summary>
         public static string InvalidHexStringLength {
             get {
@@ -178,7 +178,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid type for XmlType to .NET Type conversion..
+        ///   Looks up a localized string similar to Invalid type for Xml type to .NET object conversion..
         /// </summary>
         public static string InvalidTypeForXmlTypeToNETTypeConversion {
             get {
@@ -187,7 +187,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid XML configuration file format in {0}..
+        ///   Looks up a localized string similar to Invalid Xml configuration file format..
         /// </summary>
         public static string InvalidXMLConfigurationFileFormat {
             get {
@@ -196,7 +196,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to JSON.NET library not avaiable. Please add the Newtonsoft.Json package to your project..
+        ///   Looks up a localized string similar to JSON.NET library not available..
         /// </summary>
         public static string JSON_NET_library_not_avaiable {
             get {
@@ -214,7 +214,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No active Transaction to commit..
+        ///   Looks up a localized string similar to No active transaction to commit..
         /// </summary>
         public static string NoActiveTransactionToCommit {
             get {
@@ -223,7 +223,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Object could not be deserialized from Xml..
+        ///   Looks up a localized string similar to Object could not be deserialized from Xml.
         /// </summary>
         public static string ObjectCouldNotBeDeserializedFromXml {
             get {
@@ -232,7 +232,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Sql Server Compact data provider is not supported on .NET Core.
+        ///   Looks up a localized string similar to SqlServer Compact Data Provider not supported on .NET Core..
         /// </summary>
         public static string SqlServerCompactDataProviderNotSupportedOnNetCore {
             get {
@@ -241,7 +241,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type Conversion not handled in StringToTypedValue for .
+        ///   Looks up a localized string similar to String to typed value type conversion failed..
         /// </summary>
         public static string StringToTypedValueValueTypeConversionFailed {
             get {
@@ -259,7 +259,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to read configuration string from Sql Server field..
+        ///   Looks up a localized string similar to Unable to extract config data from string.
         /// </summary>
         public static string UnableToExtractKeys {
             get {
@@ -268,7 +268,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to read config information from string..
+        ///   Looks up a localized string similar to Unable to read configuration data from string..
         /// </summary>
         public static string UnableToReadConfigDataFromString {
             get {
@@ -277,7 +277,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to retrieve DbProviderFactory for: {0}.
+        ///   Looks up a localized string similar to Unable to retrieve DbProvider Factory Form.
         /// </summary>
         public static string UnableToRetrieveDbProviderFactoryForm {
             get {
@@ -286,7 +286,7 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unsupported Provider Factory specified: {0}.
+        ///   Looks up a localized string similar to Unsupported Provider Factory.
         /// </summary>
         public static string UnsupportedProviderFactory {
             get {
