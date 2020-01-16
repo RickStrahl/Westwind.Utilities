@@ -88,8 +88,13 @@ namespace Westwind.Utilities.Logging
 
                     // *** If the file's not empty start writing over the end doc tag
                     // *** We'll rewrite it at the end
-                    if (fileStream.Position > 0)
-                        fileStream.Seek(-1 * "</ApplicationLog>\r\n".Length, SeekOrigin.End);
+                    if (fileStream.Position > 15)  
+                    {
+                        try
+                        {
+                            fileStream.Seek(-1 * "</ApplicationLog>\r\n".Length, SeekOrigin.End);
+                        }catch { }
+                    }
                 }
                 catch
                 {

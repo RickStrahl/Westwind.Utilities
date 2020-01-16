@@ -12,6 +12,9 @@ Fix trailing spaces issue in SafeFilename, when last character is a replacement 
 * **Fix: Missing resources**  
 Project conversion appears to have removed resx resources for localization resulting in empty messages for some operations.
 
+* **Fix: Xml Logging Adapter with Empty File**  
+Fix error when creating a new XML error log and appending the XML closing tag.
+
 ### 3.0.30
 *August 28th, 2019*
 
