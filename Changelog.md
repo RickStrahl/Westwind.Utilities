@@ -1,10 +1,22 @@
 ﻿# Westwind.Utilities Changelog
 
+### 3.0.33
+*not released yet*
+
+* **FileUtils.ShortFilename**  
+Turn a Windows long filename into a short filename. Use to get around 256 MAX_PATH limitations for some operations.
+
+* **Fix: FileUtils.SafeFilename trailing Spaces**  
+Fix trailing spaces issue in SafeFilename, when last character is a replacement character.
+
+* **Fix: Missing resources**  
+Project conversion appears to have removed resx resources for localization resulting in empty messages for some operations.
+
 ### 3.0.30
 *August 28th, 2019*
 
 * **Add some Async Methods to DataAccessBase**  
-Add `ExecuteNonQueryAsync`, `ExecuteScalarAsync`, `InsertEntityAsync` methods. More to come in future updates.
+Add `ExecuteNonQueryAsync`, `ExecuteScalarAsync`, `InsertEntityAsync` methods. More to come in future updates. 
 
 * **StringUtils.Right() Method**  
 Add method to retrieve the rightmost characters from a string.

@@ -16,7 +16,6 @@ namespace Westwind.Utilities.Test
             string result = FileUtils.SafeFilename(file);
 
             Assert.AreEqual(result, "This iS this file really invalid");
-
             Console.WriteLine(result);
         }
 
@@ -171,5 +170,21 @@ namespace Westwind.Utilities.Test
 
             Assert.IsTrue(fails == 0, "Failed to delete all files");
         }
+
+        //[TestMethod]
+        //public void ShortPathTest()
+        //{
+        //    var path = FileUtils.ExpandPathEnvironmentVariables(@"%appdata%\Markdown Monster\MarkdownMonster.json");
+        //    var shortPath = FileUtils.GetShortPath(path);
+
+        //    Assert.IsFalse(path == shortPath);
+        //    Console.WriteLine(shortPath);
+
+        //    //path = path.Replace(".json", ".json-bogus");
+        //    //shortPath = FileUtils.GetShortPath(path);
+        //    //Assert.IsFalse(path == shortPath);
+        //    //Console.WriteLine(shortPath);
+
+        //}
     }
 }

@@ -122,46 +122,6 @@ namespace Westwind.Utilities
             return filename;
         }
 
-        /// <summary>
-        /// Returns a compact path with elipsis from a long path
-        /// </summary>
-        /// <param name="path">Original path to potentially trim</param>
-        /// <param name="length">Max length of the path string returned</param>
-        /// <returns></returns>
-        public static string GetCompactPath(string path, int length = 70)
-	    {
-	        if (string.IsNullOrEmpty(path))
-	            return path;
-
-	        if (path.Length <= length)
-	            return path;
-
-	        var index = -1;
-	        for (int i = path.Length-1; i >= 0; i--)
-	        {
-	            if (path[i] == '\\' || path[i] == '/')
-	            {
-	                index = i;
-                    break;
-	            }
-	        }
-
-            if (index == -1) // no slashes
-                return path.Substring(0,length); 
-
-	        var end = path.Substring(index);
-	        var start = path.Substring(0, index - 1);
-
-	        var maxStartLength = length - end.Length ;
-
-            var startBlock = start.Substring(0, maxStartLength);
-
-	        if (start.Length > maxStartLength)
-	            startBlock = startBlock.Substring(0, maxStartLength - 3) + "...";
-
-            return startBlock + end;
-	    }
-
 
         /// <summary>
         /// Returns a relative path string from a full path based on a base path
@@ -193,6 +153,27 @@ namespace Westwind.Utilities
 		}
 
 
+        //// To ensure that paths are not limited to MAX_PATH, use this signature within .NET
+        //[DllImport("kernel32.dll", CharSet = CharSet.Unicode, EntryPoint = "GetShortPathNameW", SetLastError = true)]
+        //static extern int GetShortPathName_Internal(string pathName, StringBuilder shortName, int cbShortName);
+
+        ///// <summary>
+        ///// Returns a Windows short path (8 char path segments)
+        ///// for a long path.
+        ///// </summary>
+        ///// <param name="fullPath"></param>
+        ///// <remarks>Throws on non-existant files</remarks>
+        ///// <returns></returns>
+        //public static string GetShortPath(string fullPath)
+        //{
+        //    if (string.IsNullOrEmpty(fullPath))
+        //        return fullPath;
+
+        //    StringBuilder sb = new StringBuilder();
+        //    GetShortPathName_Internal(fullPath, sb, 2048);
+        //    return sb.ToString();
+        //}
+
 
         /// <summary>
         /// Expands Path Environment Variables like %appdata% in paths.
@@ -217,9 +198,49 @@ namespace Westwind.Utilities
             return path;
         }
 
-        #endregion
+        /// <summary>
+        /// Returns a compact path with elipsis from a long path
+        /// </summary>
+        /// <param name="path">Original path to potentially trim</param>
+        /// <param name="length">Max length of the path string returned</param>
+        /// <returns></returns>
+        public static string GetCompactPath(string path, int length = 70)
+        {
+            if (string.IsNullOrEmpty(path))
+                return path;
 
-        #region File and Path Normalization
+            if (path.Length <= length)
+                return path;
+
+            var index = -1;
+            for (int i = path.Length-1; i >= 0; i--)
+            {
+                if (path[i] == '\\' || path[i] == '/')
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index == -1) // no slashes
+                return path.Substring(0,length); 
+
+            var end = path.Substring(index);
+            var start = path.Substring(0, index - 1);
+
+            var maxStartLength = length - end.Length ;
+
+            var startBlock = start.Substring(0, maxStartLength);
+
+            if (start.Length > maxStartLength)
+                startBlock = startBlock.Substring(0, maxStartLength - 3) + "...";
+
+            return startBlock + end;
+        }
+
+#endregion
+
+#region File and Path Normalization
 
         /// <summary>
         /// Returns a safe filename from a string by stripping out
@@ -243,7 +264,7 @@ namespace Westwind.Utilities
 	        if (!string.IsNullOrEmpty(spaceReplacement))
 	            file = file.Replace(" ", spaceReplacement);
 
-	        return file;
+	        return file.Trim();
 	    }
 
         /// <summary>
@@ -311,9 +332,9 @@ namespace Westwind.Utilities
 
 	        return path + separator;
 	    }
-	    #endregion
+#endregion
 
-        #region Miscellaneous functions
+#region Miscellaneous functions
 
         /// <summary>
         /// Detects the byte order mark of a file and returns
@@ -481,7 +502,7 @@ namespace Westwind.Utilities
 	        }
 	    }
 
-        #endregion
+#endregion
     }
 
 }
