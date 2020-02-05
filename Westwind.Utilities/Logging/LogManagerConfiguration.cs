@@ -165,6 +165,7 @@ namespace Westwind.Utilities.Logging
     public enum LogAdapterTypes
     {
         Sql,
-        Xml
+        Xml,
+        Text
     }
 }

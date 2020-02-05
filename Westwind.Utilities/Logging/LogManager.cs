@@ -102,6 +102,8 @@ namespace Westwind.Utilities.Logging
                 adapter = new SqlLogAdapter();
             else if (logType == LogAdapterTypes.Xml)
                 adapter = new XmlLogAdapter();
+            else if (logType == LogAdapterTypes.Text)
+                adapter = new TextLogAdapter();
 
             return Create(adapter);
         }

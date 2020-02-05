@@ -1,10 +1,13 @@
-﻿# Westwind.Utilities Changelog
+# Westwind.Utilities Changelog
 
-### 3.0.34
+### 3.0.35
 *not released yet*
 
 * **FileUtils.ShortFilename**  
 Turn a Windows long filename into a short filename. Use to get around 256 MAX_PATH limitations for some operations.
+
+* **SqlDataAccess.DoesTableExist()**  
+Added a method that checks to see if a table exist in the current database.
 
 * **Fix: FileUtils.SafeFilename trailing Spaces**  
 Fix trailing spaces issue in SafeFilename, when last character is a replacement character.
@@ -23,6 +26,9 @@ Add `ExecuteNonQueryAsync`, `ExecuteScalarAsync`, `InsertEntityAsync` methods. M
 
 * **StringUtils.Right() Method**  
 Add method to retrieve the rightmost characters from a string.
+
+* **Add TextLogAdapter**  
+Add a log adapter for plain text output.
 
 * **Update: ShellUtils.ExecuteProcess with Output Capture**  
 Add overload for `ShellUtils.ExecuteProcess()` that allows passing in a string that is filled with the output generated from execution of a command line tool or an optional `Action<string>` that can intercept output as it's generated and fire your own capture code.
