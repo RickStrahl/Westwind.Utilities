@@ -879,6 +879,25 @@ namespace Westwind.Utilities.Data
             return false;
         }
 
+
+        /// <summary>
+        /// Determines whether a table exists
+        /// </summary>
+        /// <param name="tablename"></param>
+        /// <param name="schema"></param>
+        /// <returns></returns>
+        public virtual bool DoesTableExist(string tablename, string schema = null)
+        {
+            var sql = @"SELECT TABLE_CATALOG FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = @0";
+
+            if (!string.IsNullOrEmpty(schema))
+                sql += " AND TABLE_SCHEMA = @1";
+
+            var cat = ExecuteScalar(sql, tablename, schema);
+
+            return !(cat is null);
+        }
+
         #endregion 
 
         #region Sql Execution

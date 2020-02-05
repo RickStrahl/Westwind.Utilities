@@ -522,5 +522,14 @@ namespace Westwind.Utilities.Data.Tests
                 }
             }
         }
+
+        [TestMethod]
+        public void DoesTableExist()
+        {
+            var db = new SqlDataAccess(STR_ConnectionString);
+            Assert.IsFalse(db.DoesTableExist("Bogus"));
+            Assert.IsTrue(db.DoesTableExist("customers"));
+
+        }
     }
 }
