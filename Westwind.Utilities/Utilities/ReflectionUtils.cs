@@ -541,9 +541,14 @@ namespace Westwind.Utilities
                 // Get the member
                 MemberInfo Member = Parent.GetType().GetMember(PureProperty, ReflectionUtils.MemberAccess)[0];
                 if (Member.MemberType == MemberTypes.Property)
-                    ((PropertyInfo)Member).SetValue(Parent, Value, null);
+                {
+                    var prop = (PropertyInfo) Member;
+                    if (prop.CanWrite)
+                        prop.SetValue(Parent, Value, null);
+                }
                 else
                     ((FieldInfo)Member).SetValue(Parent, Value);
+
                 return null;
             }
             else
@@ -551,7 +556,11 @@ namespace Westwind.Utilities
                 // Get the member
                 MemberInfo Member = Parent.GetType().GetMember(PureProperty, ReflectionUtils.MemberAccess)[0];
                 if (Member.MemberType == MemberTypes.Property)
-                    Result = ((PropertyInfo)Member).GetValue(Parent, null);
+                {
+                    var prop = (PropertyInfo) Member;
+                    if (prop.CanRead)
+                        Result = prop.GetValue(Parent, null);
+                }
                 else
                     Result = ((FieldInfo)Member).GetValue(Parent);
             }
