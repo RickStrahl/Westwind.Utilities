@@ -44,6 +44,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Globalization;
+using System.Xml.Serialization;
 using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities.Configuration
@@ -142,9 +143,12 @@ namespace Westwind.Utilities.Configuration
             // Loop through all fields and properties                 
             foreach (PropertyInfo property in properties)
             {
+                if (!property.CanWrite || Attribute.IsDefined(property, typeof(XmlIgnoreAttribute)))
+                    continue;
+                
                 Type fieldType = property.PropertyType;                
                 string fieldName = property.Name.ToLowerInvariant();
-
+                
                 // Error Message is an internal public property
                 if (fieldName == "errormessage" || fieldName == "provider")
                     continue;
@@ -162,9 +166,12 @@ namespace Westwind.Utilities.Configuration
 
                     try
                     {
-                        // Assign the value to the property
-                        ReflectionUtils.SetPropertyEx(config,property.Name,
-                            StringToTypedValue(value, fieldType, CultureInfo.InvariantCulture));
+                        if (property.CanWrite)
+                        {
+                            // Assign the value to the property
+                            ReflectionUtils.SetPropertyEx(config, property.Name,
+                                StringToTypedValue(value, fieldType, CultureInfo.InvariantCulture));
+                        }
                     }
                     catch
                     {
@@ -196,7 +203,8 @@ namespace Westwind.Utilities.Configuration
 
                     try
                     {
-                        ReflectionUtils.SetPropertyEx(config, property.Name, list);
+                        if(property.CanWrite)
+                            ReflectionUtils.SetPropertyEx(config, property.Name, list);
                     }
                     catch { }
                 }
@@ -274,6 +282,9 @@ namespace Westwind.Utilities.Configuration
 
             foreach (var property in properties)
             {                
+                if (!property.CanWrite || Attribute.IsDefined(property, typeof(XmlIgnoreAttribute)))
+                    continue;
+
                 Type fieldType = null;
                 string typeName = null;
     
@@ -358,6 +369,9 @@ namespace Westwind.Utilities.Configuration
 
                 foreach (var property in properties)
                 {
+                    if (!property.CanRead || Attribute.IsDefined(property, typeof(XmlIgnoreAttribute)))
+                        continue;
+
                     // Don't persist ErrorMessage property
                     if (property.Name == "ErrorMessage" || property.Name == "Provider")
                         continue;

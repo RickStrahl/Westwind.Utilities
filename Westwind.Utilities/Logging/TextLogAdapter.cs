@@ -77,7 +77,6 @@ namespace Westwind.Utilities.Logging
 
 
             string logFilename = ConnectionString;
-            bool writeEndDoc = true;
 
             lock (_writeLock)
             {

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Westwind.Utilities.Configuration.Tests
 {
@@ -20,7 +21,13 @@ public class CustomConfigFileConfiguration : Westwind.Utilities.Configuration.Ap
     public bool SendAdminEmailConfirmations { get; set; }
     public string Password { get; set; }
     public string AppConnectionString { get; set; }
+
     public LicenseInformation License { get; set; }
+
+
+    [XmlIgnore]
+    public string IgnoredProperty {get; set;}
+
     public List<string> ServerList { get; set;  }
 
         public CustomConfigFileConfiguration()

@@ -19,5 +19,5 @@ namespace Westwind.Utilities.Test
         public static string MailServerPassword { get; set;  }
 
         public static bool MailServerUseSsl { get; set; }
-	}
+    }
 }

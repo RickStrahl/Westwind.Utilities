@@ -1,7 +1,10 @@
 # Westwind.Utilities Changelog
 
-### 3.0.35
+### 3.0.36
 *not released yet*
+
+* **XmlIgnore for XML Configuration**  
+You can now specify `[XmlIgnore]` for properties when using XML configure to have properties ignored when serializing, deserializing. This worked for external files before, but not for config file configuration in full framework.
 
 * **FileUtils.ShortFilename**  
 Turn a Windows long filename into a short filename. Use to get around 256 MAX_PATH limitations for some operations.
