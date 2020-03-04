@@ -587,7 +587,7 @@ namespace Westwind.Utilities
                             val = null;
                         // deal with data drivers return bit values as int64 or in
                         else if (prop.PropertyType == typeof(bool) && (val is long || val is int))
-                            val = (long)val == 1 ? true : false;
+                            val = Convert.ToInt64(val) == 1 ? true : false;
                         // int conversions when the value is not different type of number
                         else if (prop.PropertyType == typeof(int) && (val is long || val is decimal))
                             val = Convert.ToInt32(val);
