@@ -41,6 +41,7 @@ using System.Text;
 using System.Configuration;
 using Westwind.Utilities.Properties;
 using System.Data.Common;
+using System.IO;
 using Westwind.Utilities.Data;
 
 namespace Westwind.Utilities
@@ -50,12 +51,12 @@ namespace Westwind.Utilities
     /// </summary>
     public static class DataUtils
     {
-        public const BindingFlags MemberAccess =
+        const BindingFlags MemberAccess =
             BindingFlags.Public | BindingFlags.NonPublic |
             BindingFlags.Static | BindingFlags.Instance | BindingFlags.IgnoreCase;
 
-        public const BindingFlags MemberPublicInstanceAccess =
-            BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase;
+        //const BindingFlags MemberPublicInstanceAccess =
+        //    BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase;
 
         #region Unique Ids and Random numbers
         /// <summary>
@@ -175,6 +176,52 @@ namespace Westwind.Utilities
             var bytes = encoding.GetBytes(stringToFind);
 
             return IndexOfByteArray(buffer, bytes);
+        }
+
+        /// <summary>
+        /// Removes a sequence of bytes from a byte array
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="bytesToRemove"></param>
+        /// <returns></returns>
+        public static byte[] RemoveBytes(byte[] buffer, byte[] bytesToRemove)
+        {
+            if (buffer == null || buffer.Length == 0 ||
+                bytesToRemove == null || bytesToRemove.Length == 0)
+                return buffer;
+
+            using (var ms = new MemoryStream())
+            using(var bw = new BinaryWriter(ms))
+            {
+                var firstByte = bytesToRemove[0];
+                
+                for (int i = 0; i < buffer.Length; i++)
+                {
+                    var current = buffer[i];
+                    if (current == firstByte && buffer.Length >= i + bytesToRemove.Length)
+                    {
+                        bool found = true;
+                        for (int y = 1; y < bytesToRemove.Length; y++)
+                        {
+                            if (buffer[i + y] != bytesToRemove[y])
+                            {
+                                found = false;
+                                break;
+                            }
+                        }
+
+                        if (found)
+                            i += bytesToRemove.Length -1; // skip over
+                        else
+                            bw.Write(current);
+                    }
+                    else
+                        bw.Write(current);
+
+                }
+                
+                return ms.ToArray();
+            }
         }
 
         #endregion
