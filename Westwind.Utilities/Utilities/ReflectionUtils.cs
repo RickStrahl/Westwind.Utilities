@@ -899,6 +899,26 @@ namespace Westwind.Utilities
             return items;
         }
 
+
+        /// <summary>
+        /// Allows invoking an event from an external classes where direct access
+        /// is not allowed (due to 'Can only assign to left hand side of operation')
+        /// </summary>
+        /// <param name="instance">Instance of the object hosting the event</param>
+        /// <param name="eventName">Name of the event to invoke</param>
+        /// <param name="parameters">Optional parameters to the event handler to be invoked</param>
+        public static void InvokeEvent(object instance, string eventName, params object[] parameters)
+        {
+            MulticastDelegate del =
+                (MulticastDelegate)instance.GetType().GetField(eventName,
+                    System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.NonPublic).GetValue(instance);
+            Delegate[] delegates = del.GetInvocationList();
+            foreach (Delegate dlg in delegates)
+            {
+                dlg.Method.Invoke(dlg.Target, parameters);
+            }
+        }
         #endregion
 
         #region COM Reflection Routines
