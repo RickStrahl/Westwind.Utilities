@@ -120,17 +120,20 @@ namespace Westwind.Utilities
 		/// <summary>
 		/// Retrieves a result string from an XPATH query. Null if not found.
 		/// </summary>
-		/// <param name="node"></param>
-		/// <param name="xPath"></param>
-		/// <param name="ns"></param>
-		/// <returns></returns>
-		public static string GetXmlString(XmlNode node, string xPath, XmlNamespaceManager ns=null)
+		/// <param name="node">The base node to search from</param>
+		/// <param name="xPath">XPath to drill into to find the target node. if not provided or null, returns current node</param>
+		/// <param name="ns">namespace to search in (optional)</param>
+		/// <returns>node text</returns>
+		public static string GetXmlString(XmlNode node, string xPath = null, XmlNamespaceManager ns=null)
         {
-            XmlNode selNode = node.SelectSingleNode(xPath,ns);
-            if (selNode == null)
+            if (node == null)
                 return null;
 
-            return selNode.InnerText;
+            if (string.IsNullOrEmpty(xPath))
+                return node?.InnerText;
+
+            XmlNode selNode = node.SelectSingleNode(xPath,ns);
+            return selNode?.InnerText;
         }
 
 
