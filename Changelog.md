@@ -3,6 +3,9 @@
 ### 3.0.36
 *not released yet*
 
+* **ReflectionUtils.InvokeEvent()**  
+Method that allows triggering of events even from outside of the host class using Reflection without requiring a wrapper `OnEvent()` handler method to force operation into the original definition's class.
+
 * **XmlIgnore for XML Configuration**  
 You can now specify `[XmlIgnore]` for properties when using XML configure to have properties ignored when serializing, deserializing. This worked for external files before, but not for config file configuration in full framework.
 
@@ -11,6 +14,9 @@ Turn a Windows long filename into a short filename. Use to get around 256 MAX_PA
 
 * **SqlDataAccess.DoesTableExist()**  
 Added a method that checks to see if a table exist in the current database.
+
+* **DataUtils.RemoveBytes()**  
+Removes a sequence of bytes from a byte array.
 
 * **Fix: FileUtils.SafeFilename trailing Spaces**  
 Fix trailing spaces issue in SafeFilename, when last character is a replacement character.
