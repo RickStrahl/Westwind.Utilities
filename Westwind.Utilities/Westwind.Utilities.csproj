@@ -71,9 +71,6 @@
     <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
-    <!--<PackageReference Include="Microsoft.Data.SqlClient">
-      <Version>1.1.2</Version>
-    </PackageReference>-->
   </ItemGroup>
 
 
