@@ -35,7 +35,11 @@
 
 using System;
 using System.Data.Common;
+#if NETSTANDARD2_0
+using Microsoft.Data.SqlClient;
+#else
 using System.Data.SqlClient;
+#endif
 
 namespace Westwind.Utilities.Data
 {

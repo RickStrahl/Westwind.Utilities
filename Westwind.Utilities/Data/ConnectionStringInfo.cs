@@ -1,7 +1,11 @@
 using System;
 using System.Configuration;
 using System.Data.Common;
+#if NETSTANDARD2_0
+using Microsoft.Data.SqlClient;
+#else
 using System.Data.SqlClient;
+#endif
 using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities.Data

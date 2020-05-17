@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net46;netstandard2.0;net40</TargetFrameworks>
-    <Version>3.0.37</Version>
+    <Version>3.0.27</Version>
     <Authors>Rick Strahl</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <Language>en-US</Language>
@@ -55,7 +55,9 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient">
+      <Version>1.1.2</Version>
+    </PackageReference>
   </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
@@ -69,6 +71,9 @@
     <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
+    <!--<PackageReference Include="Microsoft.Data.SqlClient">
+      <Version>1.1.2</Version>
+    </PackageReference>-->
   </ItemGroup>
 
 
@@ -102,4 +107,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+
+
+  
 </Project>

@@ -38,7 +38,11 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+#if NETSTANDARD2_0
+using Microsoft.Data.SqlClient;
+#else
 using System.Data.SqlClient;
+#endif
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;

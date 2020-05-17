@@ -35,7 +35,11 @@
 // TODO: Doesn't work due to missing SqlDbClientFactories which should be added later
 
 
+#if NETSTANDARD2_0
+using Microsoft.Data.SqlClient;
+#else
 using System.Data.SqlClient;
+#endif
 using Westwind.Utilities.Data;
 using System.Data.Common;
 using System;

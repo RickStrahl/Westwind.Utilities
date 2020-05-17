@@ -38,8 +38,12 @@ using System.Configuration;
 using System.Reflection;
 using System.Xml;
 using System.Globalization;
-
+#if NETSTANDARD2_0
+using Microsoft.Data.SqlClient;
+#else
 using System.Data.SqlClient;
+#endif
+
 using System.Xml.Serialization;
 using System.Diagnostics;
 
