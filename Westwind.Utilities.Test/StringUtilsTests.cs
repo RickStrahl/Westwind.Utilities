@@ -524,5 +524,19 @@ multiple lines";
             converted = StringUtils.NormalizeLineFeeds(text, LineFeedTypes.CrLf);
             Assert.IsTrue(converted == string.Empty);
         }
+
+        [TestMethod]
+        public void TextAbstractTest()
+        {
+            var text = "This is a long block of text that needs to be truncated into a text abstract by ending in an elipses.\r\n" +
+            "Multiple lines are converted to spaces to make the text cleaner to work with. This is some pretty long text to truncate\n\nand more lines.";
+
+            string result = StringUtils.TextAbstract(text,200);
+
+            Console.WriteLine($"{result.Length} {result}");
+
+            // breaks on word boundaries so size may not be exact
+            Assert.IsTrue(result.Length > 180 && result.Length < 204);
+        }
     }
 }

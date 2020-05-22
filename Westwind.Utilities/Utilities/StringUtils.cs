@@ -465,6 +465,8 @@ namespace Westwind.Utilities
         /// <summary>
         /// Returns an abstract of the provided text by returning up to Length characters
         /// of a text string. If the text is truncated a ... is appended.
+        ///
+        /// Note: Linebreaks are converted into spaces.
         /// </summary>
         /// <param name="text">Text to abstract</param>
         /// <param name="length">Number of characters to abstract to</param>
@@ -474,13 +476,19 @@ namespace Westwind.Utilities
             if (text == null)
                 return string.Empty;
 
-            if (text.Length <= length)
-                return text;
+            if (text.Length > length)
+            {
+                text = text.Substring(0, length);
+                text = text.Substring(0, text.LastIndexOf(" ")) + "...";
+            }
 
-            text = text.Substring(0, length);
+            StringBuilder sb = new StringBuilder(text.Length);
+            foreach (var s in GetLines(text))
+            {
+                sb.Append(s.Trim() + " ");
+            }
 
-            text = text.Substring(0, text.LastIndexOf(" "));
-            return text + "...";
+            return sb.ToString().Trim();
         }
 
         /// <summary>
