@@ -1,7 +1,7 @@
 # Westwind.Utilities Changelog
 
-### 3.0.36
-*not released yet*
+### 3.0.40
+*May 22nd, 2020*
 
 * **ReflectionUtils.InvokeEvent()**  
 Method that allows triggering of events even from outside of the host class using Reflection without requiring a wrapper `OnEvent()` handler method to force operation into the original definition's class.
@@ -17,6 +17,9 @@ Added a method that checks to see if a table exist in the current database.
 
 * **DataUtils.RemoveBytes()**  
 Removes a sequence of bytes from a byte array.
+
+* **Fix: TextAbstract() remove Line Breaks**  
+`TextAbstract()` now removes line breaks when creating the the abstract and replaces them with spaces.
 
 * **Fix: FileUtils.SafeFilename trailing Spaces**  
 Fix trailing spaces issue in SafeFilename, when last character is a replacement character.

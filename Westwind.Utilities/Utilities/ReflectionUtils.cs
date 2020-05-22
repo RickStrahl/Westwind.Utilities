@@ -910,9 +910,13 @@ namespace Westwind.Utilities
         public static void InvokeEvent(object instance, string eventName, params object[] parameters)
         {
             MulticastDelegate del =
-                (MulticastDelegate)instance.GetType().GetField(eventName,
+                (MulticastDelegate)instance?.GetType().GetField(eventName,
                     System.Reflection.BindingFlags.Instance |
-                    System.Reflection.BindingFlags.NonPublic).GetValue(instance);
+                    System.Reflection.BindingFlags.NonPublic)?.GetValue(instance);
+            
+            if (del == null)
+                return;
+
             Delegate[] delegates = del.GetInvocationList();
             foreach (Delegate dlg in delegates)
             {
