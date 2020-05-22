@@ -297,9 +297,10 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="url">Any URL Moniker that the Windows Shell understands (URL, Word Docs, PDF, Email links etc.)</param>
         /// <returns></returns>
-        public static int GoUrl(string url)
+        public static int GoUrl(string url, string workingFolder = null)
         {
             string TPath = Path.GetTempPath();
+
            
             ProcessStartInfo info = new ProcessStartInfo();
             info.UseShellExecute = true;
@@ -307,13 +308,102 @@ namespace Westwind.Utilities
             info.WorkingDirectory = TPath;
             info.FileName = url;
 
-            Process process = new Process(); 
-            process.StartInfo = info;
-            process.Start();
+            using (Process process = new Process())
+            {
+                process.StartInfo = info;
+                process.Start();
+            }
 
             return 0;
         }
 
+        /// <summary>
+        /// Wrapper around the Shell Execute API
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="arguments"></param>
+        /// <param name="workingFolder"></param>
+        /// <param name="verb"></param>
+        /// <returns></returns>
+        public static int ShellExecute(string url, string arguments, string workingFolder = null, string verb = "Open")
+        {
+            ProcessStartInfo info = new ProcessStartInfo();
+            info.UseShellExecute = true;
+            info.Verb = "Open";
+            
+            info.FileName = url;
+            info.Arguments = arguments;
+            info.WorkingDirectory = workingFolder;
+            
+            using (Process process = new Process())
+            {
+                process.StartInfo = info;
+                process.Start();
+            }
+
+            return 0;
+        }
+
+        
+        /// <summary>
+        /// Executes a Windows Command Line using Shell Execute as a
+        /// single command line with parameters. This method handles
+        /// parsing out the executable from the parameters.
+        /// </summary>
+        /// <param name="fullCommandLine">Full command line - Executable plus arguments. Recommend double quotes for best command parsing experience</param>
+        /// <param name="workingFolder">Optional - the folder the executable runs in. If not specified uses current folder.</param>
+        /// <param name="waitForExitMs">Optional - Number of milliseconds to wait for completion. 0 don't wait.</param>
+        /// <param name="verb">Optional - Shell verb to apply. Defaults to "Open"</param>
+        /// <param name="windowStyle">Optional - Windows style for the launched application. Default style is normal</param>
+        public static void ExecuteCommandLine(string fullCommandLine, 
+            string workingFolder = null, 
+            int waitForExitMs = 0, 
+            string verb = "OPEN",
+            ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal)
+        {
+            string executable = fullCommandLine;
+            string args = null;
+	
+            if (executable.StartsWith("\""))
+            {
+                int at = executable.IndexOf("\" ");
+                if (at > 0)
+                {			
+                    args = executable.Substring(at+1).Trim();
+                    executable = executable.Substring(0, at);
+                }
+            }
+            else
+            {
+                int at = executable.IndexOf(" ");
+                if (at > 0)
+                {
+			
+                    if (executable.Length > at +1)
+                        args = executable.Substring(at + 1).Trim();
+                    executable = executable.Substring(0, at);
+                }
+            }
+
+            var pi = new ProcessStartInfo();
+            //pi.UseShellExecute = true;
+            pi.Verb = verb;
+            pi.WindowStyle = windowStyle;
+
+            pi.FileName = executable;
+            pi.WorkingDirectory = workingFolder;
+            pi.Arguments = args;
+
+
+            using (var p = Process.Start(pi))
+            {
+                if (waitForExitMs > 0)
+                {
+                    if (!p.WaitForExit(waitForExitMs))
+                        throw new TimeoutException("Process failed to complete in time.");
+                }
+            }
+        }
 
         /// <summary>
         /// Displays a string in in a browser as HTML. Optionally
