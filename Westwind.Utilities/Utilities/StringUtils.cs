@@ -473,7 +473,7 @@ namespace Westwind.Utilities
         /// <returns>string</returns>
         public static string TextAbstract(string text, int length)
         {
-            if (text == null)
+            if (string.IsNullOrEmpty(text))
                 return string.Empty;
 
             if (text.Length > length)
@@ -482,12 +482,13 @@ namespace Westwind.Utilities
                 text = text.Substring(0, text.LastIndexOf(" ")) + "...";
             }
 
+            if (!text.Contains("\n"))
+                return text;
+
+            // linebreaks to spaces
             StringBuilder sb = new StringBuilder(text.Length);
             foreach (var s in GetLines(text))
-            {
                 sb.Append(s.Trim() + " ");
-            }
-
             return sb.ToString().Trim();
         }
 
