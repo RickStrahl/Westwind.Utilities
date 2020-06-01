@@ -123,7 +123,7 @@ namespace Westwind.Utilities.Configuration
             InitializeCalled = true;  
             
             if (string.IsNullOrEmpty(sectionName))
-                sectionName = this.GetType().Name;
+                sectionName = GetType().Name;
 
             OnInitialize(provider,sectionName,configData);
         }
@@ -173,7 +173,7 @@ namespace Westwind.Utilities.Configuration
 #else
 			var providerType = typeof(JsonFileConfigurationProvider<>);
 #endif
-			var type = this.GetType();
+			var type = GetType();
             Type typeProvider = providerType.MakeGenericType(type);
 
             var provider = Activator.CreateInstance(typeProvider) as IConfigurationProvider;

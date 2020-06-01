@@ -15,6 +15,8 @@ namespace Westwind.Utilities.Configuration.Tests
     /// </summary>
 public class CustomConfigFileConfiguration : Westwind.Utilities.Configuration.AppConfiguration
 {
+    public string ConfigFile  {get; set; }
+
     public string ApplicationName { get; set; }
     public DebugModes DebugMode { get; set; }
     public int MaxDisplayListItems { get; set; }
@@ -30,6 +32,7 @@ public class CustomConfigFileConfiguration : Westwind.Utilities.Configuration.Ap
 
     public List<string> ServerList { get; set;  }
 
+    
         public CustomConfigFileConfiguration()
         {
             ApplicationName = "Configuration Tests";
@@ -63,7 +66,7 @@ public class CustomConfigFileConfiguration : Westwind.Utilities.Configuration.Ap
         {
             var provider = new ConfigurationFileConfigurationProvider<CustomConfigFileConfiguration>()
             {
-                //ConfigurationFile = "CustomConfiguration.config",
+                ConfigurationFile = ConfigFile,
                 ConfigurationSection = sectionName,
                 EncryptionKey = "ultra-seekrit",  // use a generated value here
                 PropertiesToEncrypt = "Password,AppConnectionString,License.LicenseKey"

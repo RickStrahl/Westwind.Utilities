@@ -35,16 +35,38 @@ namespace Westwind.Utilities.Configuration.Tests
         [TestMethod]
         public void DefaultConstructorInstanceTest()
         {
+            var configFile  = Path.Combine(Path.GetTempPath(),"testconfig.config");
+
             var config = new CustomConfigFileConfiguration();
             config.Initialize();
 
             Assert.IsNotNull(config);
             Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));
-            
+
             string text = File.ReadAllText(TestHelpers.GetTestConfigFilePath());
             Assert.IsTrue(text.Contains(@"<add key=""MaxDisplayListItems"" value=""15"" />"));
             Console.WriteLine(text);          
         }
+
+        [TestMethod]
+        public void CustomFileLocationInstanceTest()
+        {
+            var configFile  = Path.Combine(Path.GetTempPath(),"testconfig.config");
+
+            var config = new CustomConfigFileConfiguration();
+            config.ConfigFile = configFile; // custom property to pass in the path
+            config.Initialize();
+
+            Assert.IsNotNull(config);
+            Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));
+
+            string text = File.ReadAllText(configFile); // TestHelpers.GetTestConfigFilePath());
+            Assert.IsTrue(text.Contains(@"<add key=""MaxDisplayListItems"" value=""15"" />"));
+            Console.WriteLine(text);
+
+            File.Delete(configFile);
+        }
+
 
         [TestMethod]
         public void WriteConfigurationTest()
