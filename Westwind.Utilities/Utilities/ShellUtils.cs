@@ -37,6 +37,7 @@ using System.Text;
 using System.IO;
 using System.Net;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Westwind.Utilities
 {
@@ -290,7 +291,8 @@ namespace Westwind.Utilities
         }
 #endregion
 
-        #region URL and HTTP Access
+        #region Shell Execute Apis, URL Openening
+
         /// <summary>
         /// Uses the Shell Extensions to launch a program based on URL moniker or file name
         /// Basically a wrapper around ShellExecute
@@ -299,9 +301,11 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static int GoUrl(string url, string workingFolder = null)
         {
+            if (string.IsNullOrEmpty(workingFolder))
+                return OpenUrl(url) ? 0 : 1;
+
             string TPath = Path.GetTempPath();
 
-           
             ProcessStartInfo info = new ProcessStartInfo();
             info.UseShellExecute = true;
             info.Verb = "Open";
@@ -318,7 +322,62 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Wrapper around the Shell Execute API
+        /// Opens a URL in the browser. This version is specific to opening
+        /// a URL in a browser and it's cross platform enabled.
+        /// </summary>
+        /// <param name="url"></param>
+        public static bool OpenUrl(string url)
+        {
+            bool success = true;
+
+            Process p = null;
+            try
+            {
+                var psi = new ProcessStartInfo(url);
+                p = Process.Start(psi);
+            }
+            catch
+            {
+                #if NETCORE
+                // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ||
+                    RuntimeInformation.OSDescription.Contains("microsoft-standard"))  // wsl
+                {
+                    url = url.Replace("&", "^&");
+                    try
+                    {
+                        Process.Start(new ProcessStartInfo("cmd.exe", $"/c start {url}") {CreateNoWindow = true});
+                    }
+                    catch
+                    {
+                        success = false;
+                    }
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    p = Process.Start("xdg-open", url);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    p = Process.Start("open", url);
+                }
+                else
+                {
+                    success = false;
+                }
+                #else
+                    success = false;
+                #endif
+            }
+
+            p?.Dispose();
+
+            return success;
+        }
+        
+
+        /// <summary>
+        /// Wrapper around the Shell Execute API. Windows specific.
         /// </summary>
         /// <param name="url"></param>
         /// <param name="arguments"></param>
@@ -452,7 +511,9 @@ namespace Westwind.Utilities
 
             return GoUrl(File);
         }
+        #endregion
 
+        #region Simple HTTP Helpers
         /// <summary>
         /// Simple method to retrieve HTTP content from the Web quickly
         /// </summary>
