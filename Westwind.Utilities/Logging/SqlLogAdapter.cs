@@ -38,7 +38,13 @@ using System.Drawing;
 using System.Data.Common;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Data.SqlClient;
+
+#if NETCORE
+    using Microsoft.Data.SqlClient;
+#else
+    using System.Data.SqlClient;
+#endif
+
 
 namespace Westwind.Utilities.Logging
 {

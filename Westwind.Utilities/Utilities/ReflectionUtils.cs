@@ -41,7 +41,7 @@ using System.Collections.Generic;
 using System.IO;
 
 
-namespace Westwind.WebConnection
+namespace Westwind.Utilities
 {
     /// <summary>
     /// Collection of Reflection and type conversion related utility functions

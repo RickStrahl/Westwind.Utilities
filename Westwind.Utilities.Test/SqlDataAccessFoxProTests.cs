@@ -14,7 +14,7 @@ using System.IO;
 using Westwind.Utilities.Test;
 
 // Remove TestFoxProDriver from Compiler Options if you don't have the FoxPro OleDb Driver installed
-#if TestFoxProDriver
+#if TEST_FOXPRO_DATA
 
 namespace Westwind.Utilities.Data.Tests
 {

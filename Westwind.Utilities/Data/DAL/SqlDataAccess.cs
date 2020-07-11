@@ -35,7 +35,13 @@
 
 using System;
 using System.Data.Common;
-using System.Data.SqlClient;
+
+#if NETCORE
+    using Microsoft.Data.SqlClient;
+#else
+    using System.Data.SqlClient;
+#endif
+
 
 namespace Westwind.Utilities.Data
 {

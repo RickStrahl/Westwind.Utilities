@@ -1,6 +1,4 @@
-﻿#define NETCORE
-
-#region License
+﻿#region License
 //#define SupportWebRequestProvider
 /*
  **************************************************************
@@ -38,7 +36,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -46,6 +43,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Westwind.Utilities.Properties;
+
+
+#if NETCORE
+    using Microsoft.Data.SqlClient;
+#else
+    using System.Data.SqlClient;
+#endif
 
 namespace Westwind.Utilities.Data
 {
