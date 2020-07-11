@@ -1,6 +1,11 @@
 # Westwind.Utilities Changelog
 
 ### 3.0.40
+
+* **Switch Data Access to Microsoft.Data.SqlClient**  
+Switch the Sql Client library to the new `Microsoft.Data.SqlClient` for .NET Standard and .NET Standard. The full framework libs continue using `System.Data.SqlClient` native in the framework `System.Data` assembly.
+
+### 3.0.40
 *May 22nd, 2020*
 
 * **ReflectionUtils.InvokeEvent()**  
