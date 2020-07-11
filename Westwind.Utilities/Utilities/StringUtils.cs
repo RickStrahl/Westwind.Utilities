@@ -104,18 +104,23 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static string Replicate(string input, int charCount)
         {
-            return new StringBuilder().Insert(0, input, charCount).ToString();
+            StringBuilder sb = new StringBuilder(input.Length * charCount);
+            for (int i = 0; i < charCount; i++)
+                sb.Append(input);
+
+            return sb.ToString();
         }
 
         /// <summary>
         /// Replicates a character n number of times and returns a string
+        /// You can use `new string(char, count)` directly though.
         /// </summary>
         /// <param name="charCount"></param>
         /// <param name="character"></param>
         /// <returns></returns>
         public static string Replicate(char character, int charCount)
         {
-            return new StringBuilder().Insert(0, character.ToString(), charCount).ToString();
+            return new string(character, charCount);
         }
 
         /// <summary>
