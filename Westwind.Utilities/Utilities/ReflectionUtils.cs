@@ -39,13 +39,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using Westwind.Utilities.Properties;
-using System.Runtime.InteropServices;
 
 
-namespace Westwind.Utilities
+namespace Westwind.WebConnection
 {
     /// <summary>
     /// Collection of Reflection and type conversion related utility functions
@@ -354,7 +350,7 @@ namespace Westwind.Utilities
                 {
                     Debug.Assert(false, string.Format("Type Conversion not handled in StringToTypedValue for {0} {1}",
                         targetType.Name, sourceString));
-                    throw (new InvalidCastException(Resources.StringToTypedValueValueTypeConversionFailed + targetType.Name));
+                    throw (new InvalidCastException("Type Conversion failed for: " + targetType.Name));
                 }
             }
 
@@ -436,15 +432,97 @@ namespace Westwind.Utilities
         #region Member Access
 
         /// <summary>
-        /// Retrieve a field dynamically from an object. This is a simple implementation that's
-        /// straight Reflection and doesn't support indexers.
+        /// Calls a method on an object dynamically. This version requires explicit
+        /// specification of the parameter type signatures.
         /// </summary>
-        /// <param name="Object">Object to retreve Field from</param>
-        /// <param name="Property">name of the field to retrieve</param>
-        /// <returns></returns>
-        public static object GetField(object Object, string Property)
+        /// <param name="instance">Instance of object to call method on</param>
+        /// <param name="method">The method to call as a stringToTypedValue</param>
+        /// <param name="parameterTypes">Specify each of the types for each parameter passed. 
+        /// You can also pass null, but you may get errors for ambiguous methods signatures
+        /// when null parameters are passed</param>
+        /// <param name="parms">any variable number of parameters.</param>        
+        /// <returns>object</returns>
+        public static object CallMethod(object instance, string method, Type[] parameterTypes, params object[] parms)
         {
-            return Object.GetType().GetField(Property, ReflectionUtils.MemberAccess | BindingFlags.GetField).GetValue(Object);
+            if (parameterTypes == null && parms.Length > 0)
+                // Call without explicit parameter types - might cause problems with overloads    
+                // occurs when null parameters were passed and we couldn't figure out the parm type
+                return instance.GetType().GetMethod(method, ReflectionUtils.MemberAccess | BindingFlags.InvokeMethod).Invoke(instance, parms);
+            else
+                // Call with parameter types - works only if no null values were passed
+                return instance.GetType().GetMethod(method, ReflectionUtils.MemberAccess | BindingFlags.InvokeMethod, null, parameterTypes, null).Invoke(instance, parms);
+        }
+
+        /// <summary>
+        /// Calls a method on an object dynamically. 
+        /// 
+        /// This version doesn't require specific parameter signatures to be passed. 
+        /// Instead parameter types are inferred based on types passed. Note that if 
+        /// you pass a null parameter, type inferrance cannot occur and if overloads
+        /// exist the call may fail. if so use the more detailed overload of this method.
+        /// </summary> 
+        /// <param name="instance">Instance of object to call method on</param>
+        /// <param name="method">The method to call as a stringToTypedValue</param>
+        /// <param name="parameterTypes">Specify each of the types for each parameter passed. 
+        /// You can also pass null, but you may get errors for ambiguous methods signatures
+        /// when null parameters are passed</param>
+        /// <param name="parms">any variable number of parameters.</param>        
+        /// <returns>object</returns>
+        public static object CallMethod(object instance, string method, params object[] parms)
+        {
+            // Pick up parameter types so we can match the method properly
+            Type[] parameterTypes = null;
+            if (parms != null)
+            {
+                parameterTypes = new Type[parms.Length];
+                for (int x = 0; x < parms.Length; x++)
+                {
+                    // if we have null parameters we can't determine parameter types - exit
+                    if (parms[x] == null)
+                    {
+                        parameterTypes = null;  // clear out - don't use types        
+                        break;
+                    }
+                    parameterTypes[x] = parms[x].GetType();
+                }
+            }
+            return CallMethod(instance, method, parameterTypes, parms);
+        }
+
+        /// <summary>
+        /// Allows invoking an event from an external classes where direct access
+        /// is not allowed (due to 'Can only assign to left hand side of operation')
+        /// </summary>
+        /// <param name="instance">Instance of the object hosting the event</param>
+        /// <param name="eventName">Name of the event to invoke</param>
+        /// <param name="parameters">Optional parameters to the event handler to be invoked</param>
+        public static void InvokeEvent(object instance, string eventName, params object[] parameters)
+        {
+            MulticastDelegate del =
+                (MulticastDelegate)instance?.GetType().GetField(eventName,
+                    System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.NonPublic)?.GetValue(instance);
+            
+            if (del == null)
+                return;
+
+            Delegate[] delegates = del.GetInvocationList();
+            foreach (Delegate dlg in delegates)
+            {
+                dlg.Method.Invoke(dlg.Target, parameters);
+            }
+        }
+
+        /// <summary>
+        /// Retrieve a property value from an object dynamically. This is a simple version
+        /// that uses Reflection calls directly. It doesn't support indexers.
+        /// </summary>
+        /// <param name="instance">Object to make the call on</param>
+        /// <param name="property">Property to retrieve</param>
+        /// <returns>Object - cast to proper type</returns>
+        public static object GetProperty(object instance, string property)
+        {
+            return instance.GetType().GetProperty(property, ReflectionUtils.MemberAccess).GetValue(instance, null);
         }
 
         /// <summary>
@@ -472,12 +550,22 @@ namespace Westwind.Utilities
                 isArrayOrCollection = true;
             }
 
-            // Get the member
-            MemberInfo member = Parent.GetType().GetMember(pureProperty, ReflectionUtils.MemberAccess)[0];
-            if (member.MemberType == MemberTypes.Property)
-                result = ((PropertyInfo)member).GetValue(Parent, null);
+            var parentType = Parent.GetType();
+
+            if (string.IsNullOrEmpty(pureProperty))
+            {
+                // most likely an indexer
+                result = Parent;
+            }
             else
-                result = ((FieldInfo)member).GetValue(Parent);
+            {
+                // Get the member
+                MemberInfo member = Parent.GetType().GetMember(pureProperty, ReflectionUtils.MemberAccess)[0];
+                if (member.MemberType == MemberTypes.Property)
+                    result = ((PropertyInfo) member).GetValue(Parent, null);
+                else
+                    result = ((FieldInfo) member).GetValue(Parent);
+            }
 
             if (isArrayOrCollection)
             {
@@ -489,7 +577,7 @@ namespace Westwind.Utilities
                     int.TryParse(indexes, out Index);
                     result = CallMethod(result, "GetValue", Index);
                 }
-                else if (result is ICollection)
+                else if (result is ICollection || result is System.Data.DataRow || result is System.Data.DataTable)
                 {
                     if (indexes.StartsWith("\""))
                     {
@@ -511,6 +599,51 @@ namespace Westwind.Utilities
             return result;
         }
 
+        /// <summary>
+        /// Returns a PropertyInfo structure from an extended Property reference
+        /// </summary>
+        /// <param name="Parent"></param>
+        /// <param name="Property"></param>
+        /// <returns></returns>
+        public static PropertyInfo GetPropertyInfoInternal(object Parent, string Property)
+        {
+            if (Property == "this" || Property == "me")
+                return null;
+
+            string propertyName = Property;
+
+            // Deal with Array Property - strip off array indexer
+            if (Property.IndexOf("[") > -1)
+                propertyName = Property.Substring(0, Property.IndexOf("["));
+
+            // Get the member
+            return Parent.GetType().GetProperty(propertyName, ReflectionUtils.MemberAccess);
+        }
+
+        /// <summary>
+        /// Retrieve a field dynamically from an object. This is a simple implementation that's
+        /// straight Reflection and doesn't support indexers.
+        /// </summary>
+        /// <param name="Object">Object to retreve Field from</param>
+        /// <param name="Property">name of the field to retrieve</param>
+        /// <returns></returns>
+        public static object GetField(object Object, string Property)
+        {
+            return Object.GetType().GetField(Property, ReflectionUtils.MemberAccess | BindingFlags.GetField).GetValue(Object);
+        }
+
+
+        /// <summary>
+        /// Sets the property on an object. This is a simple method that uses straight Reflection 
+        /// and doesn't support indexers.
+        /// </summary>
+        /// <param name="obj">Object to set property on</param>
+        /// <param name="property">Name of the property to set</param>
+        /// <param name="value">value to set it to</param>
+        public static void SetProperty(object obj, string property, object value)
+        {
+            obj.GetType().GetProperty(property, ReflectionUtils.MemberAccess).SetValue(obj, value, null);
+        }
 
         /// <summary>
         /// Parses Properties and Fields including Array and Collection references.
@@ -596,6 +729,77 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
+        /// Sets the field on an object. This is a simple method that uses straight Reflection 
+        /// and doesn't support indexers.
+        /// </summary>
+        /// <param name="obj">Object to set property on</param>
+        /// <param name="property">Name of the field to set</param>
+        /// <param name="value">value to set it to</param>
+        public static void SetField(object obj, string property, object value)
+        {
+            obj.GetType().GetField(property, ReflectionUtils.MemberAccess).SetValue(obj, value);
+        }
+
+
+        /// <summary>
+        /// Returns a List of KeyValuePair object
+        /// </summary>
+        /// <param name="enumeration"></param>
+        /// <returns></returns>
+        public static List<KeyValuePair<string, string>> GetEnumList(Type enumType, bool valueAsFieldValueNumber = false)
+        {
+            //string[] enumStrings = Enum.GetNames(enumType);
+            Array enumValues = Enum.GetValues(enumType);
+            List<KeyValuePair<string, string>> items = new List<KeyValuePair<string, string>>();
+
+            foreach (var enumValue in enumValues)
+            {
+                var strValue = enumValue.ToString();
+
+                if (!valueAsFieldValueNumber)
+                    items.Add(new KeyValuePair<string, string>(enumValue.ToString(), StringUtils.FromCamelCase(strValue)));
+                else
+                    items.Add(new KeyValuePair<string, string>(((int)enumValue).ToString(),
+                        StringUtils.FromCamelCase(strValue)
+                    ));
+            }
+            return items;
+        }
+
+        #endregion
+
+
+        #region EX processing for nested operations
+
+        /// <summary>
+        /// Calls a method on an object with extended . syntax (object: this Method: Entity.CalculateOrderTotal)
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="method"></param>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        public static object CallMethodEx(object parent, string method, params object[] parms)
+        {
+            Type Type = parent.GetType();
+
+            // no more .s - we got our final object
+            int lnAt = method.IndexOf(".");
+            if (lnAt < 0)
+            {
+                return ReflectionUtils.CallMethod(parent, method, parms);
+            }
+
+            // Walk the . syntax
+            string Main = method.Substring(0, lnAt);
+            string Subs = method.Substring(lnAt + 1);
+
+            object Sub = GetPropertyInternal(parent, Main);
+
+            // Recurse until we get the lowest ref
+            return CallMethodEx(Sub, Subs, parms);
+        }
+
+        /// <summary>
         /// Returns a property or field value using a base object and sub members including . syntax.
         /// For example, you can access: oCustomer.oData.Company with (this,"oCustomer.oData.Company")
         /// This method also supports indexers in the Property value such as:
@@ -657,51 +861,6 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Returns a PropertyInfo structure from an extended Property reference
-        /// </summary>
-        /// <param name="Parent"></param>
-        /// <param name="Property"></param>
-        /// <returns></returns>
-        public static PropertyInfo GetPropertyInfoInternal(object Parent, string Property)
-        {
-            if (Property == "this" || Property == "me")
-                return null;
-
-            string propertyName = Property;
-
-            // Deal with Array Property - strip off array indexer
-            if (Property.IndexOf("[") > -1)
-                propertyName = Property.Substring(0, Property.IndexOf("["));
-
-            // Get the member
-            return Parent.GetType().GetProperty(propertyName, ReflectionUtils.MemberAccess);
-        }
-
-        /// <summary>
-        /// Sets the property on an object. This is a simple method that uses straight Reflection 
-        /// and doesn't support indexers.
-        /// </summary>
-        /// <param name="obj">Object to set property on</param>
-        /// <param name="property">Name of the property to set</param>
-        /// <param name="value">value to set it to</param>
-        public static void SetProperty(object obj, string property, object value)
-        {
-            obj.GetType().GetProperty(property, ReflectionUtils.MemberAccess).SetValue(obj, value, null);
-        }
-
-        /// <summary>
-        /// Sets the field on an object. This is a simple method that uses straight Reflection 
-        /// and doesn't support indexers.
-        /// </summary>
-        /// <param name="obj">Object to set property on</param>
-        /// <param name="property">Name of the field to set</param>
-        /// <param name="value">value to set it to</param>
-        public static void SetField(object obj, string property, object value)
-        {
-            obj.GetType().GetField(property, ReflectionUtils.MemberAccess).SetValue(obj, value);
-        }
-
-        /// <summary>
         /// Sets a value on an object. Supports . syntax for named properties
         /// (ie. Customer.Entity.Company) as well as indexers.
         /// </summary>
@@ -739,92 +898,37 @@ namespace Westwind.Utilities
             return null;
         }
 
-        /// <summary>
-        /// Calls a method on an object dynamically. This version requires explicit
-        /// specification of the parameter type signatures.
-        /// </summary>
-        /// <param name="instance">Instance of object to call method on</param>
-        /// <param name="method">The method to call as a stringToTypedValue</param>
-        /// <param name="parameterTypes">Specify each of the types for each parameter passed. 
-        /// You can also pass null, but you may get errors for ambiguous methods signatures
-        /// when null parameters are passed</param>
-        /// <param name="parms">any variable number of parameters.</param>        
-        /// <returns>object</returns>
-        public static object CallMethod(object instance, string method, Type[] parameterTypes, params object[] parms)
-        {
-            if (parameterTypes == null && parms.Length > 0)
-                // Call without explicit parameter types - might cause problems with overloads    
-                // occurs when null parameters were passed and we couldn't figure out the parm type
-                return instance.GetType().GetMethod(method, ReflectionUtils.MemberAccess | BindingFlags.InvokeMethod).Invoke(instance, parms);
-            else
-                // Call with parameter types - works only if no null values were passed
-                return instance.GetType().GetMethod(method, ReflectionUtils.MemberAccess | BindingFlags.InvokeMethod, null, parameterTypes, null).Invoke(instance, parms);
-        }
+        #endregion
 
+        #region Static Methods and Properties
         /// <summary>
-        /// Calls a method on an object dynamically. 
-        /// 
-        /// This version doesn't require specific parameter signatures to be passed. 
-        /// Instead parameter types are inferred based on types passed. Note that if 
-        /// you pass a null parameter, type inferrance cannot occur and if overloads
-        /// exist the call may fail. if so use the more detailed overload of this method.
-        /// </summary> 
-        /// <param name="instance">Instance of object to call method on</param>
-        /// <param name="method">The method to call as a stringToTypedValue</param>
-        /// <param name="parameterTypes">Specify each of the types for each parameter passed. 
-        /// You can also pass null, but you may get errors for ambiguous methods signatures
-        /// when null parameters are passed</param>
-        /// <param name="parms">any variable number of parameters.</param>        
-        /// <returns>object</returns>
-        public static object CallMethod(object instance, string method, params object[] parms)
-        {
-            // Pick up parameter types so we can match the method properly
-            Type[] parameterTypes = null;
-            if (parms != null)
-            {
-                parameterTypes = new Type[parms.Length];
-                for (int x = 0; x < parms.Length; x++)
-                {
-                    // if we have null parameters we can't determine parameter types - exit
-                    if (parms[x] == null)
-                    {
-                        parameterTypes = null;  // clear out - don't use types        
-                        break;
-                    }
-                    parameterTypes[x] = parms[x].GetType();
-                }
-            }
-            return CallMethod(instance, method, parameterTypes, parms);
-        }
-
-        /// <summary>
-        /// Calls a method on an object with extended . syntax (object: this Method: Entity.CalculateOrderTotal)
+        /// Invokes a static method
         /// </summary>
-        /// <param name="parent"></param>
+        /// <param name="typeName"></param>
         /// <param name="method"></param>
-        /// <param name="params"></param>
+        /// <param name="parms"></param>
         /// <returns></returns>
-        public static object CallMethodEx(object parent, string method, params object[] parms)
+        public static object CallStaticMethod(string typeName, string method, params object[] parms)
         {
-            Type Type = parent.GetType();
 
-            // no more .s - we got our final object
-            int lnAt = method.IndexOf(".");
-            if (lnAt < 0)
+            Type type = GetTypeFromName(typeName);
+            if (type == null)
+                throw new ArgumentException("Invalid type: " + typeName);
+
+            try
             {
-                return ReflectionUtils.CallMethod(parent, method, parms);
+                return type.InvokeMember(method,
+                    BindingFlags.Static | BindingFlags.Public | BindingFlags.InvokeMethod,
+                    null, type, parms);
             }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                    throw ex.GetBaseException();
 
-            // Walk the . syntax
-            string Main = method.Substring(0, lnAt);
-            string Subs = method.Substring(lnAt + 1);
-
-            object Sub = GetPropertyInternal(parent, Main);
-
-            // Recurse until we get the lowest ref
-            return CallMethodEx(Sub, Subs, parms);
+                throw new ApplicationException("Failed to retrieve method signature or invoke method");
+            }
         }
-
 
         /// <summary>
         /// Retrieves a value from  a static property by specifying a type full name and property
@@ -862,67 +966,6 @@ namespace Westwind.Utilities
             return result;
         }
 
-        /// <summary>
-        /// Retrieve a property value from an object dynamically. This is a simple version
-        /// that uses Reflection calls directly. It doesn't support indexers.
-        /// </summary>
-        /// <param name="instance">Object to make the call on</param>
-        /// <param name="property">Property to retrieve</param>
-        /// <returns>Object - cast to proper type</returns>
-        public static object GetProperty(object instance, string property)
-        {
-            return instance.GetType().GetProperty(property, ReflectionUtils.MemberAccess).GetValue(instance, null);
-        }
-
-        /// <summary>
-        /// Returns a List of KeyValuePair object
-        /// </summary>
-        /// <param name="enumeration"></param>
-        /// <returns></returns>
-        public static List<KeyValuePair<string, string>> GetEnumList(Type enumType, bool valueAsFieldValueNumber = false)
-        {
-            //string[] enumStrings = Enum.GetNames(enumType);
-            Array enumValues = Enum.GetValues(enumType);
-            List<KeyValuePair<string, string>> items = new List<KeyValuePair<string, string>>();
-
-            foreach (var enumValue in enumValues)
-            {
-                var strValue = enumValue.ToString();
-
-                if (!valueAsFieldValueNumber)
-                    items.Add(new KeyValuePair<string, string>(enumValue.ToString(), StringUtils.FromCamelCase(strValue)));
-                else
-                    items.Add(new KeyValuePair<string, string>(((int)enumValue).ToString(),
-                        StringUtils.FromCamelCase(strValue)
-                    ));
-            }
-            return items;
-        }
-
-
-        /// <summary>
-        /// Allows invoking an event from an external classes where direct access
-        /// is not allowed (due to 'Can only assign to left hand side of operation')
-        /// </summary>
-        /// <param name="instance">Instance of the object hosting the event</param>
-        /// <param name="eventName">Name of the event to invoke</param>
-        /// <param name="parameters">Optional parameters to the event handler to be invoked</param>
-        public static void InvokeEvent(object instance, string eventName, params object[] parameters)
-        {
-            MulticastDelegate del =
-                (MulticastDelegate)instance?.GetType().GetField(eventName,
-                    System.Reflection.BindingFlags.Instance |
-                    System.Reflection.BindingFlags.NonPublic)?.GetValue(instance);
-            
-            if (del == null)
-                return;
-
-            Delegate[] delegates = del.GetInvocationList();
-            foreach (Delegate dlg in delegates)
-            {
-                dlg.Method.Invoke(dlg.Target, parameters);
-            }
-        }
         #endregion
 
         #region COM Reflection Routines
