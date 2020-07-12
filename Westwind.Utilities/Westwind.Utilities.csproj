@@ -23,12 +23,15 @@
     <Copyright>Rick Strahl, West Wind Technologies, 2010-2019</Copyright>
     <RepositoryType>Github</RepositoryType>
     <Company>West Wind Technologies</Company>
-
-
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageOutputPath>./nupkg</PackageOutputPath>
     
     <RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
+    
+
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>    
+    <PackageOutputPath>./nupkg</PackageOutputPath>   
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>  
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -38,7 +41,8 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <NoWarn>$(NoWarn);CS1591;CS1572;CS1573</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <IncludeSymbols>true</IncludeSymbols>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    
     <DefineConstants>RELEASE</DefineConstants>
   </PropertyGroup>
 

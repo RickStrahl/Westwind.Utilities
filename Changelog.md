@@ -5,6 +5,13 @@
 * **Switch Data Access to Microsoft.Data.SqlClient**  
 Switch the Sql Client library to the new `Microsoft.Data.SqlClient` for .NET Standard and .NET Standard. The full framework libs continue using `System.Data.SqlClient` native in the framework `System.Data` assembly.
 
+* **Fix issues with StringUtils.TextAbstract() & Line Breaks**  
+Fix behavior of text abstract with line breaks not being turned into spaces consistently. Also check for null.
+
+* **ShellUtils.OpenUrl() - Platform agnostic Browser Opening**
+
+
+
 ### 3.0.40
 *May 22nd, 2020*
 
