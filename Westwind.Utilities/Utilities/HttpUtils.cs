@@ -333,9 +333,9 @@ namespace Westwind.Utilities
             {
                 client.DownloadFile(imageUrl, filename);
 
-                var ct = client.ResponseHeaders[HttpRequestHeader.ContentType];
+                var ct = client.Response.ContentType;   // works
 
-                if (!ct.StartsWith("image/"))
+                if (string.IsNullOrEmpty(ct) || !ct.StartsWith("image/"))
                     return null;
 
                 var ext = ImageUtils.GetExtensionFromMediaType(ct);
