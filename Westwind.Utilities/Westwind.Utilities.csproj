@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net46;netstandard2.0;net40</TargetFrameworks>
-    <Version>3.0.42</Version>
+    <Version>3.0.44.2</Version>
     <Authors>Rick Strahl</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <Language>en-US</Language>
@@ -16,22 +16,19 @@
     <PackageCopyright>Rick Strahl, West Wind Technologies 2007-2020</PackageCopyright>
     <PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
     <PackageReleaseNotes></PackageReleaseNotes>
+
     <PackageIconUrl>http://www.west-wind.com/westwindToolkit/images/WestwindWebToolkit_128x128.png</PackageIconUrl>
     <PackageProjectUrl>http://github.com/rickstrahl/westwind.utilities</PackageProjectUrl>
-    <PackageLicenseUrl>http://www.west-wind.com/WestwindToolkit/docs/?page=_2lp0u0i9b.htm</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/RickStrahl/Westwind.Utilities/tree/master/Westwind.Utilities</PackageLicenseUrl>
+    
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Copyright>Rick Strahl, West Wind Technologies, 2010-2019</Copyright>
+    <Copyright>Rick Strahl, West Wind Technologies, 2010-2020</Copyright>
     <RepositoryType>Github</RepositoryType>
     <Company>West Wind Technologies</Company>
     
     <RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
+    <RepositoryType>git</RepositoryType> 
     
-
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>    
-    <PackageOutputPath>./nupkg</PackageOutputPath>   
-    <DebugType>embedded</DebugType>
-    <DebugSymbols>true</DebugSymbols>  
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -42,7 +39,13 @@
     <NoWarn>$(NoWarn);CS1591;CS1572;CS1573</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+
     
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>    
+    <PackageOutputPath>./nupkg</PackageOutputPath>  
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
     <DefineConstants>RELEASE</DefineConstants>
   </PropertyGroup>
 
@@ -63,6 +66,8 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
