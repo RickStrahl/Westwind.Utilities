@@ -384,7 +384,8 @@ namespace Westwind.Utilities
         /// <param name="workingFolder"></param>
         /// <param name="verb"></param>
         /// <returns></returns>
-        public static int ShellExecute(string url, string arguments, string workingFolder = null, string verb = "Open")
+        public static int ShellExecute(string url, string arguments = null, 
+                                       string workingFolder = null, string verb = "Open")
         {
             ProcessStartInfo info = new ProcessStartInfo();
             info.UseShellExecute = true;
