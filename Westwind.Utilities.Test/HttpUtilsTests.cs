@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Westwind.Utilities.Test
 {
@@ -193,6 +195,34 @@ namespace Westwind.Utilities.Test
                 Console.WriteLine(header + ": " + settings.Response.Headers[header.ToString()]);
             }
         }
+
+        [TestMethod]
+        public void DownloadImageFile()
+        {
+            string url = "https://markdownmonster.west-wind.com/Images/MarkdownMonster_Icon_32.png";
+
+            string fname = null;
+            try
+            {
+                fname = HttpUtils.DownloadImageToFile(url);
+
+                Console.WriteLine(fname);
+
+                Assert.IsNotNull(fname);
+                Assert.IsTrue(File.Exists(fname));
+
+                //ShellUtils.ShellExecute(fname,null);
+                //Thread.Sleep(500);
+            }
+            finally
+            {
+                if (!string.IsNullOrEmpty(fname))
+                   File.Delete(fname);
+
+                Assert.IsFalse(File.Exists(fname));
+            }
+        }
+
 
         [ExpectedException(typeof(WebException))]
         [TestMethod()]

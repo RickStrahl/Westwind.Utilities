@@ -62,6 +62,56 @@ namespace Westwind.Utilities
 
 
         /// <summary>
+        /// Retrieves bytes from the server without any request customizations
+        /// </summary>
+        /// <param name="url">Url to access</param>
+        /// <returns></returns>
+        public static byte[] HttpRequestBytes(string url)
+        {
+            return HttpRequestBytes(new HttpRequestSettings() { Url = url });
+        }
+
+
+        /// <summary>
+        /// Retrieves bytes from the server 
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public static byte[] HttpRequestBytes(HttpRequestSettings settings)
+        {
+            var client = new HttpUtilsWebClient(settings);            
+          
+            if (settings.Content != null)
+            {
+                if (!string.IsNullOrEmpty(settings.ContentType))
+                    client.Headers["Content-type"] = settings.ContentType;
+
+                if (settings.Content is string)
+                {
+                    settings.CapturedRequestContent = settings.Content as string;
+                    settings.ResponseByteData = client.UploadData(settings.Url, settings.HttpVerb, settings.Encoding.GetBytes(settings.CapturedRequestContent));
+                }
+                else if (settings.Content is byte[])
+                {
+                    settings.ResponseByteData = client.UploadData(settings.Url, settings.Content as byte[]);
+                }
+                else
+                    throw new ArgumentException("Data must be either string or byte[].");
+            }
+            else 
+                settings.ResponseByteData = client.DownloadData(settings.Url);
+
+            settings.Response = client.Response;
+            
+            return settings.ResponseByteData;
+        }
+        
+
+
+
+
+
+        /// <summary>
         /// Makes an HTTP with option JSON data serialized from an object
         /// and parses the result from JSON back into an object.
         /// Assumes that the service returns a JSON response
@@ -154,6 +204,52 @@ namespace Westwind.Utilities
             return settings.CapturedResponseContent;
         }
 
+
+        /// <summary>
+        /// Retrieves bytes from the server without any request customizations
+        /// </summary>
+        /// <param name="url">Url to access</param>
+        /// <returns></returns>
+        public static async Task<byte[]> HttpRequestBytesAsync(string url)
+        {
+            return await HttpRequestBytesAsync(new HttpRequestSettings() { Url = url });
+        }
+
+        /// <summary>
+        /// Retrieves bytes from the server 
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public static async Task<byte[]> HttpRequestBytesAsync(HttpRequestSettings settings)
+        {
+            var client = new HttpUtilsWebClient(settings);            
+          
+            if (settings.Content != null)
+            {
+                if (!string.IsNullOrEmpty(settings.ContentType))
+                    client.Headers["Content-type"] = settings.ContentType;
+
+                if (settings.Content is string)
+                {
+                    settings.CapturedRequestContent = settings.Content as string;
+                    settings.ResponseByteData = await client.UploadDataTaskAsync(settings.Url, settings.HttpVerb, settings.Encoding.GetBytes(settings.CapturedRequestContent));
+                }
+                else if (settings.Content is byte[])
+                {
+                    settings.ResponseByteData = await client.UploadDataTaskAsync(settings.Url, settings.Content as byte[]);
+                }
+                else
+                    throw new ArgumentException("Data must be either string or byte[].");
+            }
+            else 
+                settings.ResponseByteData = await client.DownloadDataTaskAsync(settings.Url);
+
+            settings.Response = client.Response;
+            
+            return settings.ResponseByteData;
+        }
+
+
 		/// <summary>
 		/// Makes an HTTP with option JSON data serialized from an object
 		/// and parses the result from JSON back into an object.
@@ -200,7 +296,135 @@ namespace Westwind.Utilities
         }
 #endif
 
-	}
+
+        /// <summary>
+        /// Creates a temporary image file from a download from a URL
+        /// 
+        /// If you don't pass a file a temporary file is created in Temp Files folder.
+        /// You're responsible for cleaning up the file after you are done with it.
+        /// 
+        /// You should check the filename that is returned regardless of whether you
+        /// passed in a filename - if the file is of a different image type the
+        /// extension may be changed.
+        /// </summary>
+        /// <param name="filename">Url of image to download</param>
+        /// <param name="imageUrl">Optional output image file. Filename may change extension if the image format doesn't match the filename.
+        /// If not passed a temporary files file is created. Caller is responsible for cleaning up this file.
+        /// </param>
+        /// <param name="settings">Optional Http Settings for the request</param>
+        /// <returns>image filename or null on failure. Note that the filename may have a different extension than the request filename parameter.</returns>
+        public static string DownloadImageToFile(string imageUrl, string filename = null, HttpRequestSettings settings = null)
+        {
+            if (string.IsNullOrEmpty(imageUrl) || 
+                !imageUrl.StartsWith("http://") && !imageUrl.StartsWith("https://") )
+                return null;
+
+            string newFilename;
+
+            if (string.IsNullOrEmpty(filename))
+            {
+                filename = Path.Combine(Path.GetTempPath(), "~img-" + DataUtils.GenerateUniqueId());
+            }
+            filename = Path.ChangeExtension(filename, "bin");
+
+            var client = new HttpUtilsWebClient(settings);
+
+            try
+            {
+                client.DownloadFile(imageUrl, filename);
+
+                var ct = client.ResponseHeaders[HttpRequestHeader.ContentType];
+
+                if (!ct.StartsWith("image/"))
+                    return null;
+
+                var ext = ImageUtils.GetExtensionFromMediaType(ct);
+                if (ext == null)
+                    return null; // invalid image type
+
+                newFilename = Path.ChangeExtension(filename, ext);
+
+                if (File.Exists(newFilename))
+                    File.Delete(newFilename);
+
+                // rename the file
+                File.Move(filename, newFilename);
+            }
+            catch
+            {
+                if (File.Exists(filename))
+                    File.Delete(filename);
+
+                return null;
+            }
+
+            return newFilename;
+        }
+
+#if !NET40
+        /// <summary>
+        /// Creates a temporary image file from a download from a URL
+        /// 
+        /// If you don't pass a file a temporary file is created in Temp Files folder.
+        /// You're responsible for cleaning up the file after you are done with it.
+        /// 
+        /// You should check the filename that is returned regardless of whether you
+        /// passed in a filename - if the file is of a different image type the
+        /// extension may be changed.
+        /// </summary>
+        /// <param name="filename">Url of image to download</param>
+        /// <param name="imageUrl">Optional output image file. Filename may change extension if the image format doesn't match the filename.
+        /// If not passed a temporary files file is created. Caller is responsible for cleaning up this file.
+        /// </param>
+        /// <param name="settings">Optional Http Settings for the request</param>
+        public static async Task<string> DownloadImageToFileAsync(string imageUrl, string filename = null, HttpRequestSettings settings = null)
+        {
+            if (string.IsNullOrEmpty(imageUrl) || 
+                !imageUrl.StartsWith("http://") && !imageUrl.StartsWith("https://") )
+                return null;
+
+            string newFilename;
+
+            if (string.IsNullOrEmpty(filename))
+            {
+                filename = Path.Combine(Path.GetTempPath(), "~img-" + DataUtils.GenerateUniqueId());
+            }
+            filename = Path.ChangeExtension(filename, "bin");
+
+            var client = new HttpUtilsWebClient(settings);
+
+            try
+            {
+                await client.DownloadFileTaskAsync(imageUrl, filename);
+
+                var ct = client.ResponseHeaders[HttpRequestHeader.ContentType];
+
+                var ext = ImageUtils.GetExtensionFromMediaType(ct);
+                if (ext == null)
+                    return null; // invalid image type
+
+                newFilename = Path.ChangeExtension(filename, ext);
+
+                
+                if (File.Exists(newFilename))
+                    File.Delete(newFilename);
+
+                // rename the file
+                File.Move(filename, newFilename);
+            }
+            catch
+            {
+                if (File.Exists(filename))
+                    File.Delete(filename);
+
+                return null;
+            }
+
+            return newFilename;
+        }
+#endif
+
+    }
 
 
     /// <summary>
