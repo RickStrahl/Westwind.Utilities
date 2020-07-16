@@ -627,5 +627,33 @@ namespace Westwind.Utilities
 
             return "application/image";
         }
+
+
+        /// <summary>
+        /// Returns a file extension for a media type/content type.
+        /// </summary>
+        /// <param name="mediaType">The media type to convert from</param>
+        /// <returns>A file extension or null if no image type is found</returns>
+        public static string GetExtensionFromMediaType(string mediaType)
+        {
+            if (mediaType == "image/jpeg")
+                return "jpg";
+            if (mediaType == "image/png")
+                return "png";
+            if (mediaType == "image/apng")
+                return "apng";
+            if (mediaType == "image/bmp")
+                return "bmp";
+            if (mediaType == "image/tiff")
+                return "tif";
+            if (mediaType == "image/svg+xml")
+                return "svg";
+            if (mediaType == "image/webp")
+                return "webp";
+            if (mediaType == "image/x-icon")
+                return "ico";
+
+            return null;
+        }
     }
 }

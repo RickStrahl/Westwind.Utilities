@@ -1,15 +1,25 @@
 # Westwind.Utilities Changelog
 
-### 3.0.40
+### 3.0.44
+*not released yet*
 
 * **Switch Data Access to Microsoft.Data.SqlClient**  
 Switch the Sql Client library to the new `Microsoft.Data.SqlClient` for .NET Standard and .NET Standard. The full framework libs continue using `System.Data.SqlClient` native in the framework `System.Data` assembly.
+
+* **Add HttpUtils.DownloadImageToFile\Async()**  
+Added method to download images from a URL and save them to file. Fixes up the file extension depending on the mime type of the Web request.
+
+* **ImageUtils.GetExtensionFromMediaType()**  
+This method retrieves a file extension based on a media/content type. Commonly needed if you're downloading images from the Web to determine what type of file needs to be created.
+
+* **HttpUtils.DownloadBytes\Async() for Binary data**  
+Http helper to download HTTP contents into a `byte[]`.
 
 * **Fix issues with StringUtils.TextAbstract() & Line Breaks**  
 Fix behavior of text abstract with line breaks not being turned into spaces consistently. Also check for null.
 
 * **ShellUtils.OpenUrl() - Platform agnostic Browser Opening**
-
+This method opens a URL in the system browser on Windows, Mac and Linux.  
 
 
 ### 3.0.40
