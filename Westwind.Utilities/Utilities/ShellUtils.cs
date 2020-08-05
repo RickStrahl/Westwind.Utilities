@@ -54,7 +54,7 @@ namespace Westwind.Utilities
         /// Explorer is opened in the parent folder with the file selected
         /// </summary>
         /// <param name="filename"></param>
-        public static void OpenFileInExplorer(string filename)
+        public static bool OpenFileInExplorer(string filename)
         {
             if (Directory.Exists(filename))
                 ShellUtils.GoUrl(filename);
@@ -62,9 +62,17 @@ namespace Westwind.Utilities
             {
                 if (!File.Exists(filename))
                     filename = Path.GetDirectoryName(filename);
-    
-                Process.Start("explorer.exe", $"/select,\"{filename}\"");
+
+                try
+                {
+                    Process.Start("explorer.exe", $"/select,\"{filename}\"");
+                }
+                catch
+                {   
+                    return false;
+                }
             }
+            return true;
         }
 
         /// <summary>
@@ -299,10 +307,10 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="url">Any URL Moniker that the Windows Shell understands (URL, Word Docs, PDF, Email links etc.)</param>
         /// <returns></returns>
-        public static int GoUrl(string url, string workingFolder = null)
+        public static bool GoUrl(string url, string workingFolder = null)
         {
             if (string.IsNullOrEmpty(workingFolder))
-                return OpenUrl(url) ? 0 : 1;
+                return OpenUrl(url);
 
             string TPath = Path.GetTempPath();
 
@@ -312,13 +320,23 @@ namespace Westwind.Utilities
             info.WorkingDirectory = TPath;
             info.FileName = url;
 
+            bool result;
+
             using (Process process = new Process())
             {
                 process.StartInfo = info;
-                process.Start();
+
+                try
+                {
+                    result = process.Start();
+                }
+                catch
+                {
+                    return false;
+                }
             }
 
-            return 0;
+            return result;
         }
 
         /// <summary>
@@ -473,7 +491,7 @@ namespace Westwind.Utilities
         /// <param name="text"></param>
         /// <param name="extension"></param>
         /// <returns></returns>
-        public static int ShowString(string text, string extension = null)
+        public static bool ShowString(string text, string extension = null)
         {
             if (extension == null)
                 extension = "htm";
@@ -491,7 +509,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="htmlString"></param>
         /// <returns></returns>
-        public static int ShowHtml(string htmlString)
+        public static bool ShowHtml(string htmlString)
         {
             return ShowString(htmlString, null);
         }
@@ -502,7 +520,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="TextString"></param>
         /// <returns></returns>
-        public static int ShowText(string TextString)
+        public static bool ShowText(string TextString)
         {
             string File = Path.GetTempPath() + "\\__preview.txt";
 
