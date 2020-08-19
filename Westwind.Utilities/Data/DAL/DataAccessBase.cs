@@ -129,6 +129,12 @@ namespace Westwind.Utilities.Data
 			dbProvider = provider;			
 		}
 
+
+        /// <summary>
+        /// Create a DataAccess component with a specific database provider
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <param name="providerType"></param>
         public DataAccessBase(string connectionString, DataAccessProviderTypes providerType)
         {
             ConnectionString = connectionString;

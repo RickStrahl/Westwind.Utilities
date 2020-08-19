@@ -740,14 +740,7 @@ namespace Westwind.Utilities
                 return SqlClientFactory.Instance; // this library has a ref to SqlClient so this works
 
             if (type == DataAccessProviderTypes.SqLite)
-            {                
-                // SqLite support in .NET Standard available now
                 return GetDbProviderFactory("System.Data.SQLite.SQLiteFactory", "System.Data.SQLite");
-//#if NETFULL
-//#else
-//                return GetDbProviderFactory("Microsoft.Data.Sqlite.SqliteFactory", "Microsoft.Data.Sqlite");
-//#endif
-            }
             if (type == DataAccessProviderTypes.MySql)
                 return GetDbProviderFactory("MySql.Data.MySqlClient.MySqlClientFactory", "MySql.Data");
             if (type == DataAccessProviderTypes.PostgreSql)
