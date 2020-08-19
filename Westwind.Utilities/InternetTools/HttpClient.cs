@@ -775,7 +775,14 @@ namespace Westwind.Utilities.InternetTools
                     Response = (HttpWebResponse)ex.Response;
                 }
                 else
-                    throw;
+                {
+                    if(ThrowExceptions)
+                        throw;
+
+					Error = true;
+                    ErrorMessage = ex.Message + "." + url;
+					return null;
+                }
             }
 
             _WebResponse = Response;
@@ -970,13 +977,20 @@ namespace Westwind.Utilities.InternetTools
 				{
 					// Check for 500 error return - if so we still want to return a response
 					// Client can check oHttp.WebResponse.StatusCode
-					if (ex.Status == WebExceptionStatus.ProtocolError) 
-					{
-						Response = (HttpWebResponse) ex.Response;
-					}
-					else
-						throw;
-				}
+                    if (ex.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        Response = (HttpWebResponse) ex.Response;
+                    }
+                    else
+                    {
+                        if (ThrowExceptions)
+                            throw;
+
+						Error = true;
+                        ErrorMessage = ex.Message + ". " + url;
+                        return null;
+                    }
+                }
 
 				_WebResponse = Response;
                 				
