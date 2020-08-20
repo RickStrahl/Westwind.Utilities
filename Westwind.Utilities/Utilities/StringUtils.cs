@@ -610,6 +610,28 @@ namespace Westwind.Utilities
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Checks to see if value is part of a delimited list of values.
+        /// Example: IsStringInList("value1,value2,value3","value3");
+        /// </summary>
+        /// <param name="stringList">A list of delimited strings (ie. value1, value2, value3) with or without spaces (values are trimmed)</param>
+        /// <param name="valueToFind">value to match against the list</param>
+        /// <param name="separator">Character that separates the list values</param>
+        /// <param name="ignoreCase">If true ignores case for the list value matches</param>
+        public static bool IsStringInList(string stringList, string valueToFind, char separator = ',', bool ignoreCase = false)
+        {
+            var tokens = stringList.Split(new [] {separator}, StringSplitOptions.RemoveEmptyEntries);
+            if (tokens.Length == 0)
+                return false;
+
+            var comparer = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.InvariantCulture;
+            foreach (var tok in tokens)
+            {
+                if (tok.Trim().Equals(valueToFind, comparer))
+                    return true;
+            }
+            return false;
+        }
 
         static Regex tokenizeRegex = new Regex("{{.*?}}");
 

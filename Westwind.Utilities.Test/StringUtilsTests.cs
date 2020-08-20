@@ -538,5 +538,18 @@ multiple lines";
             // breaks on word boundaries so size may not be exact
             Assert.IsTrue(result.Length > 180 && result.Length < 204);
         }
+
+        [TestMethod]
+        public void IsStringInListTest()
+        {
+            var list = "value1, value2, value3, value4, Value5";
+
+            Assert.IsTrue(StringUtils.IsStringInList(list, "value3"),"value3 not matched");
+            Assert.IsFalse(StringUtils.IsStringInList(list, "value10"),"value10 shouldn't match");
+            Assert.IsTrue(StringUtils.IsStringInList(list, "value5", ignoreCase: true),"value5 not matched");
+            Assert.IsFalse(StringUtils.IsStringInList(list, "value5", ignoreCase: false),"value5 shouldn't match");
+            Assert.IsFalse(StringUtils.IsStringInList(list, "value4", ignoreCase: true, separator: ';'), "value4 shouldn't match");
+
+        }
     }
 }
