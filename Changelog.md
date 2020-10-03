@@ -1,6 +1,6 @@
 # Westwind.Utilities Changelog
 
-### 3.0.44
+### 3.0.50
 *not released yet*
 
 * **Switch Data Access to Microsoft.Data.SqlClient**  
@@ -14,6 +14,9 @@ This method retrieves a file extension based on a media/content type. Commonly n
 
 * **HttpUtils.DownloadBytes\Async() for Binary data**  
 Http helper to download HTTP contents into a `byte[]`.
+
+* **ComObject Wrapper for .NET Core**  
+Added `ComObject` class that allows wrapping COM objects in .NET Core so they work with late binding since .NET Core doesn't support `dynamic` to access COM objects. This class implements `DynamicObject` and retrieves missing member data via Reflection simplifying COM access in .NET Core.
 
 * **Fix issues with StringUtils.TextAbstract() & Line Breaks**  
 Fix behavior of text abstract with line breaks not being turned into spaces consistently. Also check for null.
