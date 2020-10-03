@@ -8,10 +8,12 @@
     <AssemblyName>Westwind.Utilities</AssemblyName>
     <AssemblyTitle>Westwind.Utilities</AssemblyTitle>
     <NeutralLanguage>en-US</NeutralLanguage>    
-    <PackageId>Westwind.Utilities</PackageId>
+    <PackageId>Westwind.Utilities.PostgreSql</PackageId>
     <RootNamespace>Westwind.Utilities</RootNamespace>
     <Title>West Wind Utilities</Title>
-    <Description>.NET utility library that includes Application Configuration, lightweight ADO.NET Data Access Layer, logging, utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>    
+    <Description>Only PostgreSQL nuget package (Npgsql 4.1.5) added. 
+
+The other codes same with RickStrahl..NET utility library that includes Application Configuration, lightweight ADO.NET Data Access Layer, logging, utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>    
     <Summary>Small library of general purpose utilities for .NET development that almost every application can use. Used as a core reference library for other West Wind libraries.</Summary>
     <PackageCopyright>Rick Strahl, West Wind Technologies 2007-2020</PackageCopyright>
     <PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
