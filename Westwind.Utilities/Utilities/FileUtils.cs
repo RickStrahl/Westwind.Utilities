@@ -50,52 +50,6 @@ namespace Westwind.Utilities
 	/// </summary>
 	public static class FileUtils
 	{
-
-        #region StreamFunctions
-        /// <summary>
-        /// Copies the content of the one stream to another.
-        /// Streams must be open and stay open.
-        /// </summary>
-        public static void CopyStream(Stream source, Stream dest, int bufferSize)
-        {
-            byte[] buffer = new byte[bufferSize];
-            int read;
-            while ( (read = source.Read(buffer, 0, buffer.Length)) > 0)
-            {
-                dest.Write(buffer, 0, read);
-            }
-        }
-
-        /// <summary>
-        /// Copies the content of one stream to another by appending to the target stream
-        /// Streams must be open when passed in.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="dest"></param>
-        /// <param name="bufferSize"></param>
-        /// <param name="append"></param>
-        public static void CopyStream(Stream source, Stream dest, int bufferSize, bool append)
-        {
-            if (append)
-                dest.Seek(0, SeekOrigin.End);
-
-            CopyStream(source, dest, bufferSize);
-            return;
-        }
-
-	    /// <summary>
-	    /// Opens a stream reader with the appropriate text encoding applied.
-	    /// </summary>
-	    /// <param name="srcFile"></param>
-	    public static StreamReader OpenStreamReaderWithEncoding(string srcFile)
-	    {
-	        Encoding enc = GetFileEncoding(srcFile);
-	        return new StreamReader(srcFile, enc);
-	    }
-
-        #endregion
-
-
         #region Path Segments and Path Names
 
 
@@ -238,57 +192,16 @@ namespace Westwind.Utilities
             return startBlock + end;
         }
 
-#endregion
+        #endregion
 
-#region File and Path Normalization
-
-        /// <summary>
-        /// Returns a safe filename from a string by stripping out
-        /// illegal characters
-        /// </summary>
-        /// <param name="fileName">Filename to fix up</param>
-        /// <param name="replacementString">String value to replace illegal chars with. Defaults empty string</param>
-        /// <param name="spaceReplacement">Optional - replace spaces with a specified string.</param>
-        /// <returns>Fixed up string</returns>
-        public static string SafeFilename(string fileName, string replacementString = "", string spaceReplacement = null)
-	    {
-	        if (string.IsNullOrEmpty(fileName))
-	            return fileName;
-
-	        string file = Path.GetInvalidFileNameChars()
-	            .Aggregate(fileName.Trim(),
-	                (current, c) => current.Replace(c.ToString(), replacementString));
-
-	        file = file.Replace("#", "");
-
-	        if (!string.IsNullOrEmpty(spaceReplacement))
-	            file = file.Replace(" ", spaceReplacement);
-
-	        return file.Trim();
-	    }
+        #region File and Path Normalization
 
         /// <summary>
-        /// Returns a safe filename in CamelCase
+        /// Normalizes a file path to the operating system default
+        /// slashes.
         /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        public static string CamelCaseSafeFilename(string filename)
-	    {
-	        if (string.IsNullOrEmpty(filename))
-	            return filename;
-
-	        string fname = Path.GetFileNameWithoutExtension(filename);
-	        string ext = Path.GetExtension(filename);
-
-	        return StringUtils.ToCamelCase(SafeFilename(fname)) + ext;
-	    }
-
-	    /// <summary>
-	    /// Normalizes a file path to the operating system default
-	    /// slashes.
-	    /// </summary>
-	    /// <param name="path"></param>
-	    public static string NormalizePath(string path)
+        /// <param name="path"></param>
+        public static string NormalizePath(string path)
 	    {
             //return Path.GetFullPath(path); // this always turns into a full OS path
 
@@ -334,7 +247,7 @@ namespace Westwind.Utilities
 	    }
 #endregion
 
-#region Miscellaneous functions
+#region File Encoding and Checksums
 
         /// <summary>
         /// Detects the byte order mark of a file and returns
@@ -367,6 +280,214 @@ namespace Westwind.Utilities
             return enc;
         }
 
+
+        /// <summary>
+	    /// Creates an MD5 checksum of a file
+	    /// </summary>
+	    /// <param name="file"></param>        
+	    /// <param name="hashAlgorithm">SHA256, SHA512, SHA1, MD5</param>
+	    /// <returns>BinHex file hash</returns>
+	    public static string GetChecksumFromFile(string file, string hashAlgorithm = "MD5")
+	    {           
+	        if (!File.Exists(file))
+	            return null;
+
+	        try
+	        {
+	            byte[] checkSum;
+	            using (FileStream stream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+	            {
+                    HashAlgorithm md = null;
+
+                    if(hashAlgorithm == "MD5")
+	                    md = new MD5CryptoServiceProvider();
+                    else if (hashAlgorithm == "SHA256")
+	                    md = new SHA256Managed();
+                    else if(hashAlgorithm == "SHA512")
+	                    md = new SHA512Managed();
+	                else if (hashAlgorithm == "SHA1")
+	                    md = new SHA1Managed();
+                    else	                   
+	                    md = new MD5CryptoServiceProvider();
+
+                    checkSum = md.ComputeHash(stream);
+	            }
+
+	            return StringUtils.BinaryToBinHex(checkSum);
+	        }
+	        catch
+	        {
+	            return null;
+	        }
+	    }
+
+        #endregion
+
+        #region Searching 
+
+        /// <summary>
+        /// Searches for a file name based on a current file location up or down the
+        /// directory hierarchy including the current folder. First file match is returned.
+        /// </summary>
+        /// <param name="currentPath">Current path or filename to determine start folder to search up from</param>
+        /// <param name="searchFile">File name to search for. Should be a filename but can contain wildcards</param>
+        /// <param name="direction">Search up or down the directory hierarchy including base path</param>
+         /// <returns></returns>
+        public static string FindFileInHierarchy( string currentPath, string searchFile,
+                                                  FindFileInHierarchyDirection direction = FindFileInHierarchyDirection.Up)
+        {
+            string filename = null;
+            string path = null;
+
+            var fi = new FileInfo(currentPath);
+            if (!fi.Exists)
+            {
+                var di = new DirectoryInfo(currentPath);
+                if (!di.Exists)
+                    return null;
+
+                path = di.FullName;
+            }
+            else
+            {
+                path = fi.DirectoryName;
+            }
+
+            return FindFileInHierarchyInternal(path, searchFile, direction);
+        }
+
+        /// <summary>
+        /// Recursive method to walk the hierarchy and find the file requested.
+        /// </summary>
+        /// <param name="path">Base path</param>
+        /// <param name="searchFile">Filename to search for</param>
+        /// <param name="direction">Search up or down the tree including base path</param>
+        /// <returns></returns>
+        private static string FindFileInHierarchyInternal(string path, string searchFile,
+                                                          FindFileInHierarchyDirection direction = FindFileInHierarchyDirection.Up)
+        {
+            if (path == null)
+                return null;
+
+            var dir = new DirectoryInfo(path);
+
+            var so = SearchOption.TopDirectoryOnly;
+
+            if (direction == FindFileInHierarchyDirection.Down)
+                so = SearchOption.AllDirectories;
+
+            var files = dir.GetFiles(searchFile, so);
+            if (files.Length > 0)
+                return files[0].FullName;  // closest match
+
+            if (direction == FindFileInHierarchyDirection.Down)
+                return null;
+
+            if (dir.Parent == null)
+                return null;
+
+            return FindFileInHierarchyInternal(dir.Parent.FullName, searchFile, FindFileInHierarchyDirection.Up);
+        }
+
+        public enum FindFileInHierarchyDirection
+        {
+            Up,
+            Down
+        }
+
+        #endregion
+
+        #region File and Path Naming
+
+        
+        /// <summary>
+        /// Returns a safe filename from a string by stripping out
+        /// illegal characters
+        /// </summary>
+        /// <param name="fileName">Filename to fix up</param>
+        /// <param name="replacementString">String value to replace illegal chars with. Defaults empty string</param>
+        /// <param name="spaceReplacement">Optional - replace spaces with a specified string.</param>
+        /// <returns>Fixed up string</returns>
+        public static string SafeFilename(string fileName, string replacementString = "", string spaceReplacement = null)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                return fileName;
+
+            string file = Path.GetInvalidFileNameChars()
+                .Aggregate(fileName.Trim(),
+                    (current, c) => current.Replace(c.ToString(), replacementString));
+
+            file = file.Replace("#", "");
+
+            if (!string.IsNullOrEmpty(spaceReplacement))
+                file = file.Replace(" ", spaceReplacement);
+
+            return file.Trim();
+        }
+
+        /// <summary>
+        /// Returns a safe filename in CamelCase
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public static string CamelCaseSafeFilename(string filename)
+        {
+            if (string.IsNullOrEmpty(filename))
+                return filename;
+
+            string fname = Path.GetFileNameWithoutExtension(filename);
+            string ext = Path.GetExtension(filename);
+
+            return StringUtils.ToCamelCase(SafeFilename(fname)) + ext;
+        }
+
+        #endregion
+
+        #region StreamFunctions
+        /// <summary>
+        /// Copies the content of the one stream to another.
+        /// Streams must be open and stay open.
+        /// </summary>
+        public static void CopyStream(Stream source, Stream dest, int bufferSize)
+        {
+            byte[] buffer = new byte[bufferSize];
+            int read;
+            while ( (read = source.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                dest.Write(buffer, 0, read);
+            }
+        }
+
+        /// <summary>
+        /// Copies the content of one stream to another by appending to the target stream
+        /// Streams must be open when passed in.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="dest"></param>
+        /// <param name="bufferSize"></param>
+        /// <param name="append"></param>
+        public static void CopyStream(Stream source, Stream dest, int bufferSize, bool append)
+        {
+            if (append)
+                dest.Seek(0, SeekOrigin.End);
+
+            CopyStream(source, dest, bufferSize);
+            return;
+        }
+
+        /// <summary>
+        /// Opens a stream reader with the appropriate text encoding applied.
+        /// </summary>
+        /// <param name="srcFile"></param>
+        public static StreamReader OpenStreamReaderWithEncoding(string srcFile)
+        {
+            Encoding enc = GetFileEncoding(srcFile);
+            return new StreamReader(srcFile, enc);
+        }
+
+        #endregion
+
+        #region Folder Copying and Deleting
         /// <summary>
         /// Copies directories using either top level only or deep merge copy.
         /// 
@@ -396,7 +517,6 @@ namespace Westwind.Utilities
             foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", searchOption))
                 File.Copy(newPath, newPath.Replace(sourcePath, targetPath), true);
         }
-
 
         /// <summary>
         /// Deletes files in a folder based on a file spec recursively
@@ -461,48 +581,7 @@ namespace Westwind.Utilities
             }
         }
 
-
-	    /// <summary>
-	    /// Creates an MD5 checksum of a file
-	    /// </summary>
-	    /// <param name="file"></param>        
-	    /// <param name="hashAlgorithm">SHA256, SHA512, SHA1, MD5</param>
-	    /// <returns>BinHex file hash</returns>
-	    public static string GetChecksumFromFile(string file, string hashAlgorithm = "MD5")
-	    {           
-	        if (!File.Exists(file))
-	            return null;
-
-	        try
-	        {
-	            byte[] checkSum;
-	            using (FileStream stream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.Read))
-	            {
-                    HashAlgorithm md = null;
-
-                    if(hashAlgorithm == "MD5")
-	                    md = new MD5CryptoServiceProvider();
-                    else if (hashAlgorithm == "SHA256")
-	                    md = new SHA256Managed();
-                    else if(hashAlgorithm == "SHA512")
-	                    md = new SHA512Managed();
-	                else if (hashAlgorithm == "SHA1")
-	                    md = new SHA1Managed();
-                    else	                   
-	                    md = new MD5CryptoServiceProvider();
-
-                    checkSum = md.ComputeHash(stream);
-	            }
-
-	            return StringUtils.BinaryToBinHex(checkSum);
-	        }
-	        catch
-	        {
-	            return null;
-	        }
-	    }
-
-#endregion
+        #endregion
     }
 
 }

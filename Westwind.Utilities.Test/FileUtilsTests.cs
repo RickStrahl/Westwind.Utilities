@@ -186,5 +186,27 @@ namespace Westwind.Utilities.Test
         //    //Console.WriteLine(shortPath);
 
         //}
+
+        [TestMethod]
+        public void FindFileHierarchicalUp()
+        {
+
+            var basePath = Path.GetFullPath("./SupportFiles/SquareImage.jpg");
+            var matchedFile = FileUtils.FindFileInHierarchy(basePath, "Westwind.Utilities.dll", FileUtils.FindFileInHierarchyDirection.Up);
+
+            Assert.IsNotNull(matchedFile);
+            Console.WriteLine(matchedFile);
+        }
+
+
+        [TestMethod]
+        public void FindFileHierarchicalDown()
+        {
+            var basePath = Path.GetFullPath("./SupportFiles");
+            var matchedFile = FileUtils.FindFileInHierarchy(basePath, "SquareImage.jpg", FileUtils.FindFileInHierarchyDirection.Down);
+
+            Assert.IsNotNull(matchedFile);
+            Console.WriteLine(matchedFile);
+        }
     }
 }
