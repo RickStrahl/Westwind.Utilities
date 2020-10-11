@@ -11,6 +11,7 @@ namespace Westwind.Utilities
     /// work in .NET Core where dynamic with COM objects is not working. This
     ///
     /// Credit to: https://github.com/bubibubi/EntityFrameworkCore.Jet/blob/3.1-preview/src/System.Data.Jet/ComObject.cs
+    /// Added here with slight interface modifications
     /// </summary>
     public class ComObject : DynamicObject, IDisposable
     {
@@ -19,6 +20,18 @@ namespace Westwind.Utilities
 #if DEBUG
         private readonly Guid Id = Guid.NewGuid();
 #endif
+
+        /// <summary>
+        /// Pass a COM Object reference to create this COM Object wrapper
+        /// </summary>
+        /// <param name="instance"></param>
+        public ComObject(object instance)
+        {
+            if (instance is ComObject)
+                _instance = ((ComObject)instance)._instance;
+
+            _instance = instance;
+        }
 
         /// <summary>
         /// Create a new instance based on ProgId
@@ -60,13 +73,6 @@ namespace Westwind.Utilities
             throw new TypeLoadException("Couldn't create COM Wrapper for: " + clsid);
         }
 
-        public ComObject(object instance)
-        {
-            if (instance is ComObject)
-                _instance = ((ComObject)instance)._instance;
-
-            _instance = instance;
-        }
 
         /// <summary>
         /// Creates a new instance based on a ProgId
