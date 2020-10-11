@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net46;netstandard2.0;net40</TargetFrameworks>
-    <Version>3.0.44.2</Version>
+    <TargetFrameworks>netstandard2.0;net46;net40</TargetFrameworks>
+    <Version>3.0.48</Version>
     <Authors>Rick Strahl</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <Language>en-US</Language>
