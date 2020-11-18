@@ -25,6 +25,17 @@ Fix behavior of text abstract with line breaks not being turned into spaces cons
 This method opens a URL in the system browser on Windows, Mac and Linux.  
 
 
+* **WindowsUtils.TryGetRegistryKey() Signature Change**  
+Change the signature to TryGetRegistryKey() to pass in the base key into the optional `baseKey` parameter. The previously used `bool` value was not effective if something other than HKLM or HKCU was used. 
+Note: this is a potentially breaking change.
+
+> ### Breaking Changes for 3.0.50
+> * **WindowUtilities.TryGetRegistryKey() parameter Change**  
+The baseKey parameter replaces a `bool` parameter. Signature for most scenarios will stay the same if the parameter was omitted but the new version breaks binary compatibility which a simple recompile should fix.
+
+* **FileUtils.HasInvalidPathCharacters()**  
+Added a function that checks paths for invalid characters. Uses default invalid character list, plus you can pass in additional characters to be deemed invalid.
+
 ### 3.0.40
 *May 22nd, 2020*
 
