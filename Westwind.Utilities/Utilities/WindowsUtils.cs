@@ -202,17 +202,24 @@ namespace Westwind.Utilities
             return _WindowsVersion;
         }
 
-        public static bool TryGetRegistryKey(string path, string key, out dynamic value, bool UseCurrentUser = false)
+
+        /// <summary>
+        /// Retrieves a registry value into a dynamic value based on path and key.
+        /// </summary>
+        /// <param name="path">base key relative path (starts without slash)</param>
+        /// <param name="key">The keyname to retrieve. Use string.Empty for the default key</param>
+        /// <param name="value">Out value result as a dynamic value</param>
+        /// <param name="baseKey">Base key like HKLM, HKCU, HKCR</param>
+        /// <returns>true or false</returns>
+        public static bool TryGetRegistryKey(string path, string key, out dynamic value, RegistryKey baseKey = null)
         {
+            if (baseKey == null)
+                baseKey = Registry.CurrentUser;
+
             value = null;
             try
             {
-                RegistryKey rk;
-                if (UseCurrentUser)
-                    rk = Registry.CurrentUser.OpenSubKey(path);
-                else
-                    rk = Registry.LocalMachine.OpenSubKey(path);
-
+                RegistryKey rk= baseKey.OpenSubKey(path);
                 if (rk == null) return false;
                 value = rk.GetValue(key);
                 return value != null;
