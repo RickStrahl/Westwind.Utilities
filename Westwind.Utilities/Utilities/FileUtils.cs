@@ -336,7 +336,6 @@ namespace Westwind.Utilities
         public static string FindFileInHierarchy( string currentPath, string searchFile,
                                                   FindFileInHierarchyDirection direction = FindFileInHierarchyDirection.Up)
         {
-            string filename = null;
             string path = null;
 
             var fi = new FileInfo(currentPath);
@@ -441,6 +440,25 @@ namespace Westwind.Utilities
             return StringUtils.ToCamelCase(SafeFilename(fname)) + ext;
         }
 
+
+        /// <summary>
+        /// Checks to see if a file has invalid path characters. Use this
+        /// to check before using or manipulating paths with `Path` operations
+        /// that will fail if files or paths contain invalid characters.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="additionalChars"></param>
+        /// <returns></returns>
+        public static bool HasInvalidPathCharacters(string path, params char[] additionalChars)
+        {
+            if(string.IsNullOrEmpty(path)) return true; // no invalids
+
+            var invalids = Path.GetInvalidPathChars();
+            if (additionalChars != null)
+                invalids.Concat(additionalChars);
+	
+            return (!string.IsNullOrEmpty(path) && path.IndexOfAny(invalids) >= 0);
+        }
         #endregion
 
         #region StreamFunctions
@@ -488,36 +506,65 @@ namespace Westwind.Utilities
         #endregion
 
         #region Folder Copying and Deleting
+
         /// <summary>
         /// Copies directories using either top level only or deep merge copy.
         /// 
         /// Copies a directory by copying files from source folder to target folder.
         /// If folder(s) don't exist they are created.
-        /// 
-        /// deepCopy copies files in sub-folders and merges them into the target
-        /// folder. Unless you specify deleteFirst, files are copied and overwrite or add to
-        /// existing structure, leaving old files in place. Use deleteFirst if you
-        /// want a new structure with only the source files.
         /// </summary>
-        /// <param name="sourcePath">Path to copy from</param>
-        /// <param name="targetPath">Path to copy to</param>
-        /// <param name="deleteFirst">If true deletes target folder before copying. Otherwise files are merged from source into target.</param>
-        public static void CopyDirectory(string sourcePath, string targetPath, bool deleteFirst = false, bool deepCopy = true)
+        /// <param name="sourceDirectory">Source folder</param>
+        /// <param name="targetDirectory">Target folder </param>
+        /// <param name="deleteFirst">if set deletes the folder before copying</param>
+        /// <param name="recursive">if set copies files recursively</param>
+        public static void CopyDirectory(string sourceDirectory, string targetDirectory, bool deleteFirst = false, bool recursive = true )
         {
-            if (deleteFirst && Directory.Exists(targetPath))
-                Directory.Delete(targetPath, true);
+            var diSource = new DirectoryInfo(sourceDirectory);
+            if (!diSource.Exists)
+                return;
 
-            var searchOption = SearchOption.TopDirectoryOnly;
-            if (deepCopy)
-                searchOption = SearchOption.AllDirectories;
-
-            foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", searchOption))
-                Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
-
-            foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", searchOption))
-                File.Copy(newPath, newPath.Replace(sourcePath, targetPath), true);
+            var diTarget = new DirectoryInfo(targetDirectory);
+            CopyDirectory(diSource, diTarget, deleteFirst, recursive);
         }
 
+        /// <summary>
+        /// Copies directories using either top level only or deep merge copy.
+        /// 
+        /// Copies a directory by copying files from source folder to target folder.
+        /// If folder(s) don't exist they are created.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <param name="deleteFirst"></param>
+        /// <param name="recursive"></param>
+        public static void CopyDirectory(DirectoryInfo source, DirectoryInfo target, bool deleteFirst = false, bool recursive = true )
+        {
+            if (!source.Exists)
+                return;
+
+            if (deleteFirst && target.Exists)
+                target.Delete(true);
+            
+            Directory.CreateDirectory(target.FullName);  // create if it doesn't exist
+ 
+            // Copy each file into the new directory.
+            foreach (FileInfo fi in source.GetFiles())
+            {
+                Console.WriteLine(@"Copying {0}\{1}", target.FullName, fi.Name);
+                fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
+            }
+
+            if (recursive)
+            {
+                // Copy each subdirectory using recursion.
+                foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+                {
+                    DirectoryInfo nextTargetSubDir =
+                        target.CreateSubdirectory(diSourceSubDir.Name);
+                    CopyDirectory(diSourceSubDir, nextTargetSubDir);
+                }
+            }
+        }
         /// <summary>
         /// Deletes files in a folder based on a file spec recursively
         /// </summary>
