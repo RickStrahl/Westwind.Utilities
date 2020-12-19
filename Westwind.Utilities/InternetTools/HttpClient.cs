@@ -60,91 +60,54 @@ namespace Westwind.Utilities.InternetTools
 		/// Determines how data is POSTed when when using AddPostKey() and other methods
 		/// of posting data to the server. Support UrlEncoded, Multi-Part, XML and Raw modes.
 		/// </summary>
-		public HttpPostMode PostMode 
-		{
-			get { return _PostMode; }
-			set { _PostMode = value; }
-		}
+		public HttpPostMode PostMode { get; set; } = HttpPostMode.UrlEncoded;
 
-		/// <summary>
+        /// <summary>
 		///  User name used for Authentication. 
 		///  To use the currently logged in user when accessing an NTLM resource you can use "AUTOLOGIN".
 		/// </summary>
-		public string Username 
-		{
-			get { return _Username; }
-			set { _Username = value; }
-		}
+		public string Username { get; set; }
 
-		/// <summary>
+        /// <summary>
 		/// Password for Authentication.
 		/// </summary>
-		public string Password 
-		{
-			get {return _Password;}
-			set {_Password = value;}
-		}
+		public string Password { get; set; }
 
-		/// <summary>
+        /// <summary>
 		/// Address of the Proxy Server to be used.
 		/// Use optional DEFAULTPROXY value to specify that you want to IE's Proxy Settings
 		/// </summary>
-		public string ProxyAddress 	
-		{
-			get {return _ProxyAddress;}
-			set {_ProxyAddress = value;}
-		}
+		public string ProxyAddress { get; set; }
 
-		/// <summary>
+        /// <summary>
 		/// Semicolon separated Address list of the servers the proxy is not used for.
 		/// </summary>
-		public string ProxyBypass 
-		{
-			get {return _ProxyBypass;}
-			set {_ProxyBypass = value;}
-		}
+		public string ProxyBypass { get; set; }
 
-		/// <summary>
+        /// <summary>
 		/// Username for a password validating Proxy. Only used if the proxy info is set.
 		/// </summary>
-		public string ProxyUsername 
-		{
-			get {return _ProxyUsername;}
-			set {_ProxyUsername = value;}
-		}
-		/// <summary>
+		public string ProxyUsername { get; set; } 
+
+        /// <summary>
 		/// Password for a password validating Proxy. Only used if the proxy info is set.
 		/// </summary>
-		public string ProxyPassword 
-		{
-			get {return _ProxyPassword;}
-			set {_ProxyPassword = value;}
-		}        
+		public string ProxyPassword { get; set; }
 
 
-		/// <summary>
+        /// <summary>
 		/// Timeout for the Web request in seconds. Times out on connection, read and send operations.
 		/// Default is 30 seconds.
 		/// </summary>
-		public int Timeout 
-		{
-			get {return _timeout; }
-			set {_timeout = value; }
-		}
-        int _timeout = 30;
+		public int Timeout { get; set; } = 30;
 
-		/// <summary>
+        /// <summary>
 		/// Returns whether the last request was cancelled through one of the
 		/// events.
 		/// </summary>
-		public bool Cancelled
-		{
-			get { return _Cancelled; }
-			set { _Cancelled = value; }
-		}
-		bool _Cancelled;
+		public bool Cancelled { get; set; }
 
-        
+
         /// <summary>
         /// Use this option to set a custom content type. 
         /// If possible use PostMode to specify a predefined
@@ -188,12 +151,7 @@ namespace Westwind.Utilities.InternetTools
         /// When true will automatically add Accept-Encoding: gzip,deflate header
         /// and automatically decompress gzip and deflate content
         /// </summary>
-        public bool UseGZip
-        {
-            get { return _UseGZip; }
-            set { _UseGZip = value; }
-        }
-        private bool _UseGZip = false;
+        public bool UseGZip { get; set; }
 
         /// <summary>
         /// Keeps track of request timings for the last executed request. Tracks started, 
@@ -215,24 +173,16 @@ namespace Westwind.Utilities.InternetTools
 		/// <summary>
 		/// Error flag if an error occurred.
 		/// </summary>
-		public bool Error
-		{
-			get { return _Error; } 
-			set { _Error = value; }
-		}
+		public bool Error { get; set; } 
 
-		/// <summary>
+        /// <summary>
 		/// Determines whether errors cause exceptions to be thrown. By default errors 
 		/// are handled in the class and the Error property is set for error conditions.
 		/// (not implemented at this time).
 		/// </summary>
-		public bool ThrowExceptions 
-		{
-			get { return _ThrowExceptions; }
-			set { _ThrowExceptions = value;}
-		} 
+		public bool ThrowExceptions { get; set; } 
 
-		/// <summary>
+        /// <summary>
 		/// If set to true will automatically track cookies
         /// between multiple successive requests on this 
         /// instance. Uses the CookieCollection property
@@ -242,14 +192,10 @@ namespace Westwind.Utilities.InternetTools
         /// and on return fills the CookieCollection with
         /// cookies from the Response.
 		/// </summary>
-		public bool HandleCookies
-		{
-			get { return _HandleCookies; }
-			set { _HandleCookies = value; }
-		}
-                
+		public bool HandleCookies { get; set; }
 
-		/// <summary>
+
+        /// <summary>
 		/// Holds the internal Cookie collection before or after a request. This 
 		/// collection is used only if HandleCookies is set to .t. which also causes it
 		///  to capture cookies and repost them on the next request.
@@ -275,13 +221,9 @@ namespace Westwind.Utilities.InternetTools
 		/// and collections to retrieve more detailed information about the current 
 		/// request that completed.
 		/// </summary>
-		public HttpWebResponse WebResponse  
-		{
-			get { return _WebResponse;}
-			set { _WebResponse = value; }
-		}
+		public HttpWebResponse WebResponse { get; set; }
 
-		/// <summary>
+        /// <summary>
 		/// WebRequest object that can be manipulated and set up for the request if you
 		///  called .
 		/// 
@@ -290,63 +232,30 @@ namespace Westwind.Utilities.InternetTools
 		///  you specify a URL on any of the GetUrl methods since this causes a default
 		///  WebRequest to be created.
 		/// </summary>
-		public HttpWebRequest WebRequest  
-		{
-			get { return _WebRequest; }
-			set { _WebRequest = value; }
-		}
+		public HttpWebRequest WebRequest { get; set; }
 
-		/// <summary>
+        /// <summary>
 		/// The buffersize used for the Send and Receive operations
 		/// </summary>
-		public int BufferSize 
-		{
-			get { return _BufferSize; }
-			set { _BufferSize = value; }
-		}
-		int _BufferSize = 100;
+		public int BufferSize { get; set; } = 100;
 
-		/// <summary>
+        /// <summary>
 		/// Lets you specify the User Agent  browser string that is sent to the server.
 		///  This allows you to simulate a specific browser if necessary.
 		/// </summary>
-		public string UserAgent 
-		{
-			get { return _UserAgent; }
-			set { _UserAgent = value; }
-		}
-		string _UserAgent = "West Wind HTTP .NET Client";
+		public string UserAgent { get; set; } = "West Wind HTTP .NET Client";
 
-	    public string HttpVerb { get; set; } = "GET";
+        public string HttpVerb { get; set; } = "GET";
 		
 		// member properties
 		//string cPostBuffer = string.Empty;
-		MemoryStream _PostStream;
-		BinaryWriter _PostData;
+        private MemoryStream _PostStream;
+        private BinaryWriter _PostData;
 
-		HttpPostMode _PostMode = HttpPostMode.UrlEncoded;
 
-		
-
-		string _Username = string.Empty;
-		string _Password = string.Empty;
-
-		string _ProxyAddress = string.Empty;
-		string _ProxyBypass = string.Empty;
-		string _ProxyUsername = string.Empty;
-		string _ProxyPassword = string.Empty;
-
-		bool _ThrowExceptions = false;
-		bool _HandleCookies = false;
-	
-		string _ErrorMessage = string.Empty;
-		bool _Error = false;
-		
-		HttpWebResponse _WebResponse;
-		HttpWebRequest _WebRequest;
-		CookieCollection _Cookies;
-
-		string _MultiPartBoundary = "-----------------------------" + DateTime.Now.Ticks.ToString("x");
+        private string _ErrorMessage = string.Empty;
+        private CookieCollection _Cookies;
+        private string _MultiPartBoundary = "-----------------------------" + DateTime.Now.Ticks.ToString("x");
 
 		/// <summary>
 		/// The HttpClient Default Constructor
@@ -494,10 +403,10 @@ namespace Westwind.Utilities.InternetTools
 		{
 			byte[] lcFile;	
 
-			if (_PostMode != HttpPostMode.MultiPart) 
+			if (PostMode != HttpPostMode.MultiPart) 
 			{
 				_ErrorMessage = "File upload allowed only with Multi-part forms";
-				_Error = true;
+				Error = true;
 				return false;
 			}
 
@@ -512,7 +421,7 @@ namespace Westwind.Utilities.InternetTools
 			catch(Exception e) 
 			{
 				_ErrorMessage = e.Message;
-				_Error = true;
+				Error = true;
 				return false;
 			}
 
@@ -627,9 +536,9 @@ namespace Westwind.Utilities.InternetTools
 
             //try 
             //{
-            _Error = false;
+            Error = false;
             _ErrorMessage = string.Empty;
-            _Cancelled = false;
+            Cancelled = false;
 
             if (WebRequest == null)
             {
@@ -637,42 +546,42 @@ namespace Westwind.Utilities.InternetTools
                 //WebRequest.Headers.Add("Cache","no-cache");                
             }
 
-            WebRequest.UserAgent = _UserAgent;
-            WebRequest.Timeout = _timeout * 1000;
+            WebRequest.UserAgent = UserAgent;
+            WebRequest.Timeout = Timeout * 1000;
             WebRequest.Method = HttpVerb;
             
 #if NETFULL
-			WebRequest.ReadWriteTimeout = _timeout * 1000;
+			WebRequest.ReadWriteTimeout = Timeout * 1000;
 #endif
 
 
             // Handle Security for the request
-            if (!string.IsNullOrEmpty(_Username))
+            if (!string.IsNullOrEmpty(Username))
             {
-                if (_Username == "AUTOLOGIN" || _Username == "AutoLogin")
+                if (Username == "AUTOLOGIN" || Username == "AutoLogin")
                     WebRequest.Credentials = CredentialCache.DefaultCredentials;
                 else
-                    WebRequest.Credentials = new NetworkCredential(_Username, _Password);
+                    WebRequest.Credentials = new NetworkCredential(Username, Password);
             }
 
             // Handle Proxy Server configuration
-            if (!string.IsNullOrEmpty(_ProxyAddress))
+            if (!string.IsNullOrEmpty(ProxyAddress))
             {
-                if (_ProxyAddress == "DEFAULTPROXY")
+                if (ProxyAddress == "DEFAULTPROXY")
                 {
                     WebRequest.Proxy = HttpWebRequest.DefaultWebProxy;
                 }
                 else
                 {
-                    WebProxy Proxy = new WebProxy(_ProxyAddress, true);
+                    WebProxy Proxy = new WebProxy(ProxyAddress, true);
 
-                    if (_ProxyBypass.Length > 0)
+                    if (ProxyBypass.Length > 0)
                     {
-                        Proxy.BypassList = _ProxyBypass.Split(';');
+                        Proxy.BypassList = ProxyBypass.Split(';');
                     }
 
-                    if (_ProxyUsername.Length > 0)
-                        Proxy.Credentials = new NetworkCredential(_ProxyUsername, _ProxyPassword);
+                    if (ProxyUsername.Length > 0)
+                        Proxy.Credentials = new NetworkCredential(ProxyUsername, ProxyPassword);
 
                     WebRequest.Proxy = Proxy;
                 }
@@ -686,7 +595,7 @@ namespace Westwind.Utilities.InternetTools
             }
 
             // Handle cookies - automatically re-assign 
-            if (_HandleCookies || (_Cookies != null && _Cookies.Count > 0))
+            if (HandleCookies || (_Cookies != null && _Cookies.Count > 0))
             {
                 WebRequest.CookieContainer = new CookieContainer();
                 if (_Cookies != null && _Cookies.Count > 0)
@@ -703,7 +612,7 @@ namespace Westwind.Utilities.InternetTools
                 if (WebRequest.Method == "GET")
                     WebRequest.Method = "POST";
 
-                switch (_PostMode)
+                switch (PostMode)
                 {
                     case HttpPostMode.UrlEncoded:
                         WebRequest.ContentType = "application/x-www-form-urlencoded";
@@ -785,13 +694,13 @@ namespace Westwind.Utilities.InternetTools
                 }
             }
 
-            _WebResponse = Response;
+            WebResponse = Response;
 
             // Close out the request - it cannot be reused
             WebRequest = null;
 
             // ** Save cookies the server sends
-            if (_HandleCookies)
+            if (HandleCookies)
             {
                 if (Response.Cookies.Count > 0)
                 {
@@ -837,9 +746,9 @@ namespace Westwind.Utilities.InternetTools
 		
             //try 
             //{
-				_Error = false;
+				Error = false;
 				_ErrorMessage = string.Empty;
-				_Cancelled = false;
+				Cancelled = false;
 
 				if (WebRequest == null) 
 				{
@@ -847,40 +756,40 @@ namespace Westwind.Utilities.InternetTools
 					//WebRequest.Headers.Add("Cache","no-cache");
 				}
 				
-				WebRequest.UserAgent = _UserAgent;
-				WebRequest.Timeout = _timeout * 1000;
+				WebRequest.UserAgent = UserAgent;
+				WebRequest.Timeout = Timeout * 1000;
                 WebRequest.Method = HttpVerb;
 #if NETFULL
-				WebRequest.ReadWriteTimeout = _timeout * 1000;
+				WebRequest.ReadWriteTimeout = Timeout * 1000;
 #endif	
 
 				// Handle Security for the request
-				if (!string.IsNullOrEmpty(_Username)) 
+				if (!string.IsNullOrEmpty(Username)) 
 				{
-					if (_Username  == "AUTOLOGIN" || _Username == "AutoLogin")
+					if (Username  == "AUTOLOGIN" || Username == "AutoLogin")
 						WebRequest.Credentials = CredentialCache.DefaultCredentials;
 					else
-						WebRequest.Credentials = new NetworkCredential(_Username,_Password);
+						WebRequest.Credentials = new NetworkCredential(Username,Password);
 				}
 
 				// Handle Proxy Server configuration
-				if (_ProxyAddress.Length > 0) 
+				if (ProxyAddress.Length > 0) 
 				{
-					if (_ProxyAddress == "DEFAULTPROXY") 
+					if (ProxyAddress == "DEFAULTPROXY") 
 					{
                         WebRequest.Proxy = HttpWebRequest.DefaultWebProxy;
 					}
 					else 
 					{
-                        WebProxy Proxy = new WebProxy(_ProxyAddress,true);
+                        WebProxy Proxy = new WebProxy(ProxyAddress,true);
             
-						if (_ProxyBypass.Length > 0) 
+						if (ProxyBypass.Length > 0) 
 						{
-							Proxy.BypassList = _ProxyBypass.Split(';');
+							Proxy.BypassList = ProxyBypass.Split(';');
 						}
 
-						if (_ProxyUsername.Length > 0)
-							Proxy.Credentials = new NetworkCredential(_ProxyUsername,_ProxyPassword);
+						if (ProxyUsername.Length > 0)
+							Proxy.Credentials = new NetworkCredential(ProxyUsername,ProxyPassword);
 
 						WebRequest.Proxy = Proxy;
 					}
@@ -894,7 +803,7 @@ namespace Westwind.Utilities.InternetTools
 		    }
 
 		    // Handle cookies - automatically re-assign 
-				if (_HandleCookies || (_Cookies != null && _Cookies.Count > 0)  )
+				if (HandleCookies || (_Cookies != null && _Cookies.Count > 0)  )
 				{
 					WebRequest.CookieContainer = new CookieContainer();
 					if (_Cookies != null && _Cookies.Count > 0) 
@@ -911,7 +820,7 @@ namespace Westwind.Utilities.InternetTools
 				    if (WebRequest.Method == "GET")
 				        WebRequest.Method = "POST";
 
-				    switch (_PostMode)
+				    switch (PostMode)
 				    {
 				        case HttpPostMode.UrlEncoded:
 				            WebRequest.ContentType = "application/x-www-form-urlencoded";
@@ -992,13 +901,13 @@ namespace Westwind.Utilities.InternetTools
                     }
                 }
 
-				_WebResponse = Response;
+				WebResponse = Response;
                 				
 				// Close out the request - it cannot be reused            
 				WebRequest = null;
 
 				// ** Save cookies the server sends
-				if (_HandleCookies)  
+				if (HandleCookies)  
 				{
 					if (Response.Cookies.Count > 0)  
 					{
@@ -1274,7 +1183,7 @@ namespace Westwind.Utilities.InternetTools
 
             long responseSize = bufferSize;
             if (response.ContentLength > 0)
-                responseSize = _WebResponse.ContentLength;
+                responseSize = WebResponse.ContentLength;
             else
                 // No content size provided
                 responseSize = -1;
@@ -1347,7 +1256,7 @@ namespace Westwind.Utilities.InternetTools
                             // Check for cancelled flag
                             if (args.Cancel)
                             {
-                                _Cancelled = true;
+                                Cancelled = true;
                                 break;
                             }
                         }
@@ -1387,7 +1296,7 @@ namespace Westwind.Utilities.InternetTools
 
             long responseSize = bufferSize;
             if (response.ContentLength > 0)
-                responseSize = _WebResponse.ContentLength;
+                responseSize = WebResponse.ContentLength;
             else
                 // No content size provided
                 responseSize = -1;
@@ -1460,7 +1369,7 @@ namespace Westwind.Utilities.InternetTools
                             // Check for cancelled flag
                             if (args.Cancel)
                             {
-                                _Cancelled = true;
+                                Cancelled = true;
                                 break;
                             }
                         }
@@ -1612,15 +1521,15 @@ namespace Westwind.Utilities.InternetTools
 	    /// <filterpriority>2</filterpriority>
 	    public void Dispose()
 	    {
-	        if (_WebResponse != null)
+	        if (WebResponse != null)
 	        {
 #if !NET40
-	            _WebResponse.Dispose();  // introduced in 4.5
+	            WebResponse.Dispose();  // introduced in 4.5
 #endif
-	            _WebResponse = null;
+	            WebResponse = null;
 	        }
-	        if (_WebRequest != null)
-	            _WebRequest = null;
+	        if (WebRequest != null)
+	            WebRequest = null;
 	    }
 	}
 
