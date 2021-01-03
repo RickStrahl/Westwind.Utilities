@@ -437,7 +437,8 @@ namespace Westwind.Utilities
             string workingFolder = null, 
             int waitForExitMs = 0, 
             string verb = "OPEN",
-            ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal)
+            ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal,
+            bool useShellExecute = true)
         {
             string executable = fullCommandLine;
             string args = null;
@@ -463,15 +464,15 @@ namespace Westwind.Utilities
                 }
             }
 
-            var pi = new ProcessStartInfo();
-            //pi.UseShellExecute = true;
-            pi.Verb = verb;
-            pi.WindowStyle = windowStyle;
-
-            pi.FileName = executable;
-            pi.WorkingDirectory = workingFolder;
-            pi.Arguments = args;
-
+            var pi = new ProcessStartInfo
+            {
+                Verb = verb,
+                WindowStyle = windowStyle,
+                FileName = executable,
+                WorkingDirectory = workingFolder,
+                Arguments = args,
+                UseShellExecute = true
+            };
 
             using (var p = Process.Start(pi))
             {

@@ -76,6 +76,8 @@ namespace Westwind.Utilities
         /// </remarks>
         public static string Serialize(object value, bool throwExceptions = false, bool formatJsonOutput = false)
         {
+            if (value is null) return "null";
+
             string jsonResult = null;
             Type type = value.GetType();
             JsonTextWriter writer = null;
