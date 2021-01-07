@@ -56,10 +56,16 @@ namespace Westwind.Utilities
         /// <param name="filename"></param>
         public static bool OpenFileInExplorer(string filename)
         {
+            if (string.IsNullOrEmpty(filename))
+                return false;
+
             if (Directory.Exists(filename))
                 ShellUtils.GoUrl(filename);
             else
             {
+                // required as command Explorer command line doesn't allow mixed slashes
+                filename = FileUtils.NormalizePath(filename); 
+
                 if (!File.Exists(filename))
                     filename = Path.GetDirectoryName(filename);
 
