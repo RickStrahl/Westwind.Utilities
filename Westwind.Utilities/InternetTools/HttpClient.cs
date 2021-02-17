@@ -773,7 +773,7 @@ namespace Westwind.Utilities.InternetTools
 				}
 
 				// Handle Proxy Server configuration
-				if (ProxyAddress.Length > 0) 
+				if (!string.IsNullOrEmpty(ProxyAddress))
 				{
 					if (ProxyAddress == "DEFAULTPROXY") 
 					{

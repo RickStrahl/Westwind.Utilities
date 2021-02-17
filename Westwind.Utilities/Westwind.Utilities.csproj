@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net46;netstandard2.0;net40</TargetFrameworks>
-    <Version>3.0.50</Version>
+    <Version>3.0.50.2</Version>
     <Authors>Rick Strahl</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <Language>en-US</Language>
@@ -23,7 +23,7 @@
     <PackageLicense>LICENSE.MD</PackageLicense>
     
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Copyright>Rick Strahl, West Wind Technologies, 2010-2020</Copyright>
+    <Copyright>Rick Strahl, West Wind Technologies, 2010-2021</Copyright>
     <RepositoryType>Github</RepositoryType>
     <Company>West Wind Technologies</Company>
     
