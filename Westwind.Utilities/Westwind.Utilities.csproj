@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net46;net40</TargetFrameworks>
-    <Version>3.0.49.2</Version>
+    <TargetFrameworks>net46;netstandard2.0;net40</TargetFrameworks>
+    <Version>3.0.50</Version>
     <Authors>Rick Strahl</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <Language>en-US</Language>
@@ -13,13 +13,14 @@
     <Title>West Wind Utilities</Title>
     <Description>.NET utility library that includes Application Configuration, lightweight ADO.NET Data Access Layer, logging, utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>    
     <Summary>Small library of general purpose utilities for .NET development that almost every application can use. Used as a core reference library for other West Wind libraries.</Summary>
-    <PackageCopyright>Rick Strahl, West Wind Technologies 2007-2020</PackageCopyright>
+    <PackageCopyright>Rick Strahl, West Wind Technologies 2007-2021</PackageCopyright>
     <PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
     <PackageReleaseNotes></PackageReleaseNotes>
-
-    <PackageIconUrl>http://www.west-wind.com/westwindToolkit/images/WestwindWebToolkit_128x128.png</PackageIconUrl>
+    
     <PackageProjectUrl>http://github.com/rickstrahl/westwind.utilities</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/RickStrahl/Westwind.Utilities/tree/master/Westwind.Utilities</PackageLicenseUrl>
+
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageLicense>LICENSE.MD</PackageLicense>
     
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Copyright>Rick Strahl, West Wind Technologies, 2010-2020</Copyright>
@@ -118,4 +119,10 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="" />
+    <None Include="LICENSE.MD" Pack="true" PackagePath="" />
+  </ItemGroup>
+
 </Project>
