@@ -153,6 +153,18 @@ namespace Westwind.Utilities.Data.Tests
             }
         }
 
+        [TestMethod]
+        public void FindByKeyTest()
+        {
+            using (var data = new SqlDataAccess(STR_ConnectionString))
+            {
+                // Notice you have to explicitly specify parameter names
+                var customer = data.FindKey<Customer>(keyValue: "Strahl", tableName: "Customers",keyField: "LastName" );
+                Assert.IsNotNull(customer, data.ErrorMessage);
+                Console.WriteLine(customer.Company);
+            }
+        }
+
 
 
         [TestMethod]
@@ -435,7 +447,7 @@ namespace Westwind.Utilities.Data.Tests
         {
             using (var data = new SqlDataAccess(STR_ConnectionString))
             {
-                var entry = data.Find<WebLogEntry>(1, "ApplicationLog", "Id");
+                var entry = data.FindKey<WebLogEntry>(1, "ApplicationLog", "Id");
                 Assert.IsNotNull(entry, data.ErrorMessage);
                 Console.WriteLine(entry.Entered + " " + entry.Message);
                 var entry2 = new WebLogEntry();

@@ -1,7 +1,8 @@
 # Westwind.Utilities Changelog
 
-### 3.0.50
-*not released yet*
+### 3.0.51
+
+<small>February 17, 2021</small>
 
 * **Switch Data Access to Microsoft.Data.SqlClient**  
 Switch the Sql Client library to the new `Microsoft.Data.SqlClient` for .NET Standard and .NET Standard. The full framework libs continue using `System.Data.SqlClient` native in the framework `System.Data` assembly.
@@ -32,6 +33,9 @@ Note: this is a potentially breaking change.
 > ### Breaking Changes for 3.0.50
 > * **WindowUtilities.TryGetRegistryKey() parameter Change**  
 The baseKey parameter replaces a `bool` parameter. Signature for most scenarios will stay the same if the parameter was omitted but the new version breaks binary compatibility which a simple recompile should fix.
+>
+> * **Renamed `DataAccessBase.Find<T>()` KeyLookup overload**  
+> Renamed this method to `FindKey<T>()` to avoid ambiguous reference errors. This will break compilation if the method is used for key lookups. You might also want to do a check for all `.Find()` usage to ensure it's not unintentionally firing `Find<T>()` when `FindKey<T>()` is desired.
 
 * **FileUtils.HasInvalidPathCharacters()**  
 Added a function that checks paths for invalid characters. Uses default invalid character list, plus you can pass in additional characters to be deemed invalid.

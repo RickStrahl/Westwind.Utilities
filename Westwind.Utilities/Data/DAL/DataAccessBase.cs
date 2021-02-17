@@ -1546,14 +1546,18 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         }
 
         /// <summary>
-        /// Returns a single entity based on a keyfield and key value
+        /// Finds the first matching entity based on a keyfield and key value.
+        /// Note the keyfield can be any field that is used in a WHERE clause.
+        ///
+        /// This method has been renamed from Find() to avoid ambiguous
+        /// overload errors.
         /// </summary>
         /// <typeparam name="T">Type of entity to populate</typeparam>
         /// <param name="keyValue">Value to look up in keyfield</param>
         /// <param name="tableName">Name of the table to work on</param>
         /// <param name="keyField">Field that is used for the key lookup</param>
         /// <returns></returns>
-        public virtual T Find<T>(object keyValue, string tableName,string keyField)
+        public virtual T FindKey<T>(object keyValue, string tableName,string keyField)
             where T: class,new()
         {
             T obj = new T();
@@ -1568,7 +1572,10 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
         /// <summary>
         /// Returns the first matching record retrieved from data based on a SQL statement
-        /// as an entity or null if no match was found.        
+        /// as an entity or null if no match was found.
+        ///
+        /// NOTE: Key based method has been renamed to:
+        /// `FindKey`
         /// </summary>
         /// <typeparam name="T">Entity type to fill</typeparam>
         /// <param name="sql">SQL string to execute. Use @0,@1,@2 for parameters.
