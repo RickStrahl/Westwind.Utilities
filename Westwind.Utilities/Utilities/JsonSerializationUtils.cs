@@ -160,7 +160,13 @@ namespace Westwind.Utilities
             return true;
         }
 
-
+        /// <summary>
+        /// Deserializes an object, array or value from JSON string to an object or value
+        /// </summary>
+        /// <param name="jsonText"></param>
+        /// <param name="type"></param>
+        /// <param name="throwExceptions"></param>
+        /// <returns></returns>
         public static object Deserialize(string jsonText, Type type, bool throwExceptions = false)
         {
             var json = CreateJsonNet(throwExceptions);
@@ -191,6 +197,21 @@ namespace Westwind.Utilities
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Deserializes an object, array or value from JSON string to an object or value
+        /// </summary>
+        /// <param name="jsonText"></param>
+        /// <param name="throwExceptions"></param>
+        /// <returns></returns>
+        public static T Deserialize<T>(string jsonText, bool throwExceptions = false)
+        {
+            var res = Deserialize(jsonText, typeof(T), throwExceptions);
+            if (res == null)
+                return default(T);
+
+            return (T) res;
         }
 
 		/// <summary>
@@ -234,6 +255,21 @@ namespace Westwind.Utilities
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Deserializes an object from file and returns a reference.
+        /// </summary>
+        /// <param name="fileName">name of the file to serialize to</param>
+        /// <param name="binarySerialization">determines whether we use Xml or Binary serialization</param>
+        /// <param name="throwExceptions">determines whether failure will throw rather than return null on failure</param>
+        /// <returns>Instance of the deserialized object or null. Must be cast to your object type</returns>
+        public static T DeserializeFromFile<T>(string fileName,  bool throwExceptions = false)
+        {
+            var res = DeserializeFromFile(fileName, typeof(T), throwExceptions);
+            if (res == null)
+                return default(T);
+            return (T) res;
         }
 
         /// <summary>
