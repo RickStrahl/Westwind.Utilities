@@ -1,7 +1,14 @@
 # Westwind.Utilities Changelog
 
-### 3.0.51
 
+### 3.0.52
+<small>not released yet</small>
+
+* **NetworkUtils.IsLocalIpAddress**  
+Checks to see if an IP Address is a local address by checking for localhost/loopback and checking host IP (if valid) against local IP Addresses.
+
+
+### 3.0.51
 <small>February 17, 2021</small>
 
 * **Switch Data Access to Microsoft.Data.SqlClient**  

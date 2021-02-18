@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 
 namespace Westwind.Utilities
@@ -42,6 +43,46 @@ namespace Westwind.Utilities
             
             return uri.Host;
         }
-     
+
+        /// <summary>
+        /// Checks to see if an IP Address or Domain is a local address
+        /// </summary>
+        /// <remarks>
+        /// Do not use in high traffic situations, as this involves a
+        /// DNS lookup. If no local hostname is found it goes out to a
+        /// DNS server to retrieve IP Addresses.
+        /// </remarks>
+        /// <param name="hostOrIp">Hostname or IP Address</param>
+        /// <returns>true or false</returns>
+        public static bool IsLocalIpAddress(string hostOrIp)
+        {
+            try
+            {
+                // get IP Mapped to passed host
+                IPAddress[] hostIPs = Dns.GetHostAddresses(hostOrIp);
+                
+                // get local IP addresses
+                IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
+
+                // check host ip addresses against local ip addresses for matches
+                foreach (IPAddress hostIP in hostIPs)
+                {
+                    // check for localhost/127.0.0.1
+                    if (IPAddress.IsLoopback(hostIP)) 
+                        return true;
+
+                    // Check if IP Address matches a local IP
+                    foreach (IPAddress localIP in localIPs)
+                    {
+                        if (hostIP.Equals(localIP)) 
+                            return true;
+                    }
+                }
+            }
+            catch {}
+
+            return false;
+        }
+
     }
 }

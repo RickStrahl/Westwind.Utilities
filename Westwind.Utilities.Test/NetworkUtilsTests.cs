@@ -70,5 +70,23 @@ namespace Westwind.Utilities.Tests
             Assert.IsTrue(NetworkUtils.GetBaseDomain("classifieds5.gorge.net") == "gorge.net");
             Assert.IsTrue(NetworkUtils.GetBaseDomain(string.Empty) == string.Empty);
         }
+
+        [TestMethod]
+        public void IsLocalIpAddress()
+        {
+            Assert.IsTrue(NetworkUtils.IsLocalIpAddress("localhost"));
+            Assert.IsTrue(NetworkUtils.IsLocalIpAddress("127.0.0.1"));
+
+            var domain = "dev.west-wind.com";
+            bool result =  NetworkUtils.IsLocalIpAddress(domain);
+            Console.WriteLine($"{domain} is local: {result}");
+
+            domain = "bogus.west-wind.com";
+            result =  NetworkUtils.IsLocalIpAddress(domain);
+            Console.WriteLine($"{domain} is local: {result}");
+
+
+
+        }
     }
 }
