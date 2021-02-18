@@ -13,11 +13,10 @@ if ($len -gt 0) {
     nuget sign  ".\nupkg\$filename"   -CertificateSubject "West Wind Technologies" -timestamper " http://timestamp.digicert.com"
     
     
-    $filename = $filename.Replace(".nupkg",".snupkg")
-    Write-Host "signing... $filename"
-    nuget sign  ".\nupkg\$filename"   -CertificateSubject "West Wind Technologies" -timestamper " http://timestamp.digicert.com"
+    $snufilename = $filename.Replace(".nupkg",".snupkg")
+    Write-Host "signing... $snufilename"
+    nuget sign  ".\nupkg\$snufilename"   -CertificateSubject "West Wind Technologies" -timestamper " http://timestamp.digicert.com"
     
-    cd ./nupkg
-    nuget push  "$filename" -source "https://nuget.org"
-    cd ..
+    nuget push  ".\nupkg\$filename" -source "https://nuget.org"    
+    Write-Host "Done."
 }

@@ -56,6 +56,9 @@ namespace Westwind.Utilities
         /// <returns>true or false</returns>
         public static bool IsLocalIpAddress(string hostOrIp)
         {
+            if(string.IsNullOrEmpty(hostOrIp))
+                return false;
+
             try
             {
                 // get IP Mapped to passed host
@@ -82,6 +85,25 @@ namespace Westwind.Utilities
             catch {}
 
             return false;
+        }
+
+        /// <summary>
+        /// Checks to see if an IP Address or Domain is a local address
+        /// </summary>
+        /// <remarks>
+        /// Do not use in high traffic situations, as this involves a
+        /// DNS lookup. If no local hostname is found it goes out to a
+        /// DNS server to retrieve IP Addresses.
+        /// </remarks>
+        /// <param name="uri">Pass a full URL as an Uri</param>
+        /// <returns></returns>
+        public static bool IsLocalIpAddress(Uri uri)
+        {
+            if (uri == null)
+                return false;
+
+            var host = uri.Host;
+            return IsLocalIpAddress(host);
         }
 
     }

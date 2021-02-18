@@ -1,6 +1,5 @@
 # Westwind.Utilities Changelog
 
-
 ### 3.0.52
 <small>not released yet</small>
 
@@ -29,13 +28,15 @@ Added `ComObject` class that allows wrapping COM objects in .NET Core so they wo
 * **Fix issues with StringUtils.TextAbstract() & Line Breaks**  
 Fix behavior of text abstract with line breaks not being turned into spaces consistently. Also check for null.
 
-* **ShellUtils.OpenUrl() - Platform agnostic Browser Opening**
+* **ShellUtils.OpenUrl() - Platform agnostic Browser Opening**  
 This method opens a URL in the system browser on Windows, Mac and Linux.  
-
 
 * **WindowsUtils.TryGetRegistryKey() Signature Change**  
 Change the signature to TryGetRegistryKey() to pass in the base key into the optional `baseKey` parameter. The previously used `bool` value was not effective if something other than HKLM or HKCU was used. 
 Note: this is a potentially breaking change.
+
+* **FileUtils.HasInvalidPathCharacters()**  
+Added a function that checks paths for invalid characters. Uses default invalid character list, plus you can pass in additional characters to be deemed invalid.
 
 > ### Breaking Changes for 3.0.50
 > * **WindowUtilities.TryGetRegistryKey() parameter Change**  
@@ -44,8 +45,6 @@ The baseKey parameter replaces a `bool` parameter. Signature for most scenarios 
 > * **Renamed `DataAccessBase.Find<T>()` KeyLookup overload**  
 > Renamed this method to `FindKey<T>()` to avoid ambiguous reference errors. This will break compilation if the method is used for key lookups. You might also want to do a check for all `.Find()` usage to ensure it's not unintentionally firing `Find<T>()` when `FindKey<T>()` is desired.
 
-* **FileUtils.HasInvalidPathCharacters()**  
-Added a function that checks paths for invalid characters. Uses default invalid character list, plus you can pass in additional characters to be deemed invalid.
 
 ### 3.0.40
 *May 22nd, 2020*
