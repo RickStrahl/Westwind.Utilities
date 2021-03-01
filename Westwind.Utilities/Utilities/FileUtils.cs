@@ -135,21 +135,17 @@ namespace Westwind.Utilities
         /// <param name="path">Path with potential environment variables.</param>
         /// <returns></returns>
         public static string ExpandPathEnvironmentVariables(string path)
-        {   
-            while (path.Contains("%"))
-            {
-                var extract = StringUtils.ExtractString(path, "%", "%");
-                if (string.IsNullOrEmpty(extract))
-                    return path;
+        {
+            if (string.IsNullOrEmpty(path))
+                return path;
 
-                var env = Environment.GetEnvironmentVariable(extract);
-                if (!string.IsNullOrEmpty(env))
-                    path = path.Replace("%" + extract + "%", env);
-                else
-                    return path;
+            if (path.StartsWith("~"))
+            {
+                var userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                path = path.Replace("~", userPath);
             }
 
-            return path;
+            return Environment.ExpandEnvironmentVariables(path);
         }
 
         /// <summary>

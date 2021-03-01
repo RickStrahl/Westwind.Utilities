@@ -147,6 +147,18 @@ namespace Westwind.Utilities.Test
         }
 
         [TestMethod]
+        public void ExpandPathEnvironmentVariablesUserFolderTest()
+        {
+            string path = "~\\Projects";
+            string result = FileUtils.ExpandPathEnvironmentVariables(path);
+
+            Console.WriteLine(result);
+            Assert.AreNotEqual(path, result);
+            Assert.IsFalse(result.Contains("~\\"));
+           
+        }
+
+        [TestMethod]
         public void DeleteFilesTest()
         {
             string source = Path.Combine(Path.GetTempPath(), "_TestFolders");           
