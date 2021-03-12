@@ -80,6 +80,7 @@ namespace Westwind.Utilities
 		string cID = "";
 		
 		public ValidationError() : base() {}
+
 		public ValidationError(string message) 
 		{
 			Message = message;

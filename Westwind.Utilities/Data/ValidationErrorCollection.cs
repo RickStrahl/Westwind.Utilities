@@ -26,6 +26,11 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
+        /// Shortcut to determine whether this instance has errors
+        /// </summary>
+        public bool HasErrors => this.Count > 0;
+
+        /// <summary>
         /// Adds a new error to the collection
         /// <seealso>Class ValidationError</seealso>
         /// </summary>
