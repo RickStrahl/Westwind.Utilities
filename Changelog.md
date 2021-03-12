@@ -1,11 +1,16 @@
 # Westwind.Utilities Changelog
 
-### 3.0.52
-<small>not released yet</small>
+### 3.0.55
+<small>March 12, 2021</small>
 
 * **NetworkUtils.IsLocalIpAddress**  
 Checks to see if an IP Address is a local address by checking for localhost/loopback and checking host IP (if valid) against local IP Addresses.
 
+* **Fix: Replace Timeout with TimeoutMs**  
+Replace Timeout property with TimeoutMs to fix problems with sub-1000ms request timeouts. Conversions from calling apps often resulted in invalid values being assigned due to the conversion from milliseconds to seconds. Existing Timeout property (in seconds) is marked `[Obsolete]` but still present to use.
+
+* **ValidationErrors.HasErrors Property**   
+Added a `HasErrors` property to make the check for errors more explicit than `ValidationErrors.Count > 0`.
 
 ### 3.0.51
 <small>February 17, 2021</small>
