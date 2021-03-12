@@ -99,7 +99,43 @@ namespace Westwind.Utilities.InternetTools
 		/// Timeout for the Web request in seconds. Times out on connection, read and send operations.
 		/// Default is 30 seconds.
 		/// </summary>
-		public int Timeout { get; set; } = 30;
+		[Obsolete("Please use TimeoutMs instead")]
+        public int Timeout {
+            get
+            {
+                if (_timeoutMs < 0)
+                    return -1;
+
+                return _timeoutMs * 1000;
+            }
+            set
+            {
+                if(value >= 1)
+                    _timeoutMs = value * 1000;
+                else if (value == -1)
+                    _timeoutMs = -1;
+
+                {
+                    if (value > 0)
+                        _timeoutMs = 1;
+                    else if (value < 0)
+                        _timeoutMs = -1;
+                    else
+                        _timeoutMs = 0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Timeout for the Web request in seconds. Times out on connection, read and send operations.
+        /// Default is 30 seconds (30,000ms).
+        /// </summary>
+        public int TimeoutMs
+        {
+            get => _timeoutMs;
+            set => _timeoutMs = value;
+        }
+        private int _timeoutMs = 30_000;
 
         /// <summary>
 		/// Returns whether the last request was cancelled through one of the
@@ -462,18 +498,6 @@ namespace Westwind.Utilities.InternetTools
 
         #region Run Requests
 
-        /// <summary>
-        /// Return a the result from an HTTP Url into a StreamReader.
-        /// Client code should call Close() on the returned object when done reading.
-        /// </summary>
-        /// <param name="url">Url to retrieve.</param>		
-        /// <returns></returns>
-        [Obsolete("Use DownloadStream() instead.")]
-        public StreamReader GetUrlStream(string Url)
-        {
-            return DownloadStream(Url);
-        }
-
 		/// <summary>
 		/// Return a the result from an HTTP Url into a StreamReader.
 		/// Client code should call Close() on the returned object when done reading.
@@ -482,37 +506,46 @@ namespace Westwind.Utilities.InternetTools
 		/// <returns></returns>
 		public StreamReader DownloadStream(string url) 
 		{
-			Encoding enc;
+            try
+            {
+                Encoding enc;
 
-			HttpWebResponse Response = DownloadResponse(url);
-			if (Response == null)
-				return null;
-			            
-			try 
-			{
-				if (!string.IsNullOrEmpty(Response.CharacterSet) )
-					enc = Encoding.GetEncoding(Response.CharacterSet);
-				else
-					enc = Encoding.Default;
-			}
-			catch
-			{
-				// Invalid encoding passed
-				enc = Encoding.Default; 
-			}
+                HttpWebResponse Response = DownloadResponse(url);
+                if (Response == null)
+                    return null;
+
+                try
+                {
+                    if (!string.IsNullOrEmpty(Response.CharacterSet))
+                        enc = Encoding.GetEncoding(Response.CharacterSet);
+                    else
+                        enc = Encoding.Default;
+                }
+                catch
+                {
+                    // Invalid encoding passed
+                    enc = Encoding.Default;
+                }
 
 
-            Stream responseStream = Response.GetResponseStream();
-            //if (Response.ContentEncoding.ToLower().Contains("gzip"))
-            //    responseStream = new GZipStream(Response.GetResponseStream(), CompressionMode.Decompress);
-            //else if (Response.ContentEncoding.ToLower().Contains("deflate"))
-            //    responseStream = new DeflateStream(Response.GetResponseStream(), CompressionMode.Decompress);
-            
-            			
-			// drag to a stream
-			StreamReader strResponse = new StreamReader(responseStream,enc); 
-			return strResponse;
-		}
+                Stream responseStream = Response.GetResponseStream();
+                //if (Response.ContentEncoding.ToLower().Contains("gzip"))
+                //    responseStream = new GZipStream(Response.GetResponseStream(), CompressionMode.Decompress);
+                //else if (Response.ContentEncoding.ToLower().Contains("deflate"))
+                //    responseStream = new DeflateStream(Response.GetResponseStream(), CompressionMode.Decompress);
+
+
+                // drag to a stream
+                StreamReader strResponse = new StreamReader(responseStream, enc);
+                return strResponse;
+            }
+            catch (Exception ex)
+            {
+                Error = true;
+                ErrorMessage = "Unable to read response: " + ex.Message;
+                return null;
+            }
+        }
 
 
         /// <summary>
@@ -547,11 +580,11 @@ namespace Westwind.Utilities.InternetTools
             }
 
             WebRequest.UserAgent = UserAgent;
-            WebRequest.Timeout = Timeout * 1000;
+            WebRequest.Timeout = TimeoutMs;
             WebRequest.Method = HttpVerb;
             
 #if NETFULL
-			WebRequest.ReadWriteTimeout = Timeout * 1000;
+			WebRequest.ReadWriteTimeout = TimeoutMs;
 #endif
 
 
@@ -757,10 +790,10 @@ namespace Westwind.Utilities.InternetTools
 				}
 				
 				WebRequest.UserAgent = UserAgent;
-				WebRequest.Timeout = Timeout * 1000;
+                WebRequest.Timeout = TimeoutMs;
                 WebRequest.Method = HttpVerb;
 #if NETFULL
-				WebRequest.ReadWriteTimeout = Timeout * 1000;
+				WebRequest.ReadWriteTimeout = TimeoutMs;
 #endif	
 
 				// Handle Security for the request
@@ -845,26 +878,27 @@ namespace Westwind.Utilities.InternetTools
 				    if (!string.IsNullOrEmpty(ContentType))
                         WebRequest.ContentType = ContentType;
 
-				    using (Stream requestStream = WebRequest.GetRequestStream())
-				    {
-				        if (SendData == null)
-				            _PostStream.WriteTo(requestStream);  // Simplest version - no events
-				        else 
-				            StreamPostBuffer(requestStream);     // Send in chunks and fire events
+                    using (Stream requestStream = WebRequest.GetRequestStream())
+                    {
+                        if (SendData == null)
+                            _PostStream.WriteTo(requestStream); // Simplest version - no events
+                        else
+                            StreamPostBuffer(requestStream); // Send in chunks and fire events
 
-				        //*** Close the memory stream
-				        _PostStream.Close();
-				        _PostStream = null;
+                        //*** Close the memory stream
+                        _PostStream.Close();
+                        _PostStream = null;
 
-				        //*** Close the Binary Writer
-				        if (_PostData != null)
-				        {
-				            _PostData.Dispose();
-				            _PostData = null;
-				        }									        
-				    }
+                        //*** Close the Binary Writer
+                        if (_PostData != null)
+                        {
+                            _PostData.Dispose();
+                            _PostData = null;
+                        }
+                    }
 
-				    // clear out the Post buffer
+
+                    // clear out the Post buffer
                     ResetPostData();
 
 					// If user cancelled the 'upload' exit
@@ -896,7 +930,7 @@ namespace Westwind.Utilities.InternetTools
                             throw;
 
 						Error = true;
-                        ErrorMessage = ex.Message + ". " + url;
+                        ErrorMessage = ex.GetBaseException().Message + "  " + url;
                         return null;
                     }
                 }
@@ -1148,24 +1182,21 @@ namespace Westwind.Utilities.InternetTools
         /// <returns></returns>
         public string DownloadStringPartial(string url, int size)
         {
-            StreamReader sr = DownloadStream(url);
-            if (sr == null)
-                return null;
+            char[] buffer;
+            using (StreamReader sr = DownloadStream(url))
+            {
+                if (sr == null)
+                    return null;
 
-            char[] InBuffer = new char[size];
+                buffer = new char[size];
 
-            sr.Read(InBuffer, 0, size);
-            sr.Close();
+                sr.Read(buffer, 0, size);
+            }
 
-            return new string(InBuffer);
+            return new string(buffer);
         }
 
-    
-        [Obsolete("Use DownloadBytes() method.")]
-		public byte[] GetUrlBytes(string url,long bufferSize=8192) 
-		{   
-           return DownloadBytes(url, bufferSize);
-        }       
+     
 
         /// <summary>
         /// Retrieves URL into an Byte Array.
@@ -1231,6 +1262,7 @@ namespace Westwind.Utilities.InternetTools
                     if (responseSize != -1 && totalBytes + bufferSize > responseSize)
                         bufferSize = responseSize - totalBytes;
 
+                    
                     bytesRead = responseStream.Read(buffer, 0, (int) bufferSize);
 
                     if (bytesRead > 0)
