@@ -1,5 +1,11 @@
 # Westwind.Utilities Changelog
 
+### 3.0.56
+<small>ongoing release</small>
+
+* **Update Newtonsoft.Json**  
+Update to latest JSON.NET Nuget package.
+
 ### 3.0.55
 <small>March 12, 2021</small>
 

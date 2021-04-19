@@ -1969,8 +1969,8 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
 
         /// <summary>
-        /// Saves an enity into the database using insert or update as required.
-        /// Requires a keyfield that exists on both the entity and the database.
+        /// Saves an entity into the database using insert or update as required.
+        /// Requires a key field that exists on both the entity and the database.
         /// </summary>
         /// <param name="entity">entity to save</param>
         /// <param name="table">table to save to</param>
@@ -1983,11 +1983,9 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             object res = null;
             if (pkValue != null)
                 res = ExecuteScalar("select " + LeftFieldBracket + keyField + RightFieldBracket + " from " + 
-                                    LeftFieldBracket + table + RightFieldBracket + "] " +
-                                    "where " + LeftFieldBracket + keyField + RightFieldBracket + "=" + ParameterPrefix + "id",
+                                    LeftFieldBracket + table + RightFieldBracket +
+                                    " where " + LeftFieldBracket + keyField + RightFieldBracket + "=" + ParameterPrefix + "id",
                                          CreateParameter(ParameterPrefix + "id", pkValue));
-
-
             if (res == null)
             {
                 InsertEntity(entity, table, propertiesToSkip);
