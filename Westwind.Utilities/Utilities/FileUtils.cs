@@ -32,6 +32,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -382,6 +383,70 @@ namespace Westwind.Utilities
                 return null;
 
             return FindFileInHierarchyInternal(dir.Parent.FullName, searchFile, FindFileInHierarchyDirection.Up);
+        }
+
+        /// <summary>
+        /// Returns a list of file matches searching up and down a file hierarchy
+        /// </summary>
+        /// <param name="startPath">Path to start from</param>
+        /// <param name="searchFile">Filename or Wildcard</param>
+        /// <param name="direction">up or down the hiearchy</param>
+        /// <returns></returns>
+        public static string[] FindFilesInHierarchy(string startPath, string searchFile,
+            FindFileInHierarchyDirection direction = FindFileInHierarchyDirection.Down)
+        {
+            var list= new string[]{ };
+
+            var fi = new FileInfo(startPath);
+            if (!fi.Exists)
+            {
+                var di = new DirectoryInfo(startPath);
+                if (!di.Exists)
+                    return list;
+
+                startPath = di.FullName;
+            }
+            else
+            {
+                startPath = fi.DirectoryName;
+            }
+
+            return FindFilesInHierarchyInternal(startPath, searchFile, direction);
+        }
+
+        /// <summary>
+        /// Recursive method to walk the hierarchy and find the file requested.
+        /// </summary>
+        /// <param name="path">Base path</param>
+        /// <param name="searchFile">Filename to search for</param>
+        /// <param name="direction">Search up or down the tree including base path</param>
+        /// <returns></returns>
+        private static string[] FindFilesInHierarchyInternal(string path, string searchFile,
+            FindFileInHierarchyDirection direction = FindFileInHierarchyDirection.Up)
+        {
+            var list = new string[] { };
+
+            if (path == null)
+                return list;
+
+            var dir = new DirectoryInfo(path);
+
+            var so = SearchOption.TopDirectoryOnly;
+
+            if (direction == FindFileInHierarchyDirection.Down)
+                so = SearchOption.AllDirectories;
+
+            var files = dir.GetFiles(searchFile, so);
+            if (files.Length > 0)
+                return files.Select(fi=> fi.FullName).ToArray();
+
+            if (direction == FindFileInHierarchyDirection.Down)
+                return list;
+
+            if (dir.Parent == null)
+                return list;
+
+            return FindFilesInHierarchyInternal(dir.Parent.FullName, searchFile, FindFileInHierarchyDirection.Up);
         }
 
         public enum FindFileInHierarchyDirection

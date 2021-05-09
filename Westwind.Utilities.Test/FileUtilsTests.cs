@@ -220,5 +220,21 @@ namespace Westwind.Utilities.Test
             Assert.IsNotNull(matchedFile);
             Console.WriteLine(matchedFile);
         }
+
+        [TestMethod]
+        public void FindFilesHierarchal()
+        {
+            var basePath = Path.GetFullPath("./SupportFiles");
+            var matches = FileUtils.FindFilesInHierarchy(basePath, "*.jpg", FileUtils.FindFileInHierarchyDirection.Down);
+
+            Assert.IsNotNull(matches);
+            Assert.IsTrue(matches.Length > 0);
+
+            foreach (var file  in matches)
+            {
+                Console.WriteLine(file);
+            }
+            
+        }
     }
 }
