@@ -1518,7 +1518,11 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <returns></returns>
         public bool GetEntity(object entity, string sql, object[] parameters)
         {
-            return GetEntity(entity, CreateCommand(sql,parameters),null);
+            var command = CreateCommand(sql, parameters);
+            if (command == null)
+                return false;
+            
+            return GetEntity(entity, command, null);
         }
 
 
