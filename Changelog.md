@@ -6,6 +6,9 @@
 * **Update Newtonsoft.Json**  
 Update to latest JSON.NET Nuget package.
 
+* **ReflectionUtils.ShallowClone()**  
+Helper method to clone an object using shallow value cloning. Means: Single level clone only. Value types are cloned, References are just attached as is. Basically calls private `MemberwiseClone()` method on the source object.
+
 ### 3.0.55
 <small>March 12, 2021</small>
 
