@@ -909,9 +909,16 @@ namespace Westwind.Utilities.InternetTools
 						return null;
 					}
 				}
-		
-				// Retrieve the response headers 
-				HttpWebResponse Response;
+
+                if ((WebRequest.Method == "POST" || WebRequest.Method == "PUT") &&
+                    _PostData == null)
+                {
+                    WebRequest.ContentLength = 0;
+                }
+
+
+            // Retrieve the response headers 
+                HttpWebResponse Response;
 				try
 				{
 					Response = (HttpWebResponse) WebRequest.GetResponse();                    
