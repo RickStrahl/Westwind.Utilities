@@ -69,7 +69,18 @@ namespace Westwind.Utilities
 
         protected override WebResponse GetWebResponse(WebRequest request)
         {
-            Response = base.GetWebResponse(request) as HttpWebResponse;            
+            try
+            {
+                Response = base.GetWebResponse(request) as HttpWebResponse;
+            }
+            catch (WebException ex)
+            {
+                if (Settings.DontThrowOnErrorStatusCodes)
+                    return ex.Response;
+
+                throw ex;
+            }
+
             return Response;
         }
 

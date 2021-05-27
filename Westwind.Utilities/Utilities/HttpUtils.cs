@@ -538,6 +538,17 @@ namespace Westwind.Utilities
         public string UserAgent { get; set; }
 
 
+        /// <summary>
+        /// By default (false) throws a Web Exception on 500 and 400 repsonses.
+        /// This is the default WebClient behavior.
+        ///
+        /// If `true` doesn't throw, but instead returns the HTTP response.
+        /// Useful if you need to return error messages on 500 and 400 responses
+        /// from API requests.
+        /// </summary>
+        public bool DontThrowOnErrorStatusCodes { get; set; }
+
+
         public HttpRequestSettings()
         {
             HttpVerb = "GET";

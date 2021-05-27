@@ -211,6 +211,20 @@ namespace Westwind.Utilities
             }
             return null;
         }
+
+        /// <summary>
+        /// Clones an object using a shallow cloning using private
+        /// MemberwiseClone operation.
+        /// </summary>
+        /// <param name="source">Object to copy</param>
+        /// <returns>A shallow copy: Value types are copies, reference types are left as references</returns>
+        public static object ShallowClone(object source)
+        {
+            return source.GetType()
+                        .GetMethod("MemberwiseClone",
+                                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod)
+                        .Invoke(source, null);
+        }
         #endregion
 
 
@@ -522,7 +536,7 @@ namespace Westwind.Utilities
         /// <returns>Object - cast to proper type</returns>
         public static object GetProperty(object instance, string property)
         {
-            return instance.GetType().GetProperty(property, ReflectionUtils.MemberAccess).GetValue(instance, null);
+            return instance.GetType().GetProperty(property).GetValue(instance, null);
         }
 
         /// <summary>
