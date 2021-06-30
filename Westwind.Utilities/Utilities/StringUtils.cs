@@ -1080,6 +1080,7 @@ namespace Westwind.Utilities
         }
 
 
+
         /// <summary>
         /// Simple Logging method that allows quickly writing a string to a file
         /// </summary>
@@ -1091,10 +1092,14 @@ namespace Westwind.Utilities
             if (encoding == null)
                 encoding = Encoding.UTF8;
 
-            StreamWriter Writer = new StreamWriter(filename, true, encoding);
-            Writer.WriteLine(DateTime.Now + " - " + output);
-            Writer.Close();
+            lock (_logLock)
+            {
+                var writer = new StreamWriter(filename, true, encoding);
+                writer.WriteLine(DateTime.Now + " - " + output);
+                writer.Close();
+            }
         }
+        private static object _logLock = new object();
 
         /// <summary>
         /// Creates a Stream from a string. Internally creates
@@ -1108,7 +1113,7 @@ namespace Westwind.Utilities
             if (encoding == null)
                 encoding = Encoding.Default;
 
-            MemoryStream ms = new MemoryStream(text.Length * 2);
+            var ms = new MemoryStream(text.Length * 2);
             byte[] data = encoding.GetBytes(text);
             ms.Write(data, 0, data.Length);
             ms.Position = 0;
