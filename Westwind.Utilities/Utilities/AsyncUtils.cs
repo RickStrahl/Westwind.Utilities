@@ -98,6 +98,34 @@ namespace Westwind.Utilities
                 .GetResult();
         }
 
+
+        /// <summary>
+        /// Ensures safe operation of a task without await even if
+        /// an execution fails with an exception. This forces the
+        /// exception to be cleared unlike a non-continued task.
+        /// </summary>
+        /// <param name="t">Task Instance</param>
+        public static void FireAndForget(this Task t)
+        {
+            t.ContinueWith(tsk => tsk.Exception,
+                TaskContinuationOptions.OnlyOnFaulted);
+        }
+
+
+        /// <summary>
+        /// Ensures safe operation of a task without await even if
+        /// an execution fails with an exception. This forces the
+        /// exception to be cleared unlike a non-continued task.
+        /// 
+        /// This version allows you to capture and respond to any
+        /// exceptions caused by the Task code executing.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="del">Action delegate that receives an Exception parameter you can use to log or otherwise handle (or ignore) any exceptions</param>
+        public static void FireAndForget(this Task t, Action<Exception> del)
+        {
+            t.ContinueWith( (tsk) => del?.Invoke(tsk.Exception), TaskContinuationOptions.OnlyOnFaulted);
+        }
     }
 }
 
