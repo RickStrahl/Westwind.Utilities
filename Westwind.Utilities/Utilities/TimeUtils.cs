@@ -278,6 +278,34 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
+        /// Returns whether a date time is between two other dates. Optionally
+        /// can compare date only or date and time.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="includeTime">If true compare date and time, otherwise just date</param>
+        /// <returns>true or false</returns>
+        public static bool IsBetween(this DateTime date, DateTime startDate, DateTime endDate, bool includeTime = true)
+        {
+            return includeTime ?
+                date >= startDate && date <= endDate :
+                date.Date >= startDate.Date && date.Date <= endDate.Date;
+        }
+
+        /// <summary>
+        /// Returns whether a timespan is between two dates
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns>true or false</returns>
+        public static bool IsBetween(this TimeSpan date, DateTime startDate, DateTime endDate)
+        {
+            return date.CompareTo(endDate) <= 0 && date.CompareTo(endDate) >= 0;
+        }
+
+        /// <summary>
         /// Truncates a DateTime value to the nearest partial value.
         /// </summary>
         /// <remarks>
