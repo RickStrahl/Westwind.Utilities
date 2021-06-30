@@ -1,6 +1,6 @@
 # Westwind.Utilities Changelog
 
-### 3.0.56
+### 3.0.60
 <small>ongoing release</small>
 
 * **Update Newtonsoft.Json**  
@@ -8,6 +8,12 @@ Update to latest JSON.NET Nuget package.
 
 * **ReflectionUtils.ShallowClone()**  
 Helper method to clone an object using shallow value cloning. Means: Single level clone only. Value types are cloned, References are just attached as is. Basically calls private `MemberwiseClone()` method on the source object.
+
+* **TimeUtils.IsBetween**  
+Add helper extension method to DateTime and TimeSpan for checking for date between a high and low date.
+
+* **AsyncUtils.FireAndForget() / Task.FireAndForget()**  
+Added a couple of extension methods that allow for safe execution of async methods by explicitly continuing the task if an exception occurs. Works around hte issue that exceptions can otherwise wait around to be fired until the finalizer runs which can cause unexpected failures.
 
 ### 3.0.55
 <small>March 12, 2021</small>
