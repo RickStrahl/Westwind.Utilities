@@ -1037,10 +1037,13 @@ namespace Westwind.Utilities
         /// common white space text. Effectively removes common code indentation from
         /// code blocks for example so you can get a left aligned code snippet.
         /// </summary>
-        /// <param name="code"></param>
+        /// <param name="code">Text to normalize</param>
         /// <returns></returns>
         public static string NormalizeIndentation(string code)
         {
+            if (string.IsNullOrEmpty(code))
+                return string.Empty;
+
             // normalize tabs to 3 spaces
             string text = code.Replace("\t", "   ");
 
