@@ -38,6 +38,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace Westwind.Utilities
 {
@@ -74,7 +75,7 @@ namespace Westwind.Utilities
         /// If null is passed in null is also returned so you might want
         /// to check for null before calling this method.
         /// </remarks>
-        public static string Serialize(object value, bool throwExceptions = false, bool formatJsonOutput = false)
+        public static string Serialize(object value, bool throwExceptions = false, bool formatJsonOutput = false, bool camelCase = false)
         {
             if (value is null) return "null";
 
@@ -83,7 +84,7 @@ namespace Westwind.Utilities
             JsonTextWriter writer = null;
             try
             {
-                var json = CreateJsonNet(throwExceptions);
+                var json = CreateJsonNet(throwExceptions, camelCase);
 
                 StringWriter sw = new StringWriter();
 
@@ -91,6 +92,8 @@ namespace Westwind.Utilities
 
 				if (formatJsonOutput)
 					writer.Formatting = Formatting.Indented; 
+
+                
 
                 writer.QuoteChar = '"';
                 json.Serialize(writer, value);
@@ -122,13 +125,13 @@ namespace Westwind.Utilities
         /// <param name="throwExceptions">Determines whether exceptions are thrown or false is returned</param>
         /// <param name="formatJsonOutput">if true pretty-formats the JSON with line breaks</param>
         /// <returns>true or false</returns>        
-        public static bool SerializeToFile(object value, string fileName, bool throwExceptions = false, bool formatJsonOutput = false)
+        public static bool SerializeToFile(object value, string fileName, bool throwExceptions = false, bool formatJsonOutput = false, bool camelCase = false)
         {
             try
             {
                 Type type = value.GetType();
 
-                var json = CreateJsonNet(throwExceptions);
+                var json = CreateJsonNet(throwExceptions, camelCase);
                 if (json == null)
                     return false;
 
@@ -147,7 +150,6 @@ namespace Westwind.Utilities
 						}
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -288,7 +290,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="throwExceptions">If true throws exceptions otherwise returns null</param>
         /// <returns>Dynamic JsonSerializer instance</returns>
-        public static JsonSerializer CreateJsonNet(bool throwExceptions = true)
+        public static JsonSerializer CreateJsonNet(bool throwExceptions = true, bool camelCase = false)
         {
             if (JsonNet != null)
                 return JsonNet;
@@ -319,6 +321,9 @@ namespace Westwind.Utilities
 				// Enums as strings in JSON
 				var enumConverter = new StringEnumConverter(); 
                 json.Converters.Add(enumConverter);
+
+                if (camelCase)
+                    json.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
                 JsonNet = json;
             }

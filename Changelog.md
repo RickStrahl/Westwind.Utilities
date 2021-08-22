@@ -1,7 +1,7 @@
 # Westwind.Utilities Changelog
 
-### 3.0.60
-<small>ongoing release</small>
+### 3.1
+<small>August 23, 2021</small>
 
 * **Update Newtonsoft.Json**  
 Update to latest JSON.NET Nuget package.
@@ -14,6 +14,16 @@ Add helper extension method to DateTime and TimeSpan for checking for date betwe
 
 * **AsyncUtils.FireAndForget() / Task.FireAndForget()**  
 Added a couple of extension methods that allow for safe execution of async methods by explicitly continuing the task if an exception occurs. Works around hte issue that exceptions can otherwise wait around to be fired until the finalizer runs which can cause unexpected failures.
+
+* **JsonSerializationUtils CamelCase Support for Serialization**  
+You can now specify an additional optional parameter `camelCase` on the `Serialize()` and `serializeToFile()` methods that applies camelCasing to JSON output, instead of the exact case output used by default.
+
+
+* **StreamExtensions.AsString()**  
+Returns the contents of a stream as a string with optional encoding. 
+
+* **MemoryStreamExtensions.AsString()**  
+Helper extension method that lets you convert a memory stream to a string with optional Encoding.
 
 ### 3.0.55
 <small>March 12, 2021</small>

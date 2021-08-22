@@ -19,7 +19,21 @@ namespace Westwind.Utilities.Configuration.Tests
 
             Console.WriteLine(json);
             Assert.IsNotNull(json);
+            Assert.IsTrue(json.Contains("\"ApplicationName\": "));
         }
+
+        [TestMethod]
+        public void JsonStringSerializeCamelCaseTest()
+        {
+            var config = new AutoConfigFileConfiguration();
+
+            string json = JsonSerializationUtils.Serialize(config, true, true, true);
+
+            Console.WriteLine(json);
+            Assert.IsNotNull(json);
+            Assert.IsTrue(json.Contains("\"applicationName\": "));
+        }
+
 
         [TestMethod]
         public void JsonSerializeToFile()
