@@ -314,7 +314,7 @@ namespace Westwind.Utilities
             foreach (char ch in camelCase)
             {
                 if (!first &&
-                    (char.IsUpper(ch) ||
+                    ( (char.IsUpper(ch) && !char.IsUpper(lastChar)) ||
                      char.IsDigit(ch) && !char.IsDigit(lastChar)))
                     sb.Append(' ');
 

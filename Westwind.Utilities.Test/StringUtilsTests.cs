@@ -107,6 +107,17 @@ namespace Westwind.Utilities.Tests
             actual = StringUtils.FromCamelCase(original);
             Assert.AreEqual(expected, actual, "Failed No CamelCase Test");
 
+            expected = "OK"; // multiple upper case letters don't split
+            original = "OK";
+            actual = StringUtils.FromCamelCase(original);
+            Assert.AreEqual(expected, actual, "Failed No CamelCase Test");
+
+            expected = "IISAdmin";   // multiple upper case letters don't split
+            original = "IISAdmin";
+            actual = StringUtils.FromCamelCase(original);
+            Assert.AreEqual(expected, actual, "Failed No CamelCase Test");
+
+
         }
 
         [TestMethod]
