@@ -236,5 +236,22 @@ namespace Westwind.Utilities.Test
             }
             
         }
+
+
+            [TestMethod]
+            public void GetRelativePathTest()
+            {
+                string basePath = @"C:\Users\johndoe\Documents";
+                string fullPath = @"c:\Users\Johndoe\Documents\Visual Studio #$%*!(# 2022\Code Snippets\Visual C#\My Code Snippets\clw.snippet";
+
+                var relative = FileUtils.GetRelativePath(fullPath, basePath);
+
+                Assert.AreNotEqual(relative, fullPath);
+                Assert.IsFalse(relative.StartsWith("\\"));
+
+                Console.WriteLine(relative);
+            }
+
+
     }
 }

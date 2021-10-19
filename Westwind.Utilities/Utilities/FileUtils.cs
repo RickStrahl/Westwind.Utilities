@@ -35,6 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 //using System.Runtime.InteropServices;
@@ -92,20 +93,33 @@ namespace Westwind.Utilities
         /// </returns>
         public static string GetRelativePath(string fullPath, string basePath ) 
 		{
-            // ForceBasePath to a path
-            if (!basePath.EndsWith(value: "\\"))
-                basePath += "\\";
-            
-#pragma warning disable CS0618
-            Uri baseUri = new Uri(uriString: basePath,dontEscape: true);
-            Uri fullUri = new Uri(uriString: fullPath,dontEscape: true);
-#pragma warning restore CS0618
+            try
+            {
+                var pathChar = Path.DirectorySeparatorChar.ToString();
 
-            Uri relativeUri = baseUri.MakeRelativeUri(uri: fullUri);
+                // ForceBasePath to a path
+                if (!basePath.EndsWith(value: pathChar))
+                    basePath += pathChar;
 
-            // Uri's use forward slashes so convert back to backward slahes
-            return relativeUri.ToString().Replace(oldValue: "/", newValue: "\\");            
-		}
+                Uri baseUri = new Uri(uriString: basePath);
+                Uri fullUri = new Uri(uriString: fullPath);
+
+                Uri relativeUri = baseUri.MakeRelativeUri(uri: fullUri);
+
+                // Uri's use forward slashes so convert back to backward slahes
+                var path = relativeUri.ToString().Replace(oldValue: "/", newValue: pathChar);
+
+#if !NET40
+                return WebUtility.UrlDecode(path);
+#else
+                return StringUtils.UrlDecode(path);
+#endif
+            }
+            catch
+            {
+                return fullPath;
+            }
+        }
 
 
         //// To ensure that paths are not limited to MAX_PATH, use this signature within .NET
@@ -189,9 +203,9 @@ namespace Westwind.Utilities
             return startBlock + end;
         }
 
-        #endregion
+#endregion
 
-        #region File and Path Normalization
+#region File and Path Normalization
 
         /// <summary>
         /// Normalizes a file path to the operating system default
@@ -318,9 +332,9 @@ namespace Westwind.Utilities
 	        }
 	    }
 
-        #endregion
+#endregion
 
-        #region Searching 
+#region Searching 
 
         /// <summary>
         /// Searches for a file name based on a current file location up or down the
@@ -455,9 +469,9 @@ namespace Westwind.Utilities
             Down
         }
 
-        #endregion
+#endregion
 
-        #region File and Path Naming
+#region File and Path Naming
 
         
         /// <summary>
@@ -520,9 +534,9 @@ namespace Westwind.Utilities
 	
             return (!string.IsNullOrEmpty(path) && path.IndexOfAny(invalids) >= 0);
         }
-        #endregion
+#endregion
 
-        #region StreamFunctions
+#region StreamFunctions
         /// <summary>
         /// Copies the content of the one stream to another.
         /// Streams must be open and stay open.
@@ -564,9 +578,9 @@ namespace Westwind.Utilities
             return new StreamReader(srcFile, enc);
         }
 
-        #endregion
+#endregion
 
-        #region Folder Copying and Deleting
+#region Folder Copying and Deleting
 
         /// <summary>
         /// Copies directories using either top level only or deep merge copy.
@@ -689,7 +703,7 @@ namespace Westwind.Utilities
             }
         }
 
-        #endregion
+#endregion
     }
 
 }
