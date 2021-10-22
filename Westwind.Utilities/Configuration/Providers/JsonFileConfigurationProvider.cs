@@ -57,6 +57,11 @@ namespace Westwind.Utilities.Configuration
         private string _JsonConfigurationFile = "applicationConfiguration.json";
 		
 
+        /// <summary>
+        /// Reads configuration into the current instance of the config object passed in.
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns></returns>
         public override bool Read(AppConfiguration config)
         {
             var newConfig = JsonSerializationUtils.DeserializeFromFile(JsonConfigurationFile, typeof(TAppConfiguration)) as TAppConfiguration;
