@@ -51,7 +51,7 @@ namespace Westwind.Utilities
         /// <param name="date"></param>
         /// <param name="showTime"></param>
         /// <returns>Today,Yesterday,Day of week or a string day (Jul 15, 2008)</returns>
-        public static string FriendlyDateString(DateTime date, bool showTime)
+        public static string FriendlyDateString(DateTime date, bool showTime = false, string timeSeparator = "-")
         {
             if (date < TimeUtils.MIN_DATE_VALUE)
                 return string.Empty;
@@ -68,7 +68,7 @@ namespace Westwind.Utilities
                 FormattedDate = date.ToString("MMMM dd, yyyy");
 
             if (showTime)
-                FormattedDate += " @  " + date.ToString("t").ToLower().Replace(" ","");
+                FormattedDate += " " + timeSeparator + "  " + date.ToString("t").ToLower().Replace(" ","");
             
             return FormattedDate;
         }
@@ -77,10 +77,11 @@ namespace Westwind.Utilities
         /// <summary>
         /// Returns a short date time string 
         /// </summary>
-        /// <param name="date"></param>
-        /// <param name="showTime"></param>
+        /// <param name="date">The date to format</param>
+        /// <param name="showTime">If true displays simpe time (hour and minutes)</param>
+        /// <param name="separator">Date and time separator character</param>
         /// <returns></returns>
-        public static string ShortDateString(DateTime date, bool showTime=false)
+        public static string ShortDateString(DateTime date, bool showTime=false, string separator = "-")
         {
             if (date < TimeUtils.MIN_DATE_VALUE)
                 return string.Empty;
@@ -89,7 +90,7 @@ namespace Westwind.Utilities
             if (!showTime)
                 return dateString;
 
-            return dateString + " - " + date.ToString("h:mmtt").ToLower();
+            return dateString + " " + separator + " " + date.ToString("t").Replace(" ","").ToLower();
         }
 
         /// <summary>
@@ -107,8 +108,20 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
+        /// Short date time format that shows hours and minutes.
+        /// Culture adjusted but packs down US dates.
+        /// </summary>
+        /// <returns>Formatted date</returns>
+        public static string ShortTimeString(DateTime date)
+        {
+            return date.ToString("t").Replace(" ", "").ToLower();
+        }
+
+        /// <summary>
         /// Displays a number of milliseconds as friendly seconds, hours, minutes 
         /// Pass -1 to get a blank date.
+        ///
+        /// Note: English only!
         /// </summary>
         /// <param name="milliSeconds">the elapsed milliseconds to display time for</param>           
         /// <returns>string in format of just now or 1m ago, 2h ago</returns>
@@ -117,8 +130,11 @@ namespace Westwind.Utilities
             if (milliSeconds < 0)
                 return string.Empty;
 
-            if (milliSeconds < 60000)
+            if (milliSeconds < 20000)
                 return "just now";
+
+            if (milliSeconds < 60000)
+                return return ((int)(milliSeconds / 1000)).ToString() + "s ago"; ;
 
             if (milliSeconds < 3600000)
                 return ((int)(milliSeconds / 60000)).ToString() + "m ago";
