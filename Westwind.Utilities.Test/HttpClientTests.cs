@@ -1,7 +1,4 @@
 ﻿using System;
-#if !NETFULL
-using System.Net.Http;
-#endif
 using System.Threading;
 using System.Threading.Tasks;
 using Westwind.Utilities.InternetTools;

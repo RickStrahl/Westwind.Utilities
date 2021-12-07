@@ -1,7 +1,10 @@
 # Westwind.Utilities Changelog
 
-### 3.1
-<small>August 23, 2021</small>
+### 3.1.5
+<small>December 7th, 2020</small>
+
+* **Remove .NET 4.0 Target**  
+We've removed the .NET 4.0 target, leaving `net462` and `netstandard2.0` as the two targets for this library.
 
 * **Update Newtonsoft.Json**  
 Update to latest JSON.NET Nuget package.
@@ -12,12 +15,14 @@ Helper method to clone an object using shallow value cloning. Means: Single leve
 * **TimeUtils.IsBetween**  
 Add helper extension method to DateTime and TimeSpan for checking for date between a high and low date.
 
+* **Fix TimeUtils ShortDate Formatting**  
+Make short date formatting locale aware. Add optional date separator parameter.
+
 * **AsyncUtils.FireAndForget() / Task.FireAndForget()**  
 Added a couple of extension methods that allow for safe execution of async methods by explicitly continuing the task if an exception occurs. Works around hte issue that exceptions can otherwise wait around to be fired until the finalizer runs which can cause unexpected failures.
 
 * **JsonSerializationUtils CamelCase Support for Serialization**  
 You can now specify an additional optional parameter `camelCase` on the `Serialize()` and `serializeToFile()` methods that applies camelCasing to JSON output, instead of the exact case output used by default.
-
 
 * **StreamExtensions.AsString()**  
 Returns the contents of a stream as a string with optional encoding. 

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net5.0;net46;</TargetFrameworks>
+		<TargetFrameworks>net5.0;net462;</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
@@ -20,10 +20,10 @@
 	</ItemGroup>
 
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2'">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0'">
       <!--<PackageReference Include="Microsoft.Data.SqLite" Version="2.1.0"/>-->
   </ItemGroup>
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2'">
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net5.0'">
 		<DefineConstants>NETSTANDARD2_0;NETCORE;NETSTANDARD</DefineConstants>
 	  
 	</PropertyGroup>

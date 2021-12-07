@@ -134,7 +134,7 @@ namespace Westwind.Utilities
                 return "just now";
 
             if (milliSeconds < 60000)
-                return return ((int)(milliSeconds / 1000)).ToString() + "s ago"; ;
+                return ((int)(milliSeconds / 1000)).ToString() + "s ago"; ;
 
             if (milliSeconds < 3600000)
                 return ((int)(milliSeconds / 60000)).ToString() + "m ago";
