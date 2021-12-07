@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
-    <Version>3.1.5</Version>
+    <Version>3.1.7</Version>
     <Authors>Rick Strahl</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <Language>en-US</Language>
@@ -47,7 +47,7 @@
     <DefineConstants>RELEASE</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' != 'net462'">
+  <PropertyGroup Condition="'$(TargetFramework)' != 'net462'">
     <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net462'">
@@ -59,14 +59,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net462'">
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.1" />
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.1" />
+	</ItemGroup>
+	<!--<ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1'">
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
+	</ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0'">
+	  <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
   </ItemGroup>
-  
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0'">
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
+	</ItemGroup>-->
+	
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <Reference Include="mscorlib" />
     <Reference Include="System" />
