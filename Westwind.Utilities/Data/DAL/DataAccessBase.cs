@@ -651,8 +651,7 @@ namespace Westwind.Utilities.Data
             return ExecuteNonQuery(command);
         }
 
-
-#if !NET40
+        
         /// <summary>
         /// Executes a non-query command and returns the affected records
         /// </summary>
@@ -715,7 +714,6 @@ namespace Westwind.Utilities.Data
             int result = await ExecuteNonQueryAsync(command);
             return result;
         }
-#endif
 
 
         /// <summary>
@@ -770,7 +768,7 @@ namespace Westwind.Utilities.Data
             return ExecuteScalar(command, null);
         }
 
-#if !NET40
+
         /// <summary>
         /// Executes a command and returns a scalar value from it
         /// </summary>
@@ -823,7 +821,6 @@ namespace Westwind.Utilities.Data
 
             return await ExecuteScalarAsync(command, null);
         }
-#endif
 
         /// <summary>
         /// Executes a long SQL script that contains batches (GO commands). This code
@@ -1860,8 +1857,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             }
         }
 
-
-#if !NET40
+        
         /// <summary>
         /// Inserts an object into the database based on its type information.
         /// The properties must match the database structure and you can skip
@@ -1896,7 +1892,6 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 return res;
             }
         }
-#endif
 
 
 

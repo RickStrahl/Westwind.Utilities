@@ -157,7 +157,7 @@ namespace Westwind.Utilities
             return (TResultType)JsonSerializationUtils.Deserialize(jsonResult, typeof(TResultType), true);
         }
 
-#if !NET40
+
         /// <summary>
         /// Retrieves and Http request and returns data as a string.
         /// </summary>
@@ -294,7 +294,6 @@ namespace Westwind.Utilities
 
             return (TResultType)JsonSerializationUtils.Deserialize(jsonResult, typeof(TResultType), true);
         }
-#endif
 
 
         /// <summary>
@@ -361,7 +360,7 @@ namespace Westwind.Utilities
             return newFilename;
         }
 
-#if !NET40
+
         /// <summary>
         /// Creates a temporary image file from a download from a URL
         /// 
@@ -422,7 +421,7 @@ namespace Westwind.Utilities
 
             return newFilename;
         }
-#endif
+
 
     }
 

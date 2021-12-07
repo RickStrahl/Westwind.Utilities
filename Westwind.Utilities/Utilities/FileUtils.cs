@@ -110,11 +110,7 @@ namespace Westwind.Utilities
                 // Uri's use forward slashes so convert back to backward slahes
                 var path = relativeUri.ToString().Replace(oldValue: "/", newValue: pathChar);
 
-#if !NET40
                 return Uri.UnescapeDataString(path);
-#else
-                return StringUtils.UrlDecode(path);
-#endif
             }
             catch
             {

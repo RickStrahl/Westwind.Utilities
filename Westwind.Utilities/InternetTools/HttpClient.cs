@@ -561,8 +561,8 @@ namespace Westwind.Utilities.InternetTools
         {
             return DownloadResponse(url);
         }
+        
 
-#if !NET40
 	    public async Task<HttpWebResponse> DownloadResponseAsync(string url)
 	    {
             Cancelled = false;
@@ -763,7 +763,6 @@ namespace Westwind.Utilities.InternetTools
 
             return Response;	        
 	    }
-#endif
 
 			/// <summary>
 			/// Return an HttpWebResponse object for a request. You can use the Response to
@@ -1115,8 +1114,7 @@ namespace Westwind.Utilities.InternetTools
             }
             return encoding.GetString(bytes);
         }
-
-#if !NET40
+        
         /// <summary>
         /// Returns the content of a URL as a string using a specified Encoding
         /// </summary>
@@ -1157,8 +1155,6 @@ namespace Westwind.Utilities.InternetTools
             }
             return encoding.GetString(bytes);
         }
-#endif
-
         
         /// <summary>
         /// Returns a partial response from the URL by specifying only 
@@ -1319,7 +1315,7 @@ namespace Westwind.Utilities.InternetTools
             }
         }
 
-#if !NET40
+
         /// <summary>
         /// Retrieves URL into an Byte Array.
         /// </summary>
@@ -1433,7 +1429,7 @@ namespace Westwind.Utilities.InternetTools
                 return bytes;
             }
         }
-#endif
+
 
 		/// <summary>
 		/// Writes the output from the URL request to a file firing events.
@@ -1562,9 +1558,8 @@ namespace Westwind.Utilities.InternetTools
 	    {
 	        if (WebResponse != null)
 	        {
-#if !NET40
 	            WebResponse.Dispose();  // introduced in 4.5
-#endif
+
 	            WebResponse = null;
 	        }
 	        if (WebRequest != null)
