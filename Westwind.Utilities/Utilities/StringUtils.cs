@@ -293,14 +293,15 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Tries to create a phrase string from CamelCase text.
-        /// Will place spaces before capitalized letters.
+        /// Tries to create a phrase string from CamelCase text
+        /// into Proper Case text.  Will place spaces before capitalized
+        /// letters.
         /// 
         /// Note that this method may not work for round tripping 
         /// ToCamelCase calls, since ToCamelCase strips more characters
         /// than just spaces.
         /// </summary>
-        /// <param name="camelCase"></param>
+        /// <param name="camelCase">Camel Case Text: firstName -> First Name</param>
         /// <returns></returns>
         public static string FromCamelCase(string camelCase)
         {
@@ -314,7 +315,8 @@ namespace Westwind.Utilities
             foreach (char ch in camelCase)
             {
                 if (!first &&
-                    ( (char.IsUpper(ch) && !char.IsUpper(lastChar)) ||
+                    lastChar != ' ' && !char.IsSymbol(lastChar) && !char.IsPunctuation(lastChar) &&
+                    ((char.IsUpper(ch) && !char.IsUpper(lastChar)) ||
                      char.IsDigit(ch) && !char.IsDigit(lastChar)))
                     sb.Append(' ');
 
