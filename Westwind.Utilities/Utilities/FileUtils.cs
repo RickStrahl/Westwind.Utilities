@@ -477,7 +477,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="fileName">Filename to fix up</param>
         /// <param name="replacementString">String value to replace illegal chars with. Defaults empty string</param>
-        /// <param name="spaceReplacement">Optional - replace spaces with a specified string.</param>
+        /// <param name="spaceReplacement">Optional - replace spaces with a specified string like a - or _. Optional, if not set leaves spaces which are legal for filenames</param>
         /// <returns>Fixed up string</returns>
         public static string SafeFilename(string fileName, string replacementString = "", string spaceReplacement = null)
         {
@@ -488,7 +488,8 @@ namespace Westwind.Utilities
                 .Aggregate(fileName.Trim(),
                     (current, c) => current.Replace(c.ToString(), replacementString));
 
-            file = file.Replace("#", "");
+            file = file.Replace("#", "")
+                       .Replace("+", "");
 
             if (!string.IsNullOrEmpty(spaceReplacement))
                 file = file.Replace(" ", spaceReplacement);
