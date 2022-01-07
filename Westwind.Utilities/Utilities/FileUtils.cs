@@ -119,6 +119,56 @@ namespace Westwind.Utilities
         }
 
 
+        /// <summary>
+        /// Returns a short form Windows path (using ~8 char segment lengths)
+        /// that can help with long filenames.
+        /// </summary>
+        /// <remarks>
+        /// IMPORTANT: File has to exist when this function is called otherwise
+        /// `null` is returned.
+        ///
+        /// Path has to be fully qualified (no relative paths)
+        /// 
+        /// Max shortened file size is MAX_PATH (260) characters
+        /// </remarks>
+        /// <param name="path">Long Path syntax</param>
+        /// <returns>Shortened 8.3 syntax or null on failure</returns>
+        public static string GetShortPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return null;
+
+            // allow for extended path syntax
+            bool addExtended = false;
+            if (path.Length > 240 && !path.StartsWith(@"\\?\"))
+            {
+                path = @"\\?\" + path;
+                addExtended = true;
+            }
+
+            var shortPath = new StringBuilder(1024);
+            int res = GetShortPathName(path, shortPath, 1024);
+            if (res < 1)
+                return null;
+
+            path = shortPath.ToString();
+
+            if (addExtended)
+                path = path.Substring(4);  // strip off \\?\
+
+            return path;
+        }
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        private static extern int GetShortPathName(
+            [MarshalAs(UnmanagedType.LPTStr)]
+            string path,
+            [MarshalAs(UnmanagedType.LPTStr)]
+            StringBuilder shortPath,
+            int shortPathLength
+        );
+
+
         //// To ensure that paths are not limited to MAX_PATH, use this signature within .NET
         //[DllImport("kernel32.dll", CharSet = CharSet.Unicode, EntryPoint = "GetShortPathNameW", SetLastError = true)]
         //static extern int GetShortPathName_Internal(string pathName, StringBuilder shortName, int cbShortName);
@@ -253,9 +303,10 @@ namespace Westwind.Utilities
 
 	        return path + separator;
 	    }
-#endregion
 
-#region File Encoding and Checksums
+        #endregion
+
+        #region File Encoding and Checksums
 
         /// <summary>
         /// Detects the byte order mark of a file and returns

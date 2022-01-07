@@ -12,6 +12,9 @@ Update to latest JSON.NET Nuget package.
 * **ReflectionUtils.ShallowClone()**  
 Helper method to clone an object using shallow value cloning. Means: Single level clone only. Value types are cloned, References are just attached as is. Basically calls private `MemberwiseClone()` method on the source object.
 
+* **FileUtils.GetShortPath()**  
+Returns a short path that uses 8.3 character file syntax. This allows shortening long paths that exceed `MAX_PATH` to work with APIs that don't support long file or extended path syntax.
+
 * **TimeUtils.IsBetween**  
 Add helper extension method to DateTime and TimeSpan for checking for date between a high and low date.
 

@@ -1,5 +1,4 @@
-﻿#if NETFULL
-
+﻿
 using System;
 using Microsoft.Win32;
 
@@ -231,5 +230,3 @@ namespace Westwind.Utilities
         }
     }
 }
-
-#endif

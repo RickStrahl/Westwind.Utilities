@@ -182,7 +182,7 @@
     <value>Missing encryption key.</value>
   </data>
   <data name="ConnectionOpeningFailure" xml:space="preserve">
-    <value>Connection opening failure.</value>
+    <value>Connection opening failure: {0}</value>
   </data>
   <data name="SqlServerCompactDataProviderNotSupportedOnNetCore" xml:space="preserve">
     <value>SqlServer Compact Data Provider not supported on .NET Core.</value>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
-    <Version>3.1.7</Version>
+    <Version>3.1.8</Version>
     <Authors>Rick Strahl</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <Language>en-US</Language>
@@ -23,7 +23,7 @@
     <PackageLicense>LICENSE.MD</PackageLicense>
     
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Copyright>Rick Strahl, West Wind Technologies, 2010-2021</Copyright>
+    <Copyright>Rick Strahl, West Wind Technologies, 2010-2022</Copyright>
     <RepositoryType>Github</RepositoryType>
     <Company>West Wind Technologies</Company>
     
@@ -36,11 +36,13 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <NoWarn>$(NoWarn);CS1591;CS1572;CS1573</NoWarn>
+	  <DebugType>embedded</DebugType>
+	  <DebugSymbols>true</DebugSymbols>
+
+		<NoWarn>$(NoWarn);CS1591;CS1572;CS1573</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>    
+    
     <PackageOutputPath>./nupkg</PackageOutputPath>  
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
@@ -59,11 +61,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+	  
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.1" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
+		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
 	</ItemGroup>
 	<!--<ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1'">
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
