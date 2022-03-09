@@ -40,6 +40,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 //using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Westwind.Utilities
 {
@@ -303,6 +304,27 @@ namespace Westwind.Utilities
 
 	        return path + separator;
 	    }
+
+
+        /// <summary>
+        /// Returns a path as a `file:///` url.
+        /// </summary>
+        /// <param name="path">
+        /// A fully rooted path
+        /// or: a relative path that can be resolved to a
+        /// fully rooted path via GetFullPath().
+        /// </param>
+        /// <returns></returns>
+        public static string FilePathAsUrl(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return path;
+
+            // try to resolve the path to a full path
+            path = Path.GetFullPath(path);
+            var url = new Uri(path);
+            return url.ToString();
+        }
 
         #endregion
 
@@ -627,9 +649,43 @@ namespace Westwind.Utilities
             return new StreamReader(srcFile, enc);
         }
 
-#endregion
+        #endregion
 
-#region Folder Copying and Deleting
+        #region Async File Access for NetFX
+        
+        /// <summary>
+        /// Asynchronously reads files. Use only with NetFx
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static async Task<string> ReadAllTextAsync(string filename, Encoding encoding)
+        {
+            using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan))
+            using (var reader = new StreamReader(stream, encoding))
+            {
+                return await reader.ReadToEndAsync();
+            }
+        }
+
+        /// <summary>
+        /// Writes out text file content asynchronously.Use only with NetFx.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static async Task WriteAllTextAsync(string filename, string text, Encoding encoding)
+        {
+            using (var stream = new FileStream(filename, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan))
+            {
+                var bytes = encoding.GetBytes(text ?? string.Empty);
+                await stream.WriteAsync(bytes, 0, bytes.Length);
+            }
+        }
+
+        #endregion
+
+        #region Folder Copying and Deleting
 
         /// <summary>
         /// Copies directories using either top level only or deep merge copy.

@@ -35,6 +35,7 @@ namespace System.IO
 
             byte[] buffer = encoding.GetBytes(inputString);
             ms.Write(buffer, 0, buffer.Length);
+            ms.Position = 0;
         }
     }
 
