@@ -396,7 +396,7 @@ namespace Westwind.Utilities
             {
                 await client.DownloadFileTaskAsync(imageUrl, filename);
 
-                var ct = client.ResponseHeaders[HttpRequestHeader.ContentType];
+                var ct = client.Response.ContentType;
 
                 var ext = ImageUtils.GetExtensionFromMediaType(ct);
                 if (ext == null)
