@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
-    <Version>3.1.9</Version>
+    <Version>3.1.10</Version>
     <Authors>Rick Strahl</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <Language>en-US</Language>
@@ -37,8 +37,6 @@
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 	  <DebugType>embedded</DebugType>
-	  <DebugSymbols>true</DebugSymbols>
-
 		<NoWarn>$(NoWarn);CS1591;CS1572;CS1573</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>

@@ -23,8 +23,8 @@ namespace Westwind.Utilities.Test
             state.UserId = "1";
             state.IsAdmin = true;
             state.Name = "Rick Strahl | Markus Egger";
-            state.Date = DateTime.Now;
-            state.Role = new Role() { Level = 10, Name = "Rick" };            
+            state.Date = DateTime.Now; 
+            //state.Role = new Role() { Level = 10, Name = "Rick" };            
             
             string ser = null;
             ser = StringSerializer.SerializeObject(state);
@@ -56,7 +56,7 @@ namespace Westwind.Utilities.Test
             Assert.AreEqual(state.UserIdInt, state2.UserIdInt);
             
             // Role is an unsupported type so it should come back as null
-            Assert.IsNull(state2.Role);
+            //Assert.IsNull(state2.Role);
         }
 
         [TestMethod]
@@ -75,6 +75,29 @@ namespace Westwind.Utilities.Test
         }
 
         [TestMethod]
+        public void StringSerializerWithNullStringValuesTest()
+        {
+            UserState state = new UserState()
+            {
+                 Email = "email@west-wind.com",
+                 UserId = "rstrahl",
+                 NullString = null
+            };
+
+            string ser = StringSerializer.SerializeObject(state);
+
+            Console.WriteLine(ser.Length);
+            Console.WriteLine(ser);
+
+            var state2 = StringSerializer.Deserialize<UserState>(ser);
+
+            Assert.IsNotNull(state2);
+            Assert.AreEqual(null, state2.NullString);
+
+
+        }
+
+        [TestMethod]
         public void XmlSerializerSizeTest()
         {
             var state = new UserState();
@@ -83,7 +106,7 @@ namespace Westwind.Utilities.Test
             state.IsAdmin = true;
             state.Name = "Rick Strahl | Markus Egger";
             state.Date = DateTime.Now;
-            state.Role = null;
+            //state.Role = null;
 
             
             string xml = null; 
@@ -115,7 +138,7 @@ namespace Westwind.Utilities.Test
             state.IsAdmin = true;
             state.Name = "Rick Strahl | Markus Egger";
             state.Date = DateTime.Now;
-            state.Role = null;
+            //state.Role = null;
 
 
             string json = null;
@@ -216,7 +239,11 @@ namespace Westwind.Utilities.Test
                 {
                     if (string.IsNullOrEmpty(UserId))
                         return 0;
-                    return int.Parse(UserId);
+
+                    if (int.TryParse(UserId, out int result))
+                        return result;
+
+                    return 0;
                 }
                 set
                 {
@@ -224,11 +251,7 @@ namespace Westwind.Utilities.Test
                 }
             }
 
-            public Role Role { get; set; }
-
-
-
-
+            //public Role Role { get; set; } = new Role();
         }
 
         [Serializable]

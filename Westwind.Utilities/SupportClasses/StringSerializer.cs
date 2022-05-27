@@ -127,7 +127,10 @@ namespace Westwind.Utilities
                 if (!prop.CanRead && !prop.CanWrite)
                     continue;
 
-                token = token.Replace(Seperator_Replace_String, separator);
+                if (token == null || token == "null")
+                    token = null;
+                else
+                    token = token.Replace(Seperator_Replace_String, separator);
 
                 object value = null;
                 if (token != null)
@@ -139,6 +142,7 @@ namespace Westwind.Utilities
                     catch (InvalidCastException)
                     {
                         // DANGER: skip over unsupported types 
+                        continue;  // leave value at default
                     }
                 }
 

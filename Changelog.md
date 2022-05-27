@@ -1,7 +1,17 @@
 # Westwind.Utilities Changelog
 
+
+### 3.1.10
+<small>May 25th, 2022</small>
+
+* **StringUtils.GetMaxCharacters()**  
+String extension method that retrieves a string with n characters max optionally from a specified start position.
+
+* **Fix StringSerializer Null Values**  
+Fix null values for string properties that were returning the string `"null"` instead of an actual `null`.
+
 ### 3.1.5
-<small>December 7th, 2020</small>
+<small>December 7th, 2022</small>
 
 * **Remove .NET 4.0 Target**  
 We've removed the .NET 4.0 target, leaving `net462` and `netstandard2.0` as the two targets for this library.
