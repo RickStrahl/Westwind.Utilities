@@ -594,6 +594,26 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
+        /// Returns a string that has the max amount of characters.
+        /// </summary>
+        /// <param name="s">string to work on</param>
+        /// <param name="maxCharacters">Maximum number of characters</param>
+        /// <param name="startPosition">Optional start position. If not specified uses entire string (0)</param>
+        /// <returns></returns>
+        public static string GetMaxCharacters(this string s, int maxCharacters, int startPosition = 0)
+        {
+            if (string.IsNullOrEmpty(s) || startPosition == 0 && maxCharacters < s.Length)
+                return s;
+            
+            if (startPosition > s.Length - 1)
+                return null;
+            
+            var available = s.Length - startPosition;
+
+            return s.Substring(startPosition, Math.Min(available, maxCharacters));
+        }
+
+        /// <summary>
         /// Strips all non digit values from a string and only
         /// returns the numeric string.
         /// </summary>
