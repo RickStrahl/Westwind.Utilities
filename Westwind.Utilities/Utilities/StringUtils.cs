@@ -570,7 +570,7 @@ namespace Westwind.Utilities
         public static string[] GetLines(this string s, int maxLines = 0)
         {
             if (s == null)
-                return null;
+                return new string[] {};
            
             s = s.Replace("\r\n", "\n");
 
@@ -715,10 +715,15 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static int ParseInt(string input, int defaultValue=0, IFormatProvider numberFormat = null)
         {
+            
             if (numberFormat == null)
                 numberFormat = CultureInfo.CurrentCulture.NumberFormat;
 
             int val = defaultValue;
+
+            if (input == null)
+                return defaultValue;
+
             if (!int.TryParse(input, NumberStyles.Any, numberFormat, out val))
                 return defaultValue;
             return val;
@@ -737,6 +742,10 @@ namespace Westwind.Utilities
         {
             numberFormat = numberFormat ?? CultureInfo.CurrentCulture.NumberFormat;
             decimal val = defaultValue;
+
+            if (input == null)
+                return defaultValue;
+
             if (!decimal.TryParse(input, NumberStyles.Any, numberFormat, out val))
                 return defaultValue;
             return val;
