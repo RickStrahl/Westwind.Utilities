@@ -64,12 +64,12 @@ namespace Westwind.Utilities
         /// <summary>
         /// Instance of object passed in
         /// </summary>
-        object Instance;
+        protected object Instance;
 
         /// <summary>
         /// Cached type of the instance
         /// </summary>
-        Type InstanceType;
+        protected Type InstanceType;
 
         PropertyInfo[] InstancePropertyInfo
         {
