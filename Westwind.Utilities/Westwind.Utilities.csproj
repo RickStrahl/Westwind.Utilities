@@ -1,117 +1,112 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
-    <Version>3.1.10</Version>
-    <Authors>Rick Strahl</Authors>
-    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <Language>en-US</Language>
-    <AssemblyName>Westwind.Utilities</AssemblyName>
-    <AssemblyTitle>Westwind.Utilities</AssemblyTitle>
-    <NeutralLanguage>en-US</NeutralLanguage>    
-    <PackageId>Westwind.Utilities</PackageId>
-    <RootNamespace>Westwind.Utilities</RootNamespace>
-    <Title>West Wind Utilities</Title>
-    <Description>.NET utility library that includes Application Configuration, lightweight ADO.NET Data Access Layer, logging, utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>    
-    <Summary>Small library of general purpose utilities for .NET development that almost every application can use. Used as a core reference library for other West Wind libraries.</Summary>
-    <PackageCopyright>Rick Strahl, West Wind Technologies 2007-2021</PackageCopyright>
-    <PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
-    <PackageReleaseNotes></PackageReleaseNotes>
-    
-    <PackageProjectUrl>http://github.com/rickstrahl/westwind.utilities</PackageProjectUrl>
+	<PropertyGroup>
+		<TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
+		<Version>3.1.12</Version>
+		<Authors>Rick Strahl</Authors>
+		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+		<Language>en-US</Language>
+		<AssemblyName>Westwind.Utilities</AssemblyName>
+		<AssemblyTitle>Westwind.Utilities</AssemblyTitle>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<PackageId>Westwind.Utilities</PackageId>
+		<RootNamespace>Westwind.Utilities</RootNamespace>
+		<Title>West Wind Utilities</Title>
+		<Description>.NET utility library that includes Application Configuration, lightweight ADO.NET Data Access Layer, logging, utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>
+		<Summary>Small library of general purpose utilities for .NET development that almost every application can use. Used as a core reference library for other West Wind libraries.</Summary>
+		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2022</PackageCopyright>
+		<PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
+		<PackageReleaseNotes></PackageReleaseNotes>
 
-    <PackageIcon>icon.png</PackageIcon>
-    <PackageLicense>LICENSE.MD</PackageLicense>
-    
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Copyright>Rick Strahl, West Wind Technologies, 2010-2022</Copyright>
-    <RepositoryType>Github</RepositoryType>
-    <Company>West Wind Technologies</Company>
-    
-    <RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
-    <RepositoryType>git</RepositoryType> 
-  </PropertyGroup>
+		<PackageProjectUrl>http://github.com/rickstrahl/westwind.utilities</PackageProjectUrl>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <DefineConstants>TRACE;DEBUG;</DefineConstants>
-  </PropertyGroup>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageLicense>LICENSE.MD</PackageLicense>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-	  <DebugType>embedded</DebugType>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Copyright>Rick Strahl, West Wind Technologies, 2010-2022</Copyright>
+		<RepositoryType>Github</RepositoryType>
+		<Company>West Wind Technologies</Company>
+
+		<RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
+		<DefineConstants>TRACE;DEBUG;</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<DebugType>embedded</DebugType>
 		<NoWarn>$(NoWarn);CS1591;CS1572;CS1573</NoWarn>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    
-    <PackageOutputPath>./nupkg</PackageOutputPath>  
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 
-    <DefineConstants>RELEASE</DefineConstants>
-  </PropertyGroup>
+		<PackageOutputPath>./nupkg</PackageOutputPath>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 
-  <PropertyGroup Condition="'$(TargetFramework)' != 'net462'">
-    <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net462'">
-    <DefineConstants>NETFULL</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
-    <DebugType>embedded</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
+		<DefineConstants>RELEASE</DefineConstants>
+	</PropertyGroup>
 
-  <ItemGroup>
-	  
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(TargetFramework)' != 'net462'">
+		<DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net462'">
+		<DefineConstants>NETFULL</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
+		<DebugType>embedded</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+
+		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net462" Version="1.0.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
 		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
 	</ItemGroup>
-	<!--<ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1'">
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
+		<Reference Include="mscorlib" />
+		<Reference Include="System" />
+		<Reference Include="System.Core" />
+		<Reference Include="Microsoft.CSharp" />
+		<Reference Include="System.Data" />
+		<Reference Include="System.Web" />
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Security" />
+		<Reference Include="System.Xml" />
+		<Reference Include="System.Configuration" />
 	</ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0'">
-	  <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
-  </ItemGroup>
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0'">
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
-	</ItemGroup>-->
-	
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Configuration" />
-  </ItemGroup>
 
 
-  
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
 
-  
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="icon.png" Pack="true" PackagePath="" />
-    <None Include="LICENSE.MD" Pack="true" PackagePath="" />
-  </ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="icon.png" Pack="true" PackagePath="" />
+		<None Include="LICENSE.MD" Pack="true" PackagePath="" />
+	</ItemGroup>
 
 </Project>
