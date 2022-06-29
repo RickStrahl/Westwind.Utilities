@@ -354,18 +354,23 @@ namespace Westwind.Utilities
         {
             bool success = true;
 
+#if NETCORE
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.OSDescription.Contains("microsoft-standard");
+#else
+            bool isWindows = true;
+#endif
             Process p = null;
             try
             {
                 var psi = new ProcessStartInfo(url);
+                psi.UseShellExecute = isWindows;   // must be explicit -defaults changed in NETFX & NETCORE
                 p = Process.Start(psi);
             }
             catch
             {
-                #if NETCORE
+#if NETCORE
                 // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ||
-                    RuntimeInformation.OSDescription.Contains("microsoft-standard"))  // wsl
+                if (isWindows)
                 {
                     url = url.Replace("&", "^&");
                     try
@@ -389,9 +394,9 @@ namespace Westwind.Utilities
                 {
                     success = false;
                 }
-                #else
-                    success = false;
-                #endif
+#else
+                success = false;
+#endif
             }
 
             p?.Dispose();
@@ -537,9 +542,9 @@ namespace Westwind.Utilities
 
             return GoUrl(File);
         }
-        #endregion
+#endregion
 
-        #region Simple HTTP Helpers
+#region Simple HTTP Helpers
         /// <summary>
         /// Simple method to retrieve HTTP content from the Web quickly
         /// </summary>
@@ -618,7 +623,7 @@ namespace Westwind.Utilities
 
             return result;
         }
-        #endregion
+#endregion
     }
 
     public enum TerminalModes
