@@ -97,5 +97,10 @@ namespace Westwind.Utilities
 			ID = id;
 		}
 
-	}
+
+        public override string ToString()
+        {
+            return Message;
+        }
+    }
 }

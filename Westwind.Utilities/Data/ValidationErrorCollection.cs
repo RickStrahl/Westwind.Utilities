@@ -188,7 +188,7 @@ namespace Westwind.Utilities
         public override string ToString()
         {
             if (Count < 1)
-                return "";
+                return string.Empty;
 
             StringBuilder sb = new StringBuilder(128);
 
@@ -230,7 +230,7 @@ namespace Westwind.Utilities
             string script =
             @"    <script>
         function _errorLinkClick(id) {
-            var $t = $('#' + id).focus().addClass('errorhighlight');            
+            var $t = $('#' + id).addClass('errorhighlight').focus();            
             setTimeout(function() {
                 $t.removeClass('errorhighlight');
             }, 5000);

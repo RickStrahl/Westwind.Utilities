@@ -754,6 +754,9 @@ namespace Westwind.Utilities
         /// <returns>0 when no errors, otherwise number of files that have failed to delete (usually locked)</returns>
         public static int DeleteFiles(string path, string filespec, bool recursive)
         {
+            if (!Directory.Exists(path))
+                return 0;
+
             int failed = 0;
             path = Path.GetFullPath(path);
             string spec = Path.GetFileName(filespec);
