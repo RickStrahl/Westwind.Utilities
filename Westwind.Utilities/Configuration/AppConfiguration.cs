@@ -160,8 +160,8 @@ namespace Westwind.Utilities.Configuration
                 provider = OnCreateDefaultProvider(sectionName, configData);
 
             Provider = provider;
-            if (!Provider.Read(this))
-                throw new InvalidOperationException(Provider.ErrorMessage);
+            if (!Provider.Read(this) && !string.IsNullOrWhiteSpace(Provider.ErrorMessage))
+                Trace.WriteLine("Westwind.Utilities.Configuration.AppConfiguration initialization error: " + Provider.ErrorMessage);
         }
 
         /// <summary>
