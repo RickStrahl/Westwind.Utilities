@@ -269,7 +269,11 @@ namespace Westwind.Utilities
 
 	        char slash = Path.DirectorySeparatorChar;
 	        path = path.Replace('/', slash).Replace('\\', slash);
-	        return path.Replace(slash.ToString() + slash.ToString(), slash.ToString());
+            string doubleSlash = string.Concat(slash, slash);
+            if (path.StartsWith(doubleSlash))
+                return string.Concat(doubleSlash, path.TrimStart(slash).Replace(doubleSlash, slash.ToString()));
+            else
+                return path.Replace(doubleSlash, slash.ToString());
         }
 
 
