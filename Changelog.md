@@ -1,7 +1,7 @@
 # Westwind.Utilities Changelog
 
 
-### 3.1.10
+### 3.1.15
 <small>May 25th, 2022</small>
 
 * **StringUtils.GetMaxCharacters()**  
@@ -9,6 +9,10 @@ String extension method that retrieves a string with n characters max optionally
 
 * **Fix StringSerializer Null Values**  
 Fix null values for string properties that were returning the string `"null"` instead of an actual `null`.
+
+* **Fix: AppConfiguration.Write() if Provider is not configured**  
+Fix `Write()` method when the provider is not configured yet by loading Provider via `OnCreateDefaultProvider()` rather than doing a full initialize which reloaded the config data. This preserves the data and only loads the provider and was the cause of occasional failures if assigning a new configuration object completely.
+
 
 ### 3.1.5
 <small>December 7th, 2022</small>
