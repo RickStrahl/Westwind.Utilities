@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          © West Wind Technologies, 2009-2013
+ *          ï¿½ West Wind Technologies, 2009-2013
  *          http://www.west-wind.com/ 
  * 
  * Created: 09/12/2009
@@ -198,7 +198,11 @@ namespace Westwind.Utilities.Configuration
         /// <returns></returns>
         public virtual bool Write()
         {
-            Initialize();
+            if (Provider == null)
+            {
+                Provider = OnCreateDefaultProvider(null,null);
+                InitializeCalled = true;
+            }
 
             if (!Provider.Write(this))
             {
