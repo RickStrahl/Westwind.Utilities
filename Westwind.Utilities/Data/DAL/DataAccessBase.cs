@@ -106,13 +106,6 @@ namespace Westwind.Utilities.Data
         {
             ConnectionString = connectionString;
             dbProvider = DbProviderFactories.GetFactory(providerName);
-
-            var cmd = dbProvider.CreateCommand();
-            cmd.CommandText = "select * from customers";
-            cmd.Connection = dbProvider.CreateConnection();
-            cmd.Connection.ConnectionString = ConnectionString;
-            var reader = cmd.ExecuteReader();
-
         }
 #endif
 
@@ -139,8 +132,6 @@ namespace Westwind.Utilities.Data
         {
             ConnectionString = connectionString;
             DbProviderFactory instance = DataUtils.GetDbProviderFactory(providerType);
-
-            ConnectionString = connectionString;
             dbProvider = instance ?? throw new InvalidOperationException("Can't load database provider: " + providerType.ToString());
         }
 

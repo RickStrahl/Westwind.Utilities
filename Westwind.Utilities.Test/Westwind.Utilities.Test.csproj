@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>net6.0;net472;</TargetFrameworks>
 		<IsPackable>false</IsPackable>
+		<PlatformTarget>x86</PlatformTarget>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -30,7 +31,7 @@
 
 
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
 		<Reference Include="mscorlib" />
 		<Reference Include="System" />
 		<Reference Include="System.Core" />		
@@ -42,9 +43,10 @@
 		<Reference Include="System.Web" />		
 		<Reference Include="System.Configuration" />
 		<Reference Include="System.ComponentModel.Annotations" />
+	
     <!--<PackageReference Include="MySql.Data" Version="6.10.4" />-->
   </ItemGroup>
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'net46'">
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net472'">
 		<DefineConstants>NET45;NETFULL</DefineConstants>
 	</PropertyGroup>
 

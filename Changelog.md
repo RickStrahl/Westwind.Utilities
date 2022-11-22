@@ -2,7 +2,7 @@
 
 
 ### 3.1.15
-<small>May 25th, 2022</small>
+<small>October 3rd, 2022</small>
 
 * **StringUtils.GetMaxCharacters()**  
 String extension method that retrieves a string with n characters max optionally from a specified start position.
@@ -15,7 +15,7 @@ Fix `Write()` method when the provider is not configured yet by loading Provider
 
 
 ### 3.1.5
-<small>December 7th, 2022</small>
+<small>December 7th, 2021</small>
 
 * **Remove .NET 4.0 Target**  
 We've removed the .NET 4.0 target, leaving `net462` and `netstandard2.0` as the two targets for this library.

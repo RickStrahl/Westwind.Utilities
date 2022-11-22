@@ -1,4 +1,7 @@
-﻿using System;
+﻿// #define TEST_FOXPRO_DATA
+// IMPORTANT: For this to work the host project has to be targeting 32 bit Windows
+
+using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +16,9 @@ using System.Diagnostics;
 using System.IO;
 using Westwind.Utilities.Test;
 
+#if NETFULL && TEST_FOXPRO_DATA
+
 // Remove TestFoxProDriver from Compiler Options if you don't have the FoxPro OleDb Driver installed
-#if TEST_FOXPRO_DATA
 
 namespace Westwind.Utilities.Data.Tests
 {
@@ -63,6 +67,29 @@ namespace Westwind.Utilities.Data.Tests
         }
 
         [TestMethod]
+        public void SimpleSelectOleDbTest()
+        {
+            Console.WriteLine(connString);
+            using (var data = new SqlDataAccess(connString, DataAccessProviderTypes.OleDb)
+                   {
+                       ParameterPrefix = "?",
+                       UsePositionalParameters = true,
+                       LeftFieldBracket = "",
+                       RightFieldBracket = ""
+                   })
+            {
+                var dt = data.ExecuteTable("TCustomers","select * from customers");
+
+                Assert.IsNotNull(dt, data.ErrorMessage);
+                Assert.IsTrue(dt.Rows.Count > 0);
+
+            }
+
+            
+
+        }
+
+            [TestMethod]
         public void InsertEntityOleDbTest()
         {
             Console.WriteLine(connString);

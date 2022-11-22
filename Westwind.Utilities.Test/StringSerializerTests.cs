@@ -169,7 +169,7 @@ namespace Westwind.Utilities.Test
             state.IsAdmin = true;
             state.Name = "Rick Strahl | Markus Egger";
             state.Date = DateTime.Now;
-            state.Role = null;
+            
 
 
             var los = new LosFormatter();
