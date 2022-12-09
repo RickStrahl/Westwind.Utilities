@@ -104,16 +104,12 @@ namespace Westwind.Utilities.Configuration.Tests
             Console.WriteLine(xmlConfig);
 
 
-#if NETFULL
+
 			// Password and AppSettings  should be encrypted in config file
-			Assert.IsTrue(xmlConfig.Contains(@"<Password>ADoCNO6L1HIm8V7TyI4deg==</Password>"));
-            Assert.IsTrue(xmlConfig.Contains(@"<AppConnectionString>z6+T5mzXbtJBEgWqpQNYbBss0csbtw2b/qdge7PUixE=</AppConnectionString>"));
-#else
-			// Password and AppSettings  should be encrypted in config file
-			Assert.IsTrue(xmlConfig.Contains(@"<Password>FpFibfJwF1idGqAb0vCc8g==</Password>"));
-			Assert.IsTrue(xmlConfig.Contains(@"<AppConnectionString>75zKmNKcBMv1Ab27gEXw1F2p7sl6LH53WKBI2RSuQq8=</AppConnectionString>"));
-#endif
-			// now re-read settings into a new object
+			Assert.IsTrue(!xmlConfig.Contains(@"<Password>seekrit2</Password>"));
+            Assert.IsTrue(!xmlConfig.Contains(@"<AppConnectionString>server=.;database=unsecured</AppConnectionString>"));
+
+            // now re-read settings into a new object
 			var config2 = new XmlFileConfiguration();
             config2.Initialize(STR_XMLCONFIGFILE);
 

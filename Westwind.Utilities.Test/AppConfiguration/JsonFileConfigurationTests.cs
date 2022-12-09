@@ -66,11 +66,7 @@ namespace Westwind.Utilities.Configuration.Tests
             Assert.IsTrue(jsonConfig.Contains(@"""SendAdminEmailConfirmations"": true"));
 
 			// Password and AppSettings  should be encrypted in config file
-#if NETFULL
-			Assert.IsTrue(jsonConfig.Contains(@"""Password"": ""ADoCNO6L1HIm8V7TyI4deg=="""));            
-#else
-			Assert.IsTrue(jsonConfig.Contains("\"Password\": \"FpFibfJwF1idGqAb0vCc8g==\""));			
-#endif
+			Assert.IsTrue(!jsonConfig.Contains($"\"Password\": \"seekrit\""));			
 		}
 
         [TestMethod]
@@ -102,11 +98,7 @@ namespace Westwind.Utilities.Configuration.Tests
             Console.WriteLine(jsonConfig);
 
 			// Password and AppSettings  should be encrypted in config file
-#if NETFULL
-			Assert.IsTrue(jsonConfig.Contains(@"""Password"": ""ADoCNO6L1HIm8V7TyI4deg=="""));            
-#else
-			Assert.IsTrue(jsonConfig.Contains("\"Password\": \"FpFibfJwF1idGqAb0vCc8g==\""));
-#endif
+			Assert.IsTrue(!jsonConfig.Contains("\"Password\": \"seekrit2\""));
 
 			// now re-read settings into a new object
 			var config2 = new JsonFileConfiguration();

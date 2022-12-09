@@ -125,19 +125,19 @@ namespace Westwind.Utilities.Tests
         {
 
             var original = "ABCCompany";
-            var expected = "A B C Company";
+            var expected = "ABCCompany";
             var actual = StringUtils.FromCamelCase(original);
             Console.WriteLine(actual);
             Assert.AreEqual(expected, actual, "Failed UpperCase Letters CamelCase Test");
 
             original = "ThisIsATest";
-            expected = "This Is A Test";
+            expected = "This Is ATest";
             actual = StringUtils.FromCamelCase(original);
             Console.WriteLine(actual);
             Assert.AreEqual(expected, actual, "Failed UpperCase Letters CamelCase Test");
 
             original = "ABCdef";
-            expected = "A B Cdef";
+            expected = "ABCdef";
             actual = StringUtils.FromCamelCase(original);
             Console.WriteLine(actual);
             Assert.AreEqual(expected, actual, "Failed UpperCase Letters CamelCase Test");
@@ -335,7 +335,7 @@ multiple lines";
 
             s = null;
             strings = StringUtils.GetLines(s);
-            Assert.IsNull(strings);
+            Assert.IsTrue(strings.Length == 0);
         }
 
         [TestMethod]

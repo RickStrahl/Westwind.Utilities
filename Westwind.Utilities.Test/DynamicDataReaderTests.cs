@@ -70,7 +70,7 @@ namespace Westwind.Utilities.Data.Tests
                 while (reader.Read())
                 {
                     string sku  = reader["sku"] as string;
-                    string descript = reader["descript"] as string;
+                    string descript = reader["description"] as string;
 
                     decimal? price;
                     object t = reader["Price"];
@@ -110,7 +110,7 @@ namespace Westwind.Utilities.Data.Tests
                 while (reader.Read())
                 {
                     string sku = reader.Sku;
-                    string descript = reader.Descript;
+                    string descript = reader.Description;
                     decimal? price = reader.Price;
 
                     sb.AppendLine(sku + " " + descript + " " + price.Value.ToString("n2"));

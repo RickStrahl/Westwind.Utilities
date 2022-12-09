@@ -32,18 +32,6 @@ namespace Westwind.Utilities.Test
         }
 
         [TestMethod]
-        public void SendDeleteRequest()
-        {
-            var settings = new HttpRequestSettings
-            {
-                Url = "http://microsoft.com",
-                HttpVerb = "DELETE",
-                Content = string.Empty // force some content so there is a body!
-            };
-            string result = HttpUtils.HttpRequestString(settings);
-        }
-
-        [TestMethod]
         [ExpectedException(typeof(WebException))]
         public void InvalidUrlTest()
         {
@@ -72,6 +60,7 @@ namespace Westwind.Utilities.Test
             Assert.IsTrue(settings.ResponseStatusCode == System.Net.HttpStatusCode.OK);
         }
 
+#if false      // Web Site has gone away
 
         [TestMethod]
         public void JsonRequestTest()
@@ -94,7 +83,7 @@ namespace Westwind.Utilities.Test
         {
             var settings = new HttpRequestSettings()
             {
-                Url = "http://codepaste.net/recent?format=json",
+                Url = "https://albumviewer.west-wind.com/album/37"
 
             };
 
@@ -195,6 +184,7 @@ namespace Westwind.Utilities.Test
                 Console.WriteLine(header + ": " + settings.Response.Headers[header.ToString()]);
             }
         }
+#endif
 
         [TestMethod]
         public void DownloadImageFile()
