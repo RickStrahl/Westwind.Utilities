@@ -4,7 +4,7 @@
 
 dotnet build -c Release
 
-$filename = gci "./nupkg/*.nupkg" | sort LastWriteTime | select -last 1 | select -ExpandProperty "Name"
+$filename = Get-ChildItem "./nupkg/*.nupkg" | sort LastWriteTime | select -last 1 | select -ExpandProperty "Name"
 Write-host $filename
 $len = $filename.length
 
