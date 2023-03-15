@@ -23,7 +23,7 @@
 		<PackageLicense>LICENSE.MD</PackageLicense>
 
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Copyright>Rick Strahl, West Wind Technologies, 2010-2022</Copyright>
+		<Copyright>Rick Strahl, West Wind Technologies, 2010-2023</Copyright>
 		<RepositoryType>Github</RepositoryType>
 		<Company>West Wind Technologies</Company>
 		<RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
@@ -39,10 +39,8 @@
 		<NoWarn>$(NoWarn);CS1591;CS1572;CS1573</NoWarn>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-
 		<PackageOutputPath>./nupkg</PackageOutputPath>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
-
 		<DefineConstants>RELEASE</DefineConstants>
 	</PropertyGroup>
 
@@ -58,11 +56,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
 		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
 	</ItemGroup>
 

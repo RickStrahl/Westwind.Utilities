@@ -40,7 +40,9 @@ using System.Threading;
 using System.Web;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Westwind.Utilities.Properties;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Westwind.Utilities
 {
@@ -548,6 +550,29 @@ namespace Westwind.Utilities
 
 
         /// <summary>
+        /// Checks to see if value is part of a delimited list of values.
+        /// Example: IsStringInList("value1,value2,value3","value3");
+        /// </summary>
+        /// <param name="stringList">A list of delimited strings (ie. value1, value2, value3) with or without spaces (values are trimmed)</param>
+        /// <param name="valueToFind">value to match against the list</param>
+        /// <param name="separator">Character that separates the list values</param>
+        /// <param name="ignoreCase">If true ignores case for the list value matches</param>
+        public static bool IsStringInList(string stringList, string valueToFind, char separator = ',', bool ignoreCase = false)
+        {
+            var tokens = stringList.Split(new [] {separator}, StringSplitOptions.RemoveEmptyEntries);
+            if (tokens.Length == 0)
+                return false;
+
+            var comparer = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.InvariantCulture;
+            foreach (var tok in tokens)
+            {
+                if (tok.Trim().Equals(valueToFind, comparer))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// String.Contains() extension method that allows to specify case
         /// </summary>
         /// <param name="text">Input text</param>
@@ -593,6 +618,39 @@ namespace Westwind.Utilities
             return s.Split('\n').Length;
         }
 
+
+        /// <summary>
+        /// Counts the number of times a character occurs
+        /// in a given string
+        /// </summary>
+        /// <param name="source">input string</param>
+        /// <param name="match">character to match</param>
+        /// <returns></returns>
+        public static int Occurs(string source, char match)
+        {
+            if (string.IsNullOrEmpty(source)) return 0;
+
+            int count = 0;
+            foreach (char c in source)
+                if (c == match)
+                    count++;
+
+            return count;
+        }
+
+        /// <summary>
+        /// Counts the number of times a sub string occurs
+        /// in a given string
+        /// </summary>
+        /// <param name="source">input string</param>
+        /// <param name="match">string to match</param>
+        /// <returns></returns>
+        public static int Occurs(string source, string match)
+        {
+            if (string.IsNullOrEmpty(source)) return 0;
+            return source.Split(new[] { match }, StringSplitOptions.None).Length - 1;
+        }
+
         /// <summary>
         /// Returns a string that has the max amount of characters.
         /// </summary>
@@ -630,29 +688,6 @@ namespace Westwind.Utilities
             }
 
             return sb.ToString();
-        }
-
-        /// <summary>
-        /// Checks to see if value is part of a delimited list of values.
-        /// Example: IsStringInList("value1,value2,value3","value3");
-        /// </summary>
-        /// <param name="stringList">A list of delimited strings (ie. value1, value2, value3) with or without spaces (values are trimmed)</param>
-        /// <param name="valueToFind">value to match against the list</param>
-        /// <param name="separator">Character that separates the list values</param>
-        /// <param name="ignoreCase">If true ignores case for the list value matches</param>
-        public static bool IsStringInList(string stringList, string valueToFind, char separator = ',', bool ignoreCase = false)
-        {
-            var tokens = stringList.Split(new [] {separator}, StringSplitOptions.RemoveEmptyEntries);
-            if (tokens.Length == 0)
-                return false;
-
-            var comparer = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.InvariantCulture;
-            foreach (var tok in tokens)
-            {
-                if (tok.Trim().Equals(valueToFind, comparer))
-                    return true;
-            }
-            return false;
         }
 
         static Regex tokenizeRegex = new Regex("{{.*?}}");
@@ -1138,6 +1173,8 @@ namespace Westwind.Utilities
         /// <summary>
         /// Creates a Stream from a string. Internally creates
         /// a memory stream and returns that.
+        ///
+        /// Note: stream returned should be disposed!
         /// </summary>
         /// <param name="text"></param>
         /// <param name="encoding"></param>
@@ -1152,6 +1189,27 @@ namespace Westwind.Utilities
             ms.Write(data, 0, data.Length);
             ms.Position = 0;
             return ms;
+        }
+
+        /// <summary>
+        /// Creates a string from a text based stream
+        /// </summary>
+        /// <param name="stream">input stream (not closed by operation)</param>
+        /// <param name="encoding">Optional encoding - if not specified assumes 'Encoding.Default'</param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOleVariantTypeException"></exception>
+        public static string StreamToString(Stream stream, Encoding encoding = null)
+        {
+            if (encoding == null)
+                encoding = Encoding.Default;
+
+            if (!stream.CanRead)
+                throw new InvalidOleVariantTypeException("Stream cannot be read.");
+
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
         }
 
         /// <summary>

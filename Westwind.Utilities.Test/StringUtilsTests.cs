@@ -562,5 +562,52 @@ multiple lines";
             Assert.IsFalse(StringUtils.IsStringInList(list, "value4", ignoreCase: true, separator: ';'), "value4 shouldn't match");
 
         }
+
+        [TestMethod]
+        public void OccursCharTest()
+        {
+            var s = "3211-32123-1233-123331";
+
+            var count = StringUtils.Occurs(s, '-');
+            Assert.IsTrue(count == 3);
+
+            s = "3211321231233123331";
+            count = StringUtils.Occurs(s, '-');
+            Assert.IsTrue(count == 0);
+
+            s = "";
+            count = StringUtils.Occurs(s, '-');
+            Assert.IsTrue(count == 0);
+
+            s = null;
+            count = StringUtils.Occurs(s, '-');
+            Assert.IsTrue(count == 0);
+        }
+
+        [TestMethod]
+        public void OccursStringTest()
+        {
+            var s = "3211-32123-1233-123331";
+
+            var count = StringUtils.Occurs(s, "-");
+            Assert.IsTrue(count == 3);
+
+            s = "-3211-32123-1233-123331-";
+            count = StringUtils.Occurs(s, "-");
+            Assert.IsTrue(count == 5);
+
+
+            s = "3211321231233123331";
+            count = StringUtils.Occurs(s, "-");
+            Assert.IsTrue(count == 0);
+
+            s = "";
+            count = StringUtils.Occurs(s, "-");
+            Assert.IsTrue(count == 0);
+
+            s = null;
+            count = StringUtils.Occurs(s, "-");
+            Assert.IsTrue(count == 0);
+        }
     }
 }

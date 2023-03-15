@@ -1,5 +1,12 @@
 # Westwind.Utilities Changelog
 
+### 3.1.20
+
+* **StringUtils.Occurs()**  
+Counts the number of times a character or substring occurs in a given string.
+
+* **StringUtils.StringToStream() and StringUtils.StreamToString()**  
+Converts a string to a `MemoryStream` with Encoding, or reads a string from an input stream.
 
 ### 3.1.15
 <small>October 3rd, 2022</small>
