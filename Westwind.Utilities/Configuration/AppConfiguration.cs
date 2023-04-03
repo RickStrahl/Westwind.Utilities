@@ -39,11 +39,11 @@ using System.Reflection;
 using System.Xml;
 using System.Globalization;
 
-#if NETCORE
-    using Microsoft.Data.SqlClient;
-#else
-    using System.Data.SqlClient;
-#endif
+//#if NETCORE
+//    using Microsoft.Data.SqlClient;
+//#else
+//    using System.Data.SqlClient;
+//#endif
 
 
 using System.Xml.Serialization;

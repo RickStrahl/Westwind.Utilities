@@ -5,16 +5,17 @@
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
-		<AssemblyName>Westwind.Utilities</AssemblyName>
-		<AssemblyTitle>Westwind.Utilities</AssemblyTitle>
+		<AssemblyName>Westwind.Utilities.Data</AssemblyName>
+		<AssemblyTitle>Westwind.Utilities.Data</AssemblyTitle>
 		<NeutralLanguage>en-US</NeutralLanguage>
-		<PackageId>Westwind.Utilities</PackageId>
-		<RootNamespace>Westwind.Utilities</RootNamespace>
-		<Title>West Wind Utilities</Title>
+		<PackageId>Westwind.Utilities.Data</PackageId>
+		<RootNamespace>Westwind.Utilities.Data</RootNamespace>
+		<Title>West Wind Utilities Data</Title>
 		<Description>.NET utility library that includes Application Configuration, lightweight ADO.NET Data Access Layer, logging, utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>
-		<Summary>Small library of general purpose utilities for .NET development that almost every application can use. Used as a core reference library for other West Wind libraries.</Summary>
-		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2022</PackageCopyright>
-		<PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
+		<Description>Data access support library for Westwind.Utilities that provides a small lightweight data access providerand and a host of data utilities.</Description>
+		<Summary>Data access support library for Westwind.Utilities.</Summary>
+		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2023</PackageCopyright>
+		<PackageTags>Westwind DataAccess DataUtils DAL Sql ADO.NET</PackageTags>
 		<PackageReleaseNotes></PackageReleaseNotes>
 
 		<PackageProjectUrl>http://github.com/rickstrahl/westwind.utilities</PackageProjectUrl>
@@ -29,6 +30,8 @@
 		<RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
+
+
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
 		<DefineConstants>TRACE;DEBUG;</DefineConstants>
@@ -54,20 +57,14 @@
 		<DebugType>embedded</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 	</PropertyGroup>
-	<ItemGroup>
-	  <Compile Remove="Logging\**" />
-	  <EmbeddedResource Remove="Logging\**" />
-	  <None Remove="Logging\**" />
-	</ItemGroup>
 
 	<ItemGroup>
-		
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />
 	</ItemGroup>
+
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
@@ -75,35 +72,12 @@
 		<Reference Include="System" />
 		<Reference Include="System.Core" />
 		<Reference Include="Microsoft.CSharp" />
-		<Reference Include="System.Data" />
-		<Reference Include="System.Web" />
-		<Reference Include="System.Drawing" />
-		<Reference Include="System.Security" />
-		<Reference Include="System.Xml" />
 		<Reference Include="System.Configuration" />
-	</ItemGroup>
-
-
-
-	<ItemGroup>
-		<Compile Update="Properties\Resources.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Resources.resx</DependentUpon>
-		</Compile>
-	</ItemGroup>
-
-
-	<ItemGroup>
-		<EmbeddedResource Update="Properties\Resources.resx">
-			<Generator>PublicResXFileCodeGenerator</Generator>
-			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
+		<Reference Include="System.Data" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="icon.png" Pack="true" PackagePath="" />
-		<None Include="LICENSE.MD" Pack="true" PackagePath="" />
+		<None Include="LICENSE.MD" />
 	</ItemGroup>
-
 </Project>

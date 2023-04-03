@@ -33,7 +33,6 @@
 
 using System;
 using System.Data;
-using Westwind.Utilities.Data;
 using System.Collections.Generic;
 
 namespace Westwind.Utilities.Logging

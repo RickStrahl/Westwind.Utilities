@@ -131,7 +131,7 @@ namespace Westwind.Utilities.Data
         public DataAccessBase(string connectionString, DataAccessProviderTypes providerType)
         {
             ConnectionString = connectionString;
-            DbProviderFactory instance = DataUtils.GetDbProviderFactory(providerType);
+            DbProviderFactory instance = SqlUtils.GetDbProviderFactory(providerType);
             dbProvider = instance ?? throw new InvalidOperationException("Can't load database provider: " + providerType.ToString());
         }
 
