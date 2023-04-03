@@ -36,7 +36,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
-using Westwind.Utilities.Data;
 
 namespace Westwind.Utilities.Logging
 {
@@ -98,9 +97,9 @@ namespace Westwind.Utilities.Logging
         {
             ILogAdapter adapter = null;
             
-            if (logType == LogAdapterTypes.Sql)
-                adapter = new SqlLogAdapter();
-            else if (logType == LogAdapterTypes.Xml)
+            //if (logType == LogAdapterTypes.Sql)
+            //    adapter = new SqlLogAdapter();
+            if (logType == LogAdapterTypes.Xml)
                 adapter = new XmlLogAdapter();
             else if (logType == LogAdapterTypes.Text)
                 adapter = new TextLogAdapter();

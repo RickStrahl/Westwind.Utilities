@@ -57,6 +57,9 @@
 		<DebugType>embedded</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="Logging\SqlLogManager.cs" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />
@@ -79,5 +82,6 @@
 	<ItemGroup>
 		<None Include="icon.png" Pack="true" PackagePath="" />
 		<None Include="LICENSE.MD" />
+		<None Include="Logging\SqlLogManager.cs" />
 	</ItemGroup>
 </Project>
