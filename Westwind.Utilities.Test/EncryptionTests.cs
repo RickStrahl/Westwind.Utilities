@@ -9,9 +9,7 @@ namespace Westwind.Utilities.Test
     [TestClass]
     public class EncryptionTests
     {
-		
-
-		/// <summary>
+        /// <summary>
 		/// 16 byte (or anything less than 24 bytes) are no longer supported
 		/// by .NET Core Triple DES. Encrypt/Decrypt pad out or trim 
 		/// the buffer to fit 24 bytes, so the following should work.

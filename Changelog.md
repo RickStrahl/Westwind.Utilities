@@ -1,15 +1,15 @@
 # Westwind.Utilities Changelog
 
-### 3.1.20
+### 4.0
+
+* **Refactor Data Utilities into separate Westwind.Utilities.Data Library**   
+Due to the large required SQL Data dependencies on .NET Core, we've removed the data access components from this library and separated them out into a `Westwind.Utilities.Data`. Functionality remains the same, but now requires adding this second library in order to use the data features. This keeps the original library dependencies small even on .NET Standard/Core.
 
 * **StringUtils.Occurs()**  
 Counts the number of times a character or substring occurs in a given string.
 
 * **StringUtils.StringToStream() and StringUtils.StreamToString()**  
 Converts a string to a `MemoryStream` with Encoding, or reads a string from an input stream.
-
-### 3.1.15
-<small>October 3rd, 2022</small>
 
 * **StringUtils.GetMaxCharacters()**  
 String extension method that retrieves a string with n characters max optionally from a specified start position.
@@ -19,10 +19,6 @@ Fix null values for string properties that were returning the string `"null"` in
 
 * **Fix: AppConfiguration.Write() if Provider is not configured**  
 Fix `Write()` method when the provider is not configured yet by loading Provider via `OnCreateDefaultProvider()` rather than doing a full initialize which reloaded the config data. This preserves the data and only loads the provider and was the cause of occasional failures if assigning a new configuration object completely.
-
-
-### 3.1.5
-<small>December 7th, 2021</small>
 
 * **Remove .NET 4.0 Target**  
 We've removed the .NET 4.0 target, leaving `net462` and `netstandard2.0` as the two targets for this library.
