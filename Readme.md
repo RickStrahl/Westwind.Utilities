@@ -1,8 +1,14 @@
 # Westwind.Utilities 
 
-[![NuGet](https://img.shields.io/nuget/v/Westwind.Utilities.svg)](https://www.nuget.org/packages/Westwind.Utilities/)
-![](https://img.shields.io/nuget/dt/Westwind.Utilities.svg)
-[![Documentation](https://img.shields.io/badge/documentation-blue.svg)](https://docs.west-wind.com/westwind.utilities/)
+
+
+| Library or Tool         | Versions and Stats                                                                                                                                                                                          |
+|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Westwind.Utilities      | <a href="https://www.nuget.org/packages/Westwind.Utilities/">![](https://img.shields.io/nuget/v/Westwind.Utilities.svg)</a> ![](https://img.shields.io/nuget/dt/Westwind.Utilities.svg)                |
+| Westwind.Utilities.Data | <a href="https://www.nuget.org/packages/Westwind.Utilities.Data/">![](https://img.shields.io/nuget/v/Westwind.Utilities.Data.svg)</a>  ![](https://img.shields.io/nuget/dt/Westwind.Utilities.Data.svg) |
+| Documentation           | <a href="https://docs.west-wind.com/westwind.utilities/">![](https://img.shields.io/badge/documentation-blue.svg)</a>                                                                                       |
+
+
 
 ### A general purpose utility and helper library for .NET development
 
@@ -17,11 +23,13 @@ You can install the package [from NuGet](http://nuget.org/packages/Westwind.Util
 PM> install-package westwind.utilities
 ```
 
-or the `dotnet` command line:
+As of version 4.0 the `Data` related features are located in a separate NuGet Package:
 
 ```
-dotnet add package westwind.utilities
+PM> install-package westwind.utilities.data
 ```
+> #### Upgrading from v3 and using Data Access Features?
+> If you're switching from v3 or earlier and are using the Data Access features of the library, this is a breaking change that requires you to add the new `westwind.utilities.data` package.
 
 ### What is it?
 Every .NET application requires small, common and often repeated tasks. This library is a collection of those things that I commonly need on a regular basis and have compiled over the years.
