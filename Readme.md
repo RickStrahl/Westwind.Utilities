@@ -1,14 +1,10 @@
 # Westwind.Utilities 
 
-
-
-| Library or Tool         | Versions and Stats                                                                                                                                                                                          |
-|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Westwind.Utilities      | <a href="https://www.nuget.org/packages/Westwind.Utilities/">![](https://img.shields.io/nuget/v/Westwind.Utilities.svg)</a> ![](https://img.shields.io/nuget/dt/Westwind.Utilities.svg)                |
+| Library                 | Versions and Stats                                                                                                                                                                                      |
+|-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Westwind.Utilities      | <a href="https://www.nuget.org/packages/Westwind.Utilities/">![](https://img.shields.io/nuget/v/Westwind.Utilities.svg)</a> ![](https://img.shields.io/nuget/dt/Westwind.Utilities.svg)                 |
 | Westwind.Utilities.Data | <a href="https://www.nuget.org/packages/Westwind.Utilities.Data/">![](https://img.shields.io/nuget/v/Westwind.Utilities.Data.svg)</a>  ![](https://img.shields.io/nuget/dt/Westwind.Utilities.Data.svg) |
-| Documentation           | <a href="https://docs.west-wind.com/westwind.utilities/">![](https://img.shields.io/badge/documentation-blue.svg)</a>                                                                                       |
-
-
+| Documentation           | <a href="https://docs.west-wind.com/westwind.utilities/">![](https://img.shields.io/badge/documentation-blue.svg)</a>                                                                                   |
 
 ### A general purpose utility and helper library for .NET development
 
@@ -77,7 +73,7 @@ This assembly is the base for most other West Wind libraries.
 ## License
 This library is published under **MIT license** terms.
 
-**Copyright &copy; 2012-2019 Rick Strahl, West Wind Technologies**
+**Copyright &copy; 2012-2023 Rick Strahl, West Wind Technologies**
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
