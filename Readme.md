@@ -8,9 +8,10 @@
 
 ### A general purpose utility and helper library for .NET development
 
-> Moved from [Westwind.Toolkit repo](https://github.com/rickstrahl/WestwindToolkit)
-> * Added support for .NET Standard 2.0
-> * Targets .NET 4.5, 4.0 and NetStandard 2.0
+Supports the following Targets:
+
+* .NET Standard 2.0
+* .NET 4.62+
 
 ### Installation
 You can install the package [from NuGet](http://nuget.org/packages/Westwind.Utilities/) using the Visual Studio Package Manager or NuGet UI:
@@ -40,7 +41,9 @@ It includes tools for:
 class to create code-first strongly typed configuration classes for your applications
 
 * [**Lightweight ADO.NET Data Access Layer**](https://docs.west-wind.com/westwind.utilities?=page=_3ou0v2jum.htm)  
-ideal for components or apps that need data access but don't need the bulk of Entity Framework or similar ORM
+ideal for components or apps that need data access but don't need the bulk of Entity Framework or similar ORM.  
+<small>*requires adding the `westwind.utilities.data` package.*</small>
+
 
 * **General Purpose Utility Classes**:
 	* [StringUtils](https://docs.west-wind.com/westwind.utilities?topic=Class%20StringUtils)
