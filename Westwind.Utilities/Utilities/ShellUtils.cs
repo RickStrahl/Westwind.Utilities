@@ -433,17 +433,22 @@ namespace Westwind.Utilities
             return 0;
         }
 
-        
+
         /// <summary>
         /// Executes a Windows Command Line using Shell Execute as a
         /// single command line with parameters. This method handles
         /// parsing out the executable from the parameters.
         /// </summary>
-        /// <param name="fullCommandLine">Full command line - Executable plus arguments. Recommend double quotes for best command parsing experience</param>
+        /// <param name="fullCommandLine">Full command line - Executable plus arguments.
+        /// If the executable contains paths with spaces **make sure to add quotes around the executable** otherwise the executable may not be found.
+        /// </param>
         /// <param name="workingFolder">Optional - the folder the executable runs in. If not specified uses current folder.</param>
         /// <param name="waitForExitMs">Optional - Number of milliseconds to wait for completion. 0 don't wait.</param>
         /// <param name="verb">Optional - Shell verb to apply. Defaults to "Open"</param>
         /// <param name="windowStyle">Optional - Windows style for the launched application. Default style is normal</param>
+        /// <remarks>
+        /// If the executable or parameters contain or **may contain spaces** make sure you use quotes (") or (') around the exec or parameters.
+        /// </remarks>
         public static void ExecuteCommandLine(string fullCommandLine, 
             string workingFolder = null, 
             int waitForExitMs = 0, 
