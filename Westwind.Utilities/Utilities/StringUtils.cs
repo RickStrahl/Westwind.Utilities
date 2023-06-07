@@ -660,7 +660,7 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static string GetMaxCharacters(this string s, int maxCharacters, int startPosition = 0)
         {
-            if (string.IsNullOrEmpty(s) || startPosition == 0 && maxCharacters < s.Length)
+            if (string.IsNullOrEmpty(s) || startPosition == 0 && maxCharacters > s.Length)
                 return s;
             
             if (startPosition > s.Length - 1)

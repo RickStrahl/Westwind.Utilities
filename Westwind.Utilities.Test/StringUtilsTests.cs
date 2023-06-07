@@ -609,5 +609,30 @@ multiple lines";
             count = StringUtils.Occurs(s, "-");
             Assert.IsTrue(count == 0);
         }
+
+
+        [TestMethod]
+        public void GetMaxCharactersTest()
+        {
+            var s="1234567890";
+
+            var result = StringUtils.GetMaxCharacters(s, 5);
+            Assert.AreEqual(result.Length, 5);
+
+            result = StringUtils.GetMaxCharacters(s, 15);
+            Assert.AreEqual(result.Length, 10, "should be 10 lengths");
+            
+            result = StringUtils.GetMaxCharacters(s, 10);
+            Assert.AreEqual(result.Length,10, "should be 10 lengths");
+
+            s = null;
+            result = StringUtils.GetMaxCharacters(s, 10);
+            Assert.IsNull(result, "result should be null");
+
+            s = string.Empty;
+            result = StringUtils.GetMaxCharacters(s, 4);
+            Assert.AreEqual(result.Length, 0,"result should be empty");
+        }
+
     }
 }
