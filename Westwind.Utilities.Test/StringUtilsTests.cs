@@ -634,5 +634,25 @@ multiple lines";
             Assert.AreEqual(result.Length, 0,"result should be empty");
         }
 
+        [TestMethod]
+        public void GetLastCharactersTest()
+        {
+            string s = "1234567890";
+            
+            var res = s.GetLastCharacters(4);
+            Assert.AreEqual(res, "7890");
+
+            res = StringUtils.GetLastCharacters(null, 4);
+            Assert.AreEqual(res, string.Empty);
+
+            s = string.Empty;
+            res = s.GetLastCharacters(4);
+            Assert.AreEqual(res, string.Empty);
+
+            s = "123";
+            res = s.GetLastCharacters(4);
+            Assert.AreEqual(res, "123");
+        }
+
     }
 }

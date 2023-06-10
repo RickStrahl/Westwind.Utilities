@@ -1,10 +1,8 @@
 West Wind Utilities Library
 ===========================
 
-
 MIT License
 -----------
-
 Copyright (c) 2019-2023 West Wind Technologies
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
