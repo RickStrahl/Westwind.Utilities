@@ -1,5 +1,10 @@
 # Westwind.Utilities Changelog
 
+### 4.1
+
+* **StringUtils.GetLastCharacters()**  
+Retrieves up to the last n characters from the end of a string.
+
 ### 4.0
 
 * **Refactor Data Utilities into separate Westwind.Utilities.Data Library**   

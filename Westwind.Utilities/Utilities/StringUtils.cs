@@ -672,14 +672,14 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Retrieves the last n characters of a string up to the
+        /// Retrieves the last n characters from the end of a string up to the
         /// number of characters specified. If there are fewer characters
         /// the original string is returned otherwise the last n characters
-        /// are returned. Null strings return an empty string.
+        /// are returned.
         /// </summary>
         /// <param name="s">input string</param>
         /// <param name="characterCount">number of characters to retrieve from end of string</param>
-        /// <returns>Up to the last n characters of the string or an empty string if input was null</returns>
+        /// <returns>Up to the last n characters of the string. Empty string on empty or null</returns>
         public static string GetLastCharacters(this string s, int characterCount)
         {
             if (string.IsNullOrEmpty(s) || s.Length < characterCount)
