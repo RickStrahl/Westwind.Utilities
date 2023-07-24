@@ -122,6 +122,11 @@ namespace Westwind.Utilities.Data
 			dbProvider = provider;			
 		}
 
+        /// <summary>
+        /// Holds the last Identity Key if running insert statements that return
+        /// the identity key (save entity)
+        /// </summary>
+        public object LastIdentityResult { get; set; }
 
         /// <summary>
         /// Create a DataAccess component with a specific database provider
@@ -416,6 +421,14 @@ namespace Westwind.Utilities.Data
         {
             if (parameters != null)
             {
+          
+                // check for anonymous type
+                if (parameters.Length == 1 && ReflectionUtils.IsAnonoymousType(parameters[0]))
+                {
+                    ParseObjectParameters(command, parameters[0]);
+                    return;
+                }
+
                 var parmCount = 0;
                 foreach (var parameter in parameters)
                 {
@@ -431,7 +444,35 @@ namespace Westwind.Utilities.Data
             }
 
         }
+
+        /// <summary>
+        /// Parses an anonymous object map into a set of DbParameters
+        /// </summary>
+        /// <param name=""></param>
+        /// <param name="parameter"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public DbParameterCollection ParseObjectParameters(DbCommand command, object parameter)
+        {
+            var props = parameter.GetType().GetProperties();
+
+            var parmCount = 0;
+            foreach (var prop in props)
+            {
+                object value = prop.GetValue(parameter, null);
+                if (value is DbParameter)
+                    command.Parameters.Add(value);
+                else
+                {
+                    var parm = CreateParameter(ParameterPrefix + prop.Name, value);
+                    command.Parameters.Add(parm);
+                    parmCount++;
+                }
+            }
+
+            return command.Parameters;
+        }
         
+
         /// <summary>
         /// Used to create named parameters to pass to commands or the various
         /// methods of this class.
@@ -1676,12 +1717,14 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             {
                 if (!Property.CanRead)
                     continue;
+                if (!Property.PropertyType.IsValueType && Property.PropertyType.Name != "String")
+                    continue;
 
                 string Name = Property.Name;
 
                 if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
                     continue;
-
+                
                 object Value = Property.GetValue(entity, null);
 
                 string parmString = UsePositionalParameters ? ParameterPrefix : ParameterPrefix + Name;
@@ -1706,38 +1749,6 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
             return Command;
         }
-
-
-        /// <summary>
-        /// This version of UpdateEntity allows you to specify which fields to update and
-        /// so is a bit more efficient as it only checks for specific fields in the database
-        /// and the underlying table.
-        /// </summary>
-        /// <seealso cref="SaveEntity"/>
-        /// <seealso cref="InsertEntity"/>
-        /// <param name="entity">Entity to update</param>
-        /// <param name="table">DB Table to udpate</param>
-        /// <param name="keyField">The keyfield to query on</param>
-        /// <param name="propertiesToSkip">fields to skip in update</param>
-        /// <param name="fieldsToUpdate">fields that should be updated</param>
-        /// <returns></returns>
-        public virtual bool UpdateEntity(object entity, string table, string keyField, string propertiesToSkip, string fieldsToUpdate)
-        {
-            SetError();
-
-            var Command = GetUpdateEntityCommand(entity, table, keyField, propertiesToSkip, fieldsToUpdate);
-            if (Command == null)
-                return false;
-
-            bool result;
-            using (Command) {
-                result = ExecuteNonQuery(Command) > -1;
-                CloseConnection(Command);
-            }
-
-            return result;
-        }
-
 
 
         /// <summary>
@@ -1780,11 +1791,15 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             string[] Fields = fieldsToUpdate.Split(',');
             foreach (string Name in Fields)
             {
+           
                 if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
                     continue;
 
                 PropertyInfo Property = ObjType.GetProperty(Name);
                 if (Property == null)
+                    continue;
+
+                if (!Property.PropertyType.IsValueType && Property.PropertyType.Name != "String")
                     continue;
 
                 object Value = Property.GetValue(entity, null);
@@ -1811,6 +1826,35 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             return Command;
         }
 
+        /// <summary>
+        /// This version of UpdateEntity allows you to specify which fields to update and
+        /// so is a bit more efficient as it only checks for specific fields in the database
+        /// and the underlying table.
+        /// </summary>
+        /// <seealso cref="SaveEntity"/>
+        /// <seealso cref="InsertEntity"/>
+        /// <param name="entity">Entity to update</param>
+        /// <param name="table">DB Table to udpate</param>
+        /// <param name="keyField">The keyfield to query on</param>
+        /// <param name="propertiesToSkip">fields to skip in update</param>
+        /// <param name="fieldsToUpdate">fields that should be updated</param>
+        /// <returns></returns>
+        public virtual bool UpdateEntity(object entity, string table, string keyField, string propertiesToSkip, string fieldsToUpdate)
+        {
+            SetError();
+
+            var Command = GetUpdateEntityCommand(entity, table, keyField, propertiesToSkip, fieldsToUpdate);
+            if (Command == null)
+                return false;
+
+            bool result;
+            using (Command) {
+                result = ExecuteNonQuery(Command) > -1;
+                CloseConnection(Command);
+            }
+
+            return result;
+        }
 
 
         /// <summary>
@@ -1837,7 +1881,8 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 if (returnIdentityKey)
                 {
                     Command.CommandText += ";\r\n" + "select SCOPE_IDENTITY()";
-                    return ExecuteScalar(Command);
+                    LastIdentityResult = ExecuteScalar(Command);
+                    return LastIdentityResult;
                 }
 
                 int res = ExecuteNonQuery(Command);
@@ -1873,7 +1918,8 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 if (returnIdentityKey)
                 {
                     Command.CommandText += ";\r\n" + "select SCOPE_IDENTITY()";
-                    return await ExecuteScalarAsync(Command);
+                    LastIdentityResult = await ExecuteScalarAsync(Command);
+                    return LastIdentityResult;
                 }
 
                 int res = await ExecuteNonQueryAsync(Command);
@@ -1928,12 +1974,14 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             {
                 if (!Property.CanRead)
                     continue;
-
-                string Name = Property.Name;
-
-                if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
+                if (!Property.PropertyType.IsValueType && Property.PropertyType.Name != "String")
                     continue;
 
+                string Name = Property.Name; 
+                
+                if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1 )
+                    continue;
+                
                 object Value = Property.GetValue(entity, null);
 
                 FieldList.Append(" " + LeftFieldBracket + Name + RightFieldBracket + ",");
@@ -1966,8 +2014,10 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <param name="table">table to save to</param>
         /// <param name="keyField">keyfield to update</param>
         /// <param name="propertiesToSkip">optional fields to skip when updating (keys related items etc)</param>
+        /// <param name="returnScopeId"></param>
+        /// <param name="fieldsToUpdate">optional - specify fields to update</param>
         /// <returns></returns>
-        public virtual bool SaveEntity(object entity, string table, string keyField, string propertiesToSkip = null)
+        public virtual bool SaveEntity(object entity, string table, string keyField, string propertiesToSkip = null, bool returnScopeId = false)
         {
             object pkValue = ReflectionUtils.GetProperty(entity, keyField);
             object res = null;
@@ -1978,15 +2028,19 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                                          CreateParameter(ParameterPrefix + "id", pkValue));
             if (res == null)
             {
-                InsertEntity(entity, table, propertiesToSkip);
+                LastIdentityResult  = InsertEntity(entity, table, propertiesToSkip, returnScopeId);
                 if (!string.IsNullOrEmpty(ErrorMessage))
                     return false;
             }
             else
+            {
                 return UpdateEntity(entity, table, keyField, propertiesToSkip);
+            }
 
             return true;
         }
+
+
         #endregion
 
 #region Error Handling
