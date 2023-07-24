@@ -1129,6 +1129,32 @@ namespace Westwind.Utilities
         }
         #endregion
 
+
+        /// <summary>
+        /// Determines whether a given type passed is anonymous
+        /// </summary>
+        /// <param name="objectOrType">Pass either an object instance or a Type object</param>
+        /// <returns></returns>
+        public static bool IsAnonoymousType(object objectOrType)
+        {
+            if (objectOrType is Type type)
+            {
+                type = objectOrType as Type;
+            }
+            else
+            {
+                type = objectOrType.GetType();
+            }
+
+            if (!type.IsPublic &&
+                type.IsSealed &&
+                string.IsNullOrEmpty(type.Namespace))
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 
 
