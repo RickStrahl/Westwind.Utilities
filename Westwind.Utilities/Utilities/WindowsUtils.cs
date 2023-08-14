@@ -1,6 +1,6 @@
 ﻿
 using System;
-
+using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
 namespace Westwind.Utilities
@@ -231,5 +231,17 @@ namespace Westwind.Utilities
                 return false;
             }
         }
+
+
+        /// <summary>
+        /// Determine whether the user is an Administrator
+        /// </summary>
+        /// <returns></returns>
+        [DllImport("shell32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool IsUserAnAdmin();
     }
+
+
+
 }
