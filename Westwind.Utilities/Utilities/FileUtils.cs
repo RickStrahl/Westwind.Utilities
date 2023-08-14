@@ -596,8 +596,8 @@ namespace Westwind.Utilities
         /// to check before using or manipulating paths with `Path` operations
         /// that will fail if files or paths contain invalid characters.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="additionalChars"></param>
+        /// <param name="path">Path to check</param>
+        /// <param name="additionalChars">Optionally allows you to add additional invalid characters to the disallowed OS characters</param>
         /// <returns></returns>
         public static bool HasInvalidPathCharacters(string path, params char[] additionalChars)
         {

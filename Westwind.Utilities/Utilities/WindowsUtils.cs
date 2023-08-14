@@ -135,7 +135,7 @@ namespace Westwind.Utilities
         static string DotnetVersion = null;
 
         /// <summary> 
-        /// Returns the .NET framework version installed on the machine
+        /// Returns the **.NET framework version** installed on the machine
         /// as a string  of 4.x.y version
         /// </summary>
         /// <remarks>Minimum version supported is 4.0</remarks>
@@ -154,11 +154,13 @@ namespace Westwind.Utilities
                 return DotnetVersion;
             }
 
-            int releaseKey = value;            
+            int releaseKey = value;
 
             // https://msdn.microsoft.com/en-us/library/hh925568(v=vs.110).aspx
             // RegEdit paste: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full
-            if (releaseKey >= 528040)  
+            if (releaseKey >= 533320)
+                DotnetVersion = "4.8.1";
+            else if (releaseKey >= 528040)  
                 DotnetVersion = "4.8";
             else if (releaseKey >= 461808)
                 DotnetVersion = "4.7.2";

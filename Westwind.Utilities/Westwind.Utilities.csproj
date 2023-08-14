@@ -16,18 +16,14 @@
 		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2022</PackageCopyright>
 		<PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
 		<PackageReleaseNotes></PackageReleaseNotes>
-
 		<PackageProjectUrl>http://github.com/rickstrahl/westwind.utilities</PackageProjectUrl>
 
 		<PackageIcon>icon.png</PackageIcon>
-		<PackageLicense>LICENSE.MD</PackageLicense>
+		<PackageLicenseFile>LICENSE.MD</PackageLicenseFile>
 
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Copyright>Rick Strahl, West Wind Technologies, 2010-2023</Copyright>
-		<RepositoryType>Github</RepositoryType>
 		<Company>West Wind Technologies</Company>
-		<RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
