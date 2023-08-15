@@ -5,6 +5,9 @@
 * **StringUtils.GetLastCharacters()**  
 Retrieves up to the last n characters from the end of a string.
 
+* **WindowsUtils.IsUserAnAdmin()**  
+Determines if user is an Administrator on Windows.
+
 ### 4.0
 
 * **Refactor Data Utilities into separate Westwind.Utilities.Data Library**   
