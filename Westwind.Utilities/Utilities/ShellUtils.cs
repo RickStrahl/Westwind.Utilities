@@ -414,11 +414,11 @@ namespace Westwind.Utilities
         /// <param name="verb"></param>
         /// <returns></returns>
         public static int ShellExecute(string url, string arguments = null, 
-                                       string workingFolder = null, string verb = "Open")
+                                       string workingFolder = null, string verb = "open")
         {
             ProcessStartInfo info = new ProcessStartInfo();
             info.UseShellExecute = true;
-            info.Verb = "Open";
+            info.Verb = verb;
             
             info.FileName = url;
             info.Arguments = arguments;
