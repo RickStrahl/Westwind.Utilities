@@ -135,16 +135,21 @@ namespace Westwind.Utilities
         static string DotnetVersion = null;
 
         /// <summary> 
-        /// Returns the **.NET framework version** installed on the machine
-        /// as a string  of 4.x.y version
-        /// </summary>
-        /// <remarks>Minimum version supported is 4.0</remarks>
-        /// <returns></returns>
+        /// Returns the .NET version installed on the machine
+        /// </summary>             
+        /// <returns>
+        /// Full Framework: number (ie `4.8.1`)
+        /// .NET Core: FrameworkVersion (ie. `.NET 7.0.7`)
+        /// </returns>
         public static string GetDotnetVersion()
         {
+
             if (!string.IsNullOrEmpty(DotnetVersion))
                 return DotnetVersion;
-
+#if !NETFULL
+            DotnetVersion = System.Diagnostics.RuntimeInformation.FrameworkDescription;
+            return DotnetVersion;
+#else
             dynamic value;
             TryGetRegistryKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\", "Release", out value);
 
@@ -187,6 +192,7 @@ namespace Westwind.Utilities
                 DotnetVersion = "4.0";
 
             return DotnetVersion;
+#endif
         }
 
         static string _WindowsVersion = null;
