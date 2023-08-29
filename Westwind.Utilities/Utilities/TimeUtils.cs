@@ -127,20 +127,45 @@ namespace Westwind.Utilities
         /// <returns>string in format of just now or 1m ago, 2h ago</returns>
         public static string FriendlyElapsedTimeString(int milliSeconds)
         {
-            if (milliSeconds < 0)
+            return FriendlyElapsedTimeString(Convert.ToDouble( milliSeconds));            
+        }
+
+        /// <summary>
+        /// Displays a number of milliseconds as friendly seconds, hours, minutes 
+        /// Pass -1 to get a blank date.
+        ///
+        /// Note: English only!
+        /// </summary>
+        /// <param name="milliSeconds">the elapsed milliseconds to display time for</param>           
+        /// <returns>string in format of just now or 1m ago, 2h ago</returns>
+        public static string FriendlyElapsedTimeString(double milliSeconds)
+        {
+            if (milliSeconds == 0)
                 return string.Empty;
+
+            milliSeconds = Math.Abs(milliSeconds);
 
             if (milliSeconds < 20000)
                 return "just now";
 
             if (milliSeconds < 60000)
-                return ((int)(milliSeconds / 1000)).ToString() + "s ago"; ;
+                return ((int)(milliSeconds / 1000)) + "s ago"; 
 
             if (milliSeconds < 3600000)
-                return ((int)(milliSeconds / 60000)).ToString() + "m ago";
+                return ((int)(milliSeconds / 60000)) + "m ago";
 
-            return ((int)(milliSeconds / 3600000)).ToString() + "h ago";
+            if (milliSeconds < 86400000 * 2) // 2 days
+                return ((int)(milliSeconds / 3600000)) + "h ago";  
+            
+            if (milliSeconds < 86400000F * 30F) // 30 days
+                return ((int)(milliSeconds / 86400000 )) + "d ago";
+
+            if (milliSeconds < 86400000F * 365F ) // 365 days
+                return (Math.Round(milliSeconds / 2592000000)) + "mo ago";
+
+            return (Math.Round(milliSeconds / (60000F * 60F * 24F * 365F)) ) + "y ago";            
         }
+
 
         /// <summary>
         /// Displays the elapsed time  friendly seconds, hours, minutes 
@@ -149,7 +174,7 @@ namespace Westwind.Utilities
         /// <returns>string in format of just now or 1m ago, 2h ago</returns>
         public static string FriendlyElapsedTimeString(TimeSpan elapsed)
         {
-            return FriendlyElapsedTimeString((int)elapsed.TotalMilliseconds);
+            return FriendlyElapsedTimeString(elapsed.TotalMilliseconds);
         }
 
         /// <summary>
