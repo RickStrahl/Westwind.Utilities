@@ -21,20 +21,21 @@ namespace Westwind.Utilities
             get
             {
                 dynamic major;
-                // The 'CurrentMajorVersionNumber' string value in the CurrentVersion key is new for Windows 10, 
+                // The 'CurrentMajorVersionNumber' string value in the CurrentVersion key is new for Windows 10,
                 // and will most likely (hopefully) be there for some time before MS decides to change this - again...
                 if (TryGetRegistryKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentMajorVersionNumber",
-                    out major))
+                    out major, Registry.LocalMachine)   )
                 {
-                    return (uint) major;
+                    return (uint)major;
                 }
 
                 // When the 'CurrentMajorVersionNumber' value is not present we fallback to reading the previous key used for this: 'CurrentVersion'
                 dynamic version;
-                if (!TryGetRegistryKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentVersion", out version))
+                if (!TryGetRegistryKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentVersion",
+                    out version, Registry.LocalMachine))
                     return 0;
 
-                var versionParts = ((string) version).Split('.');
+                var versionParts = ((string)version).Split('.');
                 if (versionParts.Length != 2) return 0;
                 uint majorAsUInt;
                 return uint.TryParse(versionParts[0], out majorAsUInt) ? majorAsUInt : 0;
@@ -49,20 +50,21 @@ namespace Westwind.Utilities
             get
             {
                 dynamic minor;
-                // The 'CurrentMinorVersionNumber' string value in the CurrentVersion key is new for Windows 10, 
+                // The 'CurrentMinorVersionNumber' string value in the CurrentVersion key is new for Windows 10,
                 // and will most likely (hopefully) be there for some time before MS decides to change this - again...
                 if (TryGetRegistryKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentMinorVersionNumber",
-                    out minor))
+                    out minor, Registry.LocalMachine))
                 {
-                    return (uint) minor;
+                    return (uint)minor;
                 }
 
                 // When the 'CurrentMinorVersionNumber' value is not present we fallback to reading the previous key used for this: 'CurrentVersion'
                 dynamic version;
-                if (!TryGetRegistryKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentVersion", out version))
+                if (!TryGetRegistryKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentVersion",
+                    out version, Registry.LocalMachine))
                     return 0;
 
-                var versionParts = ((string) version).Split('.');
+                var versionParts = ((string)version).Split('.');
                 if (versionParts.Length != 2) return 0;
                 uint minorAsUInt;
                 return uint.TryParse(versionParts[1], out minorAsUInt) ? minorAsUInt : 0;
@@ -77,17 +79,17 @@ namespace Westwind.Utilities
             get
             {
                 dynamic buildNumber;
-                // The 'CurrentMinorVersionNumber' string value in the CurrentVersion key is new for Windows 10, 
+                // The 'CurrentMinorVersionNumber' string value in the CurrentVersion key is new for Windows 10,
                 // and will most likely (hopefully) be there for some time before MS decides to change this - again...
                 if (TryGetRegistryKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentBuildNumber",
-                    out buildNumber))
+                    out buildNumber, Registry.LocalMachine))
                 {
                     return Convert.ToUInt32(buildNumber);
                 }
 
 
                 if (!TryGetRegistryKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentBuild",
-                    out buildNumber))
+                    out buildNumber, Registry.LocalMachine))
                     return 0;
 
                 return Convert.ToUInt32(buildNumber);
@@ -102,10 +104,10 @@ namespace Westwind.Utilities
             get
             {
                 dynamic buildNumber;
-                // The 'CurrentMinorVersionNumber' string value in the CurrentVersion key is new for Windows 10, 
+                // The 'CurrentMinorVersionNumber' string value in the CurrentVersion key is new for Windows 10,
                 // and will most likely (hopefully) be there for some time before MS decides to change this - again...
                 if (TryGetRegistryKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "BuildLabEx",
-                    out buildNumber))
+                    out buildNumber, Registry.LocalMachine))
                 {
                     return buildNumber;
                 }
@@ -211,6 +213,7 @@ namespace Westwind.Utilities
             if (string.IsNullOrEmpty(_WindowsVersion))
                 _WindowsVersion = WinMajorVersion + "." + WinMinorVersion + "." +
                                   WinBuildLabVersion;
+
             return _WindowsVersion;
         }
 

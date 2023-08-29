@@ -1,4 +1,4 @@
-﻿#if NETFULL
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,8 +16,11 @@ namespace Westwind.Utilities.Test
         {
             var version = WindowsUtils.GetDotnetVersion();
             Console.WriteLine(version);
-
+#if NETFULL
             StringAssert.StartsWith(version, "4.");            
+#else
+            StringAssert.StartsWith(version, ".NET");            
+#endif
         }
 
         [TestMethod]
@@ -26,8 +29,8 @@ namespace Westwind.Utilities.Test
             var version = WindowsUtils.GetWindowsVersion();
             Console.WriteLine(version);
 
+
             StringAssert.StartsWith(version, "10.");
         }
     }
 }
-#endif
