@@ -143,13 +143,17 @@ namespace Westwind.Utilities
         /// </returns>
         public static string GetDotnetVersion()
         {
+#if NETCORE
+            if(!string.IsNullOrEmpty(DotnetVersion))
+                return DotnetVersion;
+
+            DotnetVersion = RuntimeInformation.FrameworkDescription;
+            return DotnetVersion;            
+#else
 
             if (!string.IsNullOrEmpty(DotnetVersion))
                 return DotnetVersion;
-#if !NETFULL
-            DotnetVersion = System.Diagnostics.RuntimeInformation.FrameworkDescription;
-            return DotnetVersion;
-#else
+
             dynamic value;
             TryGetRegistryKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\", "Release", out value);
 
