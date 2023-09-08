@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Web;
 
 namespace Westwind.Utilities
 {
@@ -75,8 +76,10 @@ namespace Westwind.Utilities
             }
             catch (WebException ex)
             {
-                if (Settings.DontThrowOnErrorStatusCodes)
-                    return ex.Response;
+                if(Settings.DontThrowOnErrorStatusCodes) {
+                    Response = ex?.Response as HttpWebResponse;
+                    return ex?.Response;
+                }
 
                 throw ex;
             }
@@ -86,9 +89,23 @@ namespace Westwind.Utilities
 
         protected override WebResponse GetWebResponse(WebRequest request, System.IAsyncResult result)
         {
-            Response = base.GetWebResponse(request, result) as HttpWebResponse;
+            try
+            {
+                Response = base.GetWebResponse(request, result) as HttpWebResponse;
+            }
+            catch (WebException ex)
+            {
+                if (Settings.DontThrowOnErrorStatusCodes) {
+                    Response = ex?.Response as HttpWebResponse;
+                    return ex?.Response;
+                }
+
+                throw ex;
+            }
+
             return Response;
         }
+
 
     }
 }

@@ -142,8 +142,8 @@ namespace Westwind.Utilities
                 }
                 else
                     settings.CapturedRequestContent = settings.Content as string;
-                
-                jsonResult = client.UploadString(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);
+                                
+                jsonResult = client.UploadString(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);                
 
                 if (jsonResult == null)
                     return default(TResultType);
