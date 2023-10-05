@@ -8,6 +8,9 @@ Retrieves up to the last n characters from the end of a string.
 * **WindowsUtils.IsUserAnAdmin()**  
 Determines if user is an Administrator on Windows.
 
+* **StringUtils.ToBase64String()/FromBase64String()**  
+Helper method that simplifies converting strings to and from Base64 without having to go through the intermediary byte conversion explicitly.
+
 ### 4.0
 
 * **Refactor Data Utilities into separate Westwind.Utilities.Data Library**   

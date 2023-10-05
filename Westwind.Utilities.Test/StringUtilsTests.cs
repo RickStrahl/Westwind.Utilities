@@ -654,5 +654,18 @@ multiple lines";
             Assert.AreEqual(res, "123");
         }
 
+        [TestMethod]
+        public void ToAndFromBase64StringTest() 
+        { 
+            var text = "This is a test string";
+
+            var encoded = StringUtils.ToBase64String(text);
+            Console.WriteLine(text);
+            Console.WriteLine(encoded);
+            var decoded = StringUtils.FromBase64String(encoded);
+
+            Assert.AreEqual(decoded, text, "Text doesn't match");        
+        }
+
     }
 }

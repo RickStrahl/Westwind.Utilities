@@ -1023,6 +1023,36 @@ namespace Westwind.Utilities
             return encoding.GetString(buffer);            
         }
 
+        /// <summary>
+        /// Converts a string to a Base64 string
+        /// </summary>
+        /// <param name="text">A string to convert to base64</param>
+        /// <param name="encoding">Optional encoding - if not passed assumed to be Unicode</param>
+        /// <returns>Base 64 or null</returns>
+        public static string ToBase64String(string text, Encoding encoding = null)
+        {
+            var bytes = StringToBytes(text);
+            if (bytes == null)
+                return null;
+
+            return Convert.ToBase64String(bytes);                
+        }
+
+        /// <summary>
+        /// Converts a base64 string back to a string
+        /// </summary>
+        /// <param name="base64">A base 64 string</param>
+        /// <param name="encoding">Optional encoding - if not passed assumed to be Unicode</param>
+        /// <returns></returns>
+        public static string FromBase64String(string base64, Encoding encoding = null)
+        {
+            var bytes = Convert.FromBase64String(base64);
+            if (bytes == null)
+                return null;
+
+            return BytesToString(bytes, encoding);
+        }
+
         static int ParseHexChar(char c)
         {
             if (c >= '0' && c <= '9')
