@@ -1031,7 +1031,7 @@ namespace Westwind.Utilities
         /// <returns>Base 64 or null</returns>
         public static string ToBase64String(string text, Encoding encoding = null)
         {
-            var bytes = StringToBytes(text);
+            var bytes = StringToBytes(text, encoding);
             if (bytes == null)
                 return null;
 
