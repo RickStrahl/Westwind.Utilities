@@ -403,35 +403,9 @@ namespace Westwind.Utilities
 
             return success;
         }
-        
 
-        /// <summary>
-        /// Wrapper around the Shell Execute API. Windows specific.
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="arguments"></param>
-        /// <param name="workingFolder"></param>
-        /// <param name="verb"></param>
-        /// <returns></returns>
-        public static int ShellExecute(string url, string arguments = null, 
-                                       string workingFolder = null, string verb = "open")
-        {
-            ProcessStartInfo info = new ProcessStartInfo();
-            info.UseShellExecute = true;
-            info.Verb = verb;
-            
-            info.FileName = url;
-            info.Arguments = arguments;
-            info.WorkingDirectory = workingFolder;
-            
-            using (Process process = new Process())
-            {
-                process.StartInfo = info;
-                process.Start();
-            }
 
-            return 0;
-        }
+
 
 
         /// <summary>
@@ -448,23 +422,25 @@ namespace Westwind.Utilities
         /// <param name="windowStyle">Optional - Windows style for the launched application. Default style is normal</param>
         /// <remarks>
         /// If the executable or parameters contain or **may contain spaces** make sure you use quotes (") or (') around the exec or parameters.
+        ///
+        /// throws if the process fails to start or doesn't complete in time (if timeout is specified).
         /// </remarks>
-        public static void ExecuteCommandLine(string fullCommandLine, 
-            string workingFolder = null, 
-            int waitForExitMs = 0, 
+        public static void ExecuteCommandLine(string fullCommandLine,
+            string workingFolder = null,
+            int waitForExitMs = 0,
             string verb = "OPEN",
             ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal,
             bool useShellExecute = true)
         {
             string executable = fullCommandLine;
             string args = null;
-	
+
             if (executable.StartsWith("\""))
             {
                 int at = executable.IndexOf("\" ");
                 if (at > 0)
-                {			
-                    args = executable.Substring(at+1).Trim();
+                {
+                    args = executable.Substring(at + 1).Trim();
                     executable = executable.Substring(0, at);
                 }
             }
@@ -473,8 +449,8 @@ namespace Westwind.Utilities
                 int at = executable.IndexOf(" ");
                 if (at > 0)
                 {
-			
-                    if (executable.Length > at +1)
+
+                    if (executable.Length > at + 1)
                         args = executable.Substring(at + 1).Trim();
                     executable = executable.Substring(0, at);
                 }
@@ -490,7 +466,8 @@ namespace Westwind.Utilities
                 UseShellExecute = true
             };
 
-            using (var p = Process.Start(pi))
+            Process p;
+            using (p = Process.Start(pi))
             {
                 if (waitForExitMs > 0)
                 {
