@@ -105,57 +105,6 @@ namespace Westwind.Utilities
             
             return settings.ResponseByteData;
         }
-        
-
-
-
-
-
-        /// <summary>
-        /// Makes an HTTP with option JSON data serialized from an object
-        /// and parses the result from JSON back into an object.
-        /// Assumes that the service returns a JSON response
-        /// </summary>
-        /// <typeparam name="TResultType">The type of the object returned</typeparam>
-        /// <param name="settings"><see cref="HttpRequestSettings"/>
-        /// Configuration object for the HTTP request made to the server.
-        /// </param>
-        /// <returns>deserialized value/object from returned JSON data</returns>
-        public static TResultType JsonRequest<TResultType>(HttpRequestSettings settings)
-        {
-            var client = new HttpUtilsWebClient(settings);            
-            client.Headers.Add("Accept", "application/json");
-
-            string jsonResult;
-
-            if (settings.Content != null)
-            {
-                if (!string.IsNullOrEmpty(settings.ContentType))
-                    client.Headers["Content-type"] = settings.ContentType;
-                else
-                    client.Headers["Content-type"] = "application/json;charset=utf-8;";
-
-                if (!settings.IsRawData)
-                {
-                    settings.CapturedRequestContent = JsonSerializationUtils.Serialize(settings.Content,
-                        throwExceptions: true);                    
-                }
-                else
-                    settings.CapturedRequestContent = settings.Content as string;
-                                
-                jsonResult = client.UploadString(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);                
-
-                if (jsonResult == null)
-                    return default(TResultType);
-            }
-            else
-                jsonResult = client.DownloadString(settings.Url);
-
-            settings.CapturedResponseContent = jsonResult;
-            settings.Response = client.Response;
-
-            return (TResultType)JsonSerializationUtils.Deserialize(jsonResult, typeof(TResultType), true);
-        }
 
 
         /// <summary>
@@ -249,8 +198,54 @@ namespace Westwind.Utilities
             return settings.ResponseByteData;
         }
 
+        /// <summary>
+        /// Makes an HTTP with option JSON data serialized from an object
+        /// and parses the result from JSON back into an object.
+        /// Assumes that the service returns a JSON response
+        /// </summary>
+        /// <typeparam name="TResultType">The type of the object returned</typeparam>
+        /// <param name="settings"><see cref="HttpRequestSettings"/>
+        /// Configuration object for the HTTP request made to the server.
+        /// </param>
+        /// <returns>deserialized value/object from returned JSON data</returns>
+        public static TResultType JsonRequest<TResultType>(HttpRequestSettings settings)
+        {
+            var client = new HttpUtilsWebClient(settings);            
+            client.Headers.Add("Accept", "application/json");
 
-		/// <summary>
+            string jsonResult;
+
+            if (settings.Content != null)
+            {
+                if (!string.IsNullOrEmpty(settings.ContentType))
+                    client.Headers["Content-type"] = settings.ContentType;
+                else
+                    client.Headers["Content-type"] = "application/json;charset=utf-8;";
+
+                if (!settings.IsRawData)
+                {
+                    settings.CapturedRequestContent = JsonSerializationUtils.Serialize(settings.Content,
+                        throwExceptions: true);                    
+                }
+                else
+                    settings.CapturedRequestContent = settings.Content as string;
+                                
+                jsonResult = client.UploadString(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);                
+
+                if (jsonResult == null)
+                    return default(TResultType);
+            }
+            else
+                jsonResult = client.DownloadString(settings.Url);
+
+            settings.CapturedResponseContent = jsonResult;
+            settings.Response = client.Response;
+
+            return (TResultType)JsonSerializationUtils.Deserialize(jsonResult, typeof(TResultType), true);
+        }
+
+
+        /// <summary>
 		/// Makes an HTTP with option JSON data serialized from an object
 		/// and parses the result from JSON back into an object.
 		/// Assumes that the service returns a JSON response and that
