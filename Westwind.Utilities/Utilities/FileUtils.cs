@@ -291,19 +291,38 @@ namespace Westwind.Utilities
             return path;
         }
 
+        /// <summary>
+        /// Adds a trailing slash to a path if there isn't one.
+        /// 
+        /// Uses the Operating System default path character (`/` or `\`)
+        /// </summary>
+        /// <param name="path">A file system path</param>
+        /// <returns></returns>
+        public static string AddTrailingSlash(string path)
+        {
+            string separator = Path.DirectorySeparatorChar.ToString();
+
+            path = path.TrimEnd();
+
+            if (path.EndsWith(separator) || path.EndsWith(Path.AltDirectorySeparatorChar.ToString()))
+                return path;
+
+            return path + separator;
+        }
+
 
         /// <summary>
         /// Adds a trailing slash to a path if there isn't one.
         /// </summary>
         /// <param name="path">A file system path</param>
+        /// <param name="slashchar">Character to use as trailing character</param>
         /// <returns></returns>
-	    public static string AddTrailingSlash(string path)
+        public static string AddTrailingSlash(string path, char slashChar)
 	    {
-	        string separator = Path.DirectorySeparatorChar.ToString();	        
-
+            var separator = slashChar.ToString();
 	        path = path.TrimEnd();
 
-	        if (path.EndsWith(separator) || path.EndsWith(Path.AltDirectorySeparatorChar.ToString()))
+	        if (path.EndsWith(separator))
 	            return path;
 
 	        return path + separator;
