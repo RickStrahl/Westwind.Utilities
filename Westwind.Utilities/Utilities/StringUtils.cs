@@ -488,7 +488,7 @@ namespace Westwind.Utilities
             if (text.Length > length)
             {
                 text = text.Substring(0, length);
-                text = text.Substring(0, text.LastIndexOf(" ")) + "...";
+                text = text.Substring(0, text.LastIndexOf(" ")) + "…";
             }
 
             if (!text.Contains("\n"))
@@ -506,17 +506,17 @@ namespace Westwind.Utilities
         /// text specified doesn't already exist and the string is not empty.
         /// </summary>
         /// <param name="value">String to terminate</param>
-        /// <param name="terminator">String to terminate the text string with</param>
+        /// <param name="terminatorString">String to terminate the text string with</param>
         /// <returns></returns>
-        public static string TerminateString(string value, string terminator)
+        public static string TerminateString(string value, string terminatorString)
         {
             if (string.IsNullOrEmpty(value))
-                return terminator;
+                return terminatorString;
                     
-            if(value.EndsWith(terminator))
+            if(value.EndsWith(terminatorString))
                 return value;
 
-            return value + terminator;
+            return value + terminatorString;
         }
 
 
