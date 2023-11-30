@@ -406,6 +406,33 @@ namespace Westwind.Utilities
 
 
 
+        /// <summary>
+        /// Wrapper around the Shell Execute API. Windows specific.
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="arguments"></param>
+        /// <param name="workingFolder"></param>
+        /// <param name="verb"></param>
+        /// <returns></returns>
+        public static int ShellExecute(string url, string arguments = null,
+            string workingFolder = null, string verb = "open")
+        {
+            ProcessStartInfo info = new ProcessStartInfo();
+            info.UseShellExecute = true;
+            info.Verb = verb;
+
+            info.FileName = url;
+            info.Arguments = arguments;
+            info.WorkingDirectory = workingFolder;
+
+            using (Process process = new Process())
+            {
+                process.StartInfo = info;
+                process.Start();
+            }
+
+            return 0;
+        }
 
 
         /// <summary>
