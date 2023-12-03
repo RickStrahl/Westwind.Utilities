@@ -251,9 +251,38 @@ namespace Westwind.Utilities
             return startBlock + end;
         }
 
-#endregion
 
-#region File and Path Normalization
+        /// <summary>
+        /// Creates a temporary file name with a specific extension. Optionall
+        /// provide the base path to create it in otherwise the TEMP path is used.
+        ///  Filename is generated as _ + 8 random characters/digits
+        /// </summary>
+        /// <param name="extension">The extension to use (.png)</param>
+        /// <param name="tempPath">Optional - path in which the file is created if it needs to override</param>
+        /// <param name="charCount">Optional - character count - minus the prefix _ - of the generated temp filename. Between 8-16</param>
+        /// <returns></returns>
+        public static string GetTempFilenameWithExtension(string extension, string tempPath = null, int charCount = 8)
+        {
+            if (string.IsNullOrEmpty(extension))
+            {
+                extension = ".tmp";
+            }
+            if (!extension.StartsWith("."))
+                extension = "." + extension;
+
+            if (tempPath == null)
+            {
+                tempPath = Path.GetTempPath();
+            }
+
+            string filename = DataUtils.GenerateUniqueId(charCount);
+
+            return Path.Combine(tempPath, filename + extension);
+        }
+
+        #endregion
+
+        #region File and Path Normalization
 
         /// <summary>
         /// Normalizes a file path to the operating system default
