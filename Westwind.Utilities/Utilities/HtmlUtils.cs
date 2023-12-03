@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -7,6 +8,7 @@ using System.Web;
 using System.Globalization;
 using System.Linq;
 using Westwind.Utilities.Properties;
+
 
 namespace Westwind.Utilities
 {
@@ -199,6 +201,20 @@ namespace Westwind.Utilities
 
 
         /// <summary>
+        /// Create an embedded image url for binary data like images and media
+        /// </summary>
+        /// <param name="imageBytes"></param>
+        /// <param name="mimeType"></param>
+        /// <returns></returns>
+        public static string BinaryToEmbeddedBase64(byte[] imageBytes, string mimeType = "image/png" )
+        {             
+            var data = $"data:{mimeType};base64," + Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
+            return data;
+        }
+
+        
+
+        /// <summary>
         /// Resolves a URL based on the current HTTPContext
         /// 
         /// Note this method is added here internally only
@@ -221,10 +237,10 @@ namespace Westwind.Utilities
             {
 
 #if NETFULL
-				//return VirtualPathUtility.ToAbsolute(originalUrl);
-				string newUrl = "";
+                //return VirtualPathUtility.ToAbsolute(originalUrl);
+                string newUrl = "";
 
-				if (HttpContext.Current != null)
+                if (HttpContext.Current != null)
                 {
                     newUrl = HttpContext.Current.Request.ApplicationPath +
                           originalUrl.Substring(1);
@@ -234,8 +250,8 @@ namespace Westwind.Utilities
                     // Not context: assume current directory is the base directory
                     throw new ArgumentException("Invalid URL: Relative URL not allowed.");
 
-				// Just to be sure fix up any double slashes
-				return newUrl;
+                // Just to be sure fix up any double slashes
+                return newUrl;
 #else
                 throw new ArgumentException("Invalid URL: Relative URL not allowed.");
 #endif
