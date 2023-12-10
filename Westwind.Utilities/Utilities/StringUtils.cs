@@ -467,10 +467,12 @@ namespace Westwind.Utilities
         /// <returns>Trimmed string</returns>
         public static string Truncate(this string text, int maxLength)
         {
-            if (string.IsNullOrEmpty(text)) return text;
-            return text.Length <= maxLength ? text : text.Substring(0, maxLength);
-        }
+            if (string.IsNullOrEmpty(text) || text.Length <= maxLength) 
+                return text;
 
+            return text.Substring(0, maxLength);
+        }
+        
         /// <summary>
         /// Returns an abstract of the provided text by returning up to Length characters
         /// of a text string. If the text is truncated a ... is appended.
@@ -652,10 +654,14 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Returns a string that has the max amount of characters.
+        /// Returns a string that has the max amount of characters of the source string.
+        /// If the string is shorter than the max length the entire string is returned.
+        /// If the string is longer it's truncated.
+        /// If empty the original value is returned (null or string.Empty)
+        /// If the startPosition is greater than the length of the string null is returned
         /// </summary>
-        /// <param name="s">string to work on</param>
-        /// <param name="maxCharacters">Maximum number of characters</param>
+        /// <param name="s">source string to work on</param>
+        /// <param name="maxCharacters">Maximum number of characters to return</param>
         /// <param name="startPosition">Optional start position. If not specified uses entire string (0)</param>
         /// <returns></returns>
         public static string GetMaxCharacters(this string s, int maxCharacters, int startPosition = 0)
