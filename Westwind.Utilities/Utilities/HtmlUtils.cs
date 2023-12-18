@@ -212,7 +212,30 @@ namespace Westwind.Utilities
             return data;
         }
 
-        
+#if NETCORE
+
+        /// <summary>
+        /// Decoded an embedded base64 resource string into its binary content and mime type
+        /// </summary>
+        /// <param name="base64Data">Embedded Base64 data (data:mime/type;b64data) </param>
+        /// <returns></returns>
+        public static (byte[] bytes, string mimeType) EmbeddedBase64ToBinary(string base64Data)
+        {
+            if (string.IsNullOrEmpty(base64Data))
+                return (null, null);
+
+            var parts = base64Data.Split(',');
+            if (parts.Length != 2)
+                return (null, null);
+
+            var mimeType = parts[0].Replace("data:", "").Replace(";base64", "");
+            var data = parts[1];
+
+            var bytes = Convert.FromBase64String(data);
+
+            return (bytes, mimeType);
+        }
+#endif        
 
         /// <summary>
         /// Resolves a URL based on the current HTTPContext
