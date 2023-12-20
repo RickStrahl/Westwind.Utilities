@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
-		<Version>4.0.9</Version>
+		<Version>4.0.11</Version>
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
@@ -21,7 +21,7 @@
 		<PackageProjectUrl>http://github.com/rickstrahl/westwind.utilities</PackageProjectUrl>
 
 		<PackageIcon>icon.png</PackageIcon>
-		<PackageLicense>LICENSE.MD</PackageLicense>
+		<PackageLicenseFile>LICENSE.MD</PackageLicenseFile>
 
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Copyright>Rick Strahl, West Wind Technologies, 2010-2023</Copyright>
@@ -81,7 +81,6 @@
 
 	<ItemGroup>
 		<None Include="icon.png" Pack="true" PackagePath="" />
-		<None Include="LICENSE.MD" />
-		<None Include="Logging\SqlLogManager.cs" />
+		<None Include="LICENSE.MD" Pack="true" PackagePath="" />
 	</ItemGroup>
 </Project>
