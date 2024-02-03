@@ -266,7 +266,7 @@ namespace Westwind.Utilities.Data
                     if (ConnectionString.Contains("="))
                     {
                         _Connection = dbProvider.CreateConnection();
-                        _Connection.ConnectionString = ConnectionString;
+                        _Connection.ConnectionString = ConnectionString;                        
                     }
                     else
                     {
@@ -319,21 +319,6 @@ namespace Westwind.Utilities.Data
         }
 
         /// <summary>
-        /// Closes a connection
-        /// </summary>
-        /// <param name="Command"></param>
-        public virtual void CloseConnection(DbCommand Command)
-        {
-            if (Transaction != null)
-                return;
-
-            if (Command.Connection != null &&
-                Command.Connection.State != ConnectionState.Closed)
-                Command.Connection.Close();
-            
-            _Connection = null;
-        }
-        /// <summary>
         /// Closes an active connection. If a transaction is pending the 
         /// connection is held open.
         /// </summary>
@@ -346,6 +331,23 @@ namespace Westwind.Utilities.Data
                 _Connection.State != ConnectionState.Closed)
                 _Connection.Close();
 
+            _Connection = null;
+        }
+
+
+        /// <summary>
+        /// Closes a connection on a command
+        /// </summary>
+        /// <param name="Command"></param>
+        public virtual void CloseConnection(DbCommand Command)
+        {
+            if (Transaction != null)
+                return;
+
+            if (Command.Connection != null &&
+                Command.Connection.State != ConnectionState.Closed)
+                Command.Connection.Close();
+            
             _Connection = null;
         }
 
