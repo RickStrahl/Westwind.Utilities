@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
-		<Version>4.0.11</Version>
+		<Version>4.0.12</Version>
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
@@ -14,7 +14,7 @@
 		<Description>.NET utility library that includes Application Configuration, lightweight ADO.NET Data Access Layer, logging, utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>
 		<Description>Data access support library for Westwind.Utilities that provides a small lightweight data access providerand and a host of data utilities.</Description>
 		<Summary>Data access support library for Westwind.Utilities.</Summary>
-		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2023</PackageCopyright>
+		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2024</PackageCopyright>
 		<PackageTags>Westwind DataAccess DataUtils DAL Sql ADO.NET</PackageTags>
 		<PackageReleaseNotes></PackageReleaseNotes>
 
@@ -61,13 +61,9 @@
 	  <Compile Remove="Logging\SqlLogManager.cs" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />
-	</ItemGroup>
-
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
@@ -82,5 +78,9 @@
 	<ItemGroup>
 		<None Include="icon.png" Pack="true" PackagePath="" />
 		<None Include="LICENSE.MD" Pack="true" PackagePath="" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />
 	</ItemGroup>
 </Project>
