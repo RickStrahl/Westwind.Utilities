@@ -1266,24 +1266,25 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Retrieves a text from an XML-like string
+        /// Retrieves a string value from an XML-like string collection that was stored via SetProperty()
         /// </summary>
-        /// <param name="propertyString"></param>
-        /// <param name="key"></param>
+        /// <param name="propertyString">String of XML like values (not proper XML)</param>
+        /// <param name="key">The key of the property to return or empty string</param>
         /// <returns></returns>
         public static string GetProperty(string propertyString, string key)
         {
-            return StringUtils.ExtractString(propertyString, "<" + key + ">", "</" + key + ">");
+            var value = StringUtils.ExtractString(propertyString, "<" + key + ">", "</" + key + ">");
+            return value;
         }
 
 
-
         /// <summary>
-        /// 
+        /// Sets a property value in an XML-like structure that can be used to store properties
+        /// in a string.
         /// </summary>
-        /// <param name="propertyString"></param>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
+        /// <param name="propertyString">String of XML like values (not proper XML)</param>
+        /// <param name="key">a key in that string</param>
+        /// <param name="value">the string value to store</param>
         /// <returns></returns>
         public static string SetProperty(string propertyString, string key, string value)
         {
@@ -1293,8 +1294,9 @@ namespace Westwind.Utilities
             {
                 return propertyString.Replace(extract, "");
             }
-
-            string xmlLine = "<" + key + ">" + value + "</" + key + ">";
+            
+            // NOTE: Value is not XML encoded - we only retrieve based on named nodes so no conflict
+            string xmlLine = "<" + key + ">" +value + "</" + key + ">";
 
             // replace existing
             if (extract != string.Empty)
