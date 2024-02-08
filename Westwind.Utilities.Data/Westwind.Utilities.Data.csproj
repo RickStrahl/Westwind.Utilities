@@ -79,8 +79,4 @@
 		<None Include="icon.png" Pack="true" PackagePath="" />
 		<None Include="LICENSE.MD" Pack="true" PackagePath="" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />
-	</ItemGroup>
 </Project>
