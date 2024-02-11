@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
-		<Version>4.0.14</Version>
+		<Version>4.0.15</Version>
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
@@ -78,5 +78,9 @@
 	<ItemGroup>
 		<None Include="icon.png" Pack="true" PackagePath="" />
 		<None Include="LICENSE.MD" Pack="true" PackagePath="" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />
 	</ItemGroup>
 </Project>
