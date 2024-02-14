@@ -542,6 +542,11 @@ namespace Westwind.Utilities
         /// </summary>
         public bool DontThrowOnErrorStatusCodes { get; set; }
 
+        /// <summary>
+        /// Http Protocol Version 1.1
+        /// </summary>
+        public string HttpVersion { get; set; } = "1.1";
+
 
         public HttpRequestSettings()
         {
