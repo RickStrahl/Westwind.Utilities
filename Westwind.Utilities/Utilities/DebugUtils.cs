@@ -33,6 +33,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Westwind.Utilities
@@ -117,6 +118,44 @@ namespace Westwind.Utilities
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Parses a stack trace and tries to return the source code line that caused the exception in 
+        /// a semi-formatted way if the stack trace returns line numbers (ie. Debug infor is available)
+        /// </summary>
+        /// <param name="stackTrace">A string of a full stack trace</param>
+        /// <returns>A stacktrace with the code line from source if source is available via Debug. Otherwise the raw stacktrace is returned.</returns>
+        public static string ParseStackTrace(string stackTrace)
+        {
+            if (string.IsNullOrEmpty(stackTrace))
+                return null;
+
+            string source = stackTrace;
+            try
+            {
+                var firstLine = StringUtils.GetLines(stackTrace, 1)[0];
+
+                if (!string.IsNullOrEmpty(firstLine) && firstLine.Contains(".cs:line "))
+                {
+                    firstLine = StringUtils.ExtractString(firstLine, " in ", "xxx", allowMissingEndDelimiter: true);
+
+                    var tokens = firstLine.Split(new[] { ":line " }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (tokens.Length > 0 && System.IO.File.Exists(tokens[0]))
+                    {
+                        var line = int.Parse(tokens[1]);
+                        var fc = File.ReadAllText(tokens[0]);
+                        var lines = StringUtils.GetLines(fc);
+                        source = lines[line - 1].Trim();
+
+                        stackTrace = source + stackTrace;
+                    }
+                }
+            }
+            catch { }
+
+            return stackTrace;
         }
 
     }
