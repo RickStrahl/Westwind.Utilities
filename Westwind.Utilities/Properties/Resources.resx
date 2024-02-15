@@ -199,4 +199,19 @@
   <data name="Yesterday" xml:space="preserve">
     <value>Yesterday</value>
   </data>
+  <data name="CouldntCreateUserToken" xml:space="preserve">
+    <value>Couldn't create user token</value>
+  </data>
+  <data name="InvalidUserTokenIdentifier" xml:space="preserve">
+    <value>Invalid token identifier - token must be at least 8 characters</value>
+  </data>
+  <data name="MissingOrInvalidTokenIdentifier" xml:space="preserve">
+    <value>Missing or invalid token identifier.</value>
+  </data>
+  <data name="UserTokenHasExpired" xml:space="preserve">
+    <value>Token has expired.</value>
+  </data>
+  <data name="UserTokenNotFound" xml:space="preserve">
+    <value>Token not found.</value>
+  </data>
 </root>

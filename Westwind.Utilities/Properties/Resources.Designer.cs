@@ -106,6 +106,15 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t create user token.
+        /// </summary>
+        public static string CouldntCreateUserToken {
+            get {
+                return ResourceManager.GetString("CouldntCreateUserToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Couldn&apos;t load entity. Invalid key provided..
         /// </summary>
         public static string CouldntLoadEntityInvalidKeyProvided {
@@ -187,6 +196,15 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid token identifier - token must be at least 8 characters.
+        /// </summary>
+        public static string InvalidUserTokenIdentifier {
+            get {
+                return ResourceManager.GetString("InvalidUserTokenIdentifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid Xml configuration file format..
         /// </summary>
         public static string InvalidXMLConfigurationFileFormat {
@@ -210,6 +228,15 @@ namespace Westwind.Utilities.Properties {
         public static string MissingEncryptionKey {
             get {
                 return ResourceManager.GetString("MissingEncryptionKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing or invalid token identifier..
+        /// </summary>
+        public static string MissingOrInvalidTokenIdentifier {
+            get {
+                return ResourceManager.GetString("MissingOrInvalidTokenIdentifier", resourceCulture);
             }
         }
         
@@ -291,6 +318,24 @@ namespace Westwind.Utilities.Properties {
         public static string UnsupportedProviderFactory {
             get {
                 return ResourceManager.GetString("UnsupportedProviderFactory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Token has expired..
+        /// </summary>
+        public static string UserTokenHasExpired {
+            get {
+                return ResourceManager.GetString("UserTokenHasExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Token not found..
+        /// </summary>
+        public static string UserTokenNotFound {
+            get {
+                return ResourceManager.GetString("UserTokenNotFound", resourceCulture);
             }
         }
         

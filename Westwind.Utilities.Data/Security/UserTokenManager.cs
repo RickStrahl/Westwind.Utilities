@@ -1,4 +1,5 @@
 ﻿using System;
+using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities.Data.Security
 {
@@ -74,7 +75,7 @@ namespace Westwind.Utilities.Data.Security
 
                 if (checkForExpiration && token.Updated.AddSeconds(TokenTimeoutSeconds) < DateTime.UtcNow)
                 {
-                    SetError("Token has expired.");
+                    SetError(Resources.UserTokenHasExpired);
                     if (!string.IsNullOrEmpty(token.Id))
                         DeleteToken(token.Id);
                     return null;
@@ -109,7 +110,7 @@ namespace Westwind.Utilities.Data.Security
         {
             if (string.IsNullOrEmpty(tokenIdentifier) || tokenIdentifier.Length < 8)
             {
-                SetError("Missing or invalid token identifier.");
+                SetError(Resources.MissingOrInvalidTokenIdentifier);
                 return null;
             }
 
@@ -121,17 +122,14 @@ namespace Westwind.Utilities.Data.Security
                 token = data.Find<UserToken>(sql, tokenIdentifier);
                 if (token == null)
                 {
-                    if (string.IsNullOrEmpty(data.ErrorMessage))
-                        data.ErrorMessage = "No matching Token Identifier";
-
-                    SetError("Token not found.");
+                    SetError(Resources.UserTokenNotFound);
                     return null;
                 }
 
                 // expired token
                 if (token.Updated.AddSeconds(TokenTimeoutSeconds) < DateTime.UtcNow)
                 {
-                    SetError("Token has expired.");
+                    SetError(Resources.UserTokenHasExpired);
                     if (!string.IsNullOrEmpty(token.Id))
                         DeleteToken(token.Id);
                     return null;
@@ -162,7 +160,7 @@ namespace Westwind.Utilities.Data.Security
 
             if (tokenIdentifier != null && tokenIdentifier.Length < 8 )
             {
-                SetError("Invalid token identifier - token must be at least 8 characters");
+                SetError(Resources.InvalidUserTokenIdentifier);
                 return null;
             }
 
@@ -204,10 +202,15 @@ insert into [{Tablename}]
                     sql = $@"update [{Tablename}] set Id=@0, UserId=@1, ReferenceId=@2, TokenIdentifier=@3, Updated=@4, IsValidated=@5  where Id=@6";
                     result = data.ExecuteNonQuery(sql, tokenId, userId, referenceId ?? token.ReferenceId, tokenIdentifier, dt, token.IsValidated, token.Id);
                 }
+
+                if (result == -1)
+                {
+                    SetError(Resources.CouldntCreateUserToken +": " + data.ErrorMessage);
+                    return null;
+                }
             }
 
-            if (result == -1)
-                return null;
+            
 
             return tokenId;
         }
@@ -347,16 +350,16 @@ Commit Transaction T1
         {
             if (message == null || message == "CLEAR")
             {
-                this.ErrorMessage = string.Empty;
+                ErrorMessage = string.Empty;
                 return;
             }
-            this.ErrorMessage += message;
+            ErrorMessage += message;
         }
 
         protected void SetError(Exception ex, bool checkInner = false)
         {
             if (ex == null)
-                this.ErrorMessage = string.Empty;
+                ErrorMessage = string.Empty;
 
             Exception e = ex;
             if (checkInner)
