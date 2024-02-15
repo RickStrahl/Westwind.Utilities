@@ -32,7 +32,6 @@ namespace Westwind.Utilities.Data.Security
             TokenServerConnectionString = connectionString;
         }
 
-
         /// <summary>
         /// Check to see if a token is valid
         /// </summary>
