@@ -19,33 +19,25 @@ namespace Westwind.Utilities
         public const string STR_MultipartBoundary = "----FormBoundary3vDSIXiW0WSTB551";
 
 
-        /// <summary>
-        /// Retrieves an Http request and returns the result as a string
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public static async Task<string> DownloadStringAsync(string url)
-        {
-            return await DownloadStringAsync(new HttpClientRequestSettings
-            {
-                Url = url
-            });            
-        }
-
-        public static async Task<string> DownloadStringAsync(string url, string verb, object data)
-        {
-            return await DownloadStringAsync(new HttpClientRequestSettings
-            {
-                Url = url,
-                HttpVerb = verb,
-                RequestContent = data
-            });
-        }
-
 
         /// <summary>
-        /// Retrieves and Http request and returns data as a string.
+        /// Runs an Http request and returns success results as a string or null
+        /// on failure or non-200/300 requests.
+        /// 
+        /// Failed requests return null and set the settings.ErrorMessage property
+        /// but you can can access the `settings.Response` or use the 
+        /// `settings.GetResponseStringAsync()` method or friends to retrieve 
+        /// content despite the error.
         /// </summary>
+        /// <remarks>
+        /// By default this method does not throw on errors or error status codes,
+        /// but returns null and an error message. For error requests you can check
+        /// settings.HasResponseContent and then either directly access settings.Response,
+        /// or use settings.GetResponseStringAsync() or friends to retrieve error content.
+        /// 
+        /// If you want the method to throw exceptions on errors an > 400 status codes,
+        /// use `settings.ThrowExceptions = true`.
+        /// </remarks>
         /// <param name="settings">Pass HTTP request configuration parameters object to set the URL, Verb, Headers, content and more</param>
         /// <returns>string of HTTP response</returns>
         public static async Task<string> DownloadStringAsync(HttpClientRequestSettings settings)
@@ -64,6 +56,7 @@ namespace Westwind.Utilities
                     settings.ErrorMessage = ex.GetBaseException().Message;
                     return null;
                 }
+              
 
                 // Capture the response content
                 try
@@ -77,19 +70,23 @@ namespace Westwind.Utilities
                         return content;
                     }
 
-                    if (settings.HasResponseContent)
-                    {
-                        settings.HasErrors = true;                        
-                        settings.ErrorMessage = ((int) settings.Response.StatusCode).ToString()  + " " + settings.Response.StatusCode.ToString();
-                        
-                        // return null but allow for explicit response reading
-                        return null;
-                    }
+                    settings.HasErrors = true;                        
+                    settings.ErrorMessage = ((int) settings.Response.StatusCode).ToString()  + " " + settings.Response.StatusCode.ToString();
+
+                    if (settings.ThrowExceptions)
+                        throw new HttpRequestException(settings.ErrorMessage);
+
+                    // return null but allow for explicit response reading
+                    return null;                    
                 }
                 catch (Exception ex)
                 {
                     settings.ErrorException = ex;
                     settings.ErrorMessage = ex.GetBaseException().Message;
+
+                    if(settings.ThrowExceptions)
+                        throw ex;
+
                     return null;
                 }
             }
@@ -97,8 +94,52 @@ namespace Westwind.Utilities
             return content;
         }
 
+
         /// <summary>
-        /// Calls a URL and returns the HttpResponse. Also set on settings.Response and you 
+        /// Runs an Http request and returns success results as a string or null
+        /// on failure or non-200/300 requests.
+        /// 
+        /// Failed requests return null and set the settings.ErrorMessage property
+        /// but you can can access the `settings.Response` or use the 
+        /// `settings.GetResponseStringAsync()` method or friends to retrieve 
+        /// content despite the error.
+        /// </summary>
+        /// <remarks>
+        /// By default this method does not throw on errors or error status codes,
+        /// but returns null and an error message. For error requests you can check
+        /// settings.HasResponseContent and then either directly access settings.Response,
+        /// or use settings.GetResponseStringAsync() or friends to retrieve error content.
+        /// 
+        /// If you want the method to throw exceptions on errors an > 400 status codes,
+        /// use `settings.ThrowExceptions = true`.
+        /// </remarks>        
+        /// <param name="url">The url to access</param>      
+        /// <param name="data">The data to send. String data is sent as is all other data is JSON encoded.</param>
+        /// <param name="contentType">Optional Content type for the request</param>
+        /// <param name="verb">The HTTP Verb to use (GET,POST,PUT,DELETE etc.)</param>
+        /// <returns>string of HTTP response</returns>
+        public static async Task<string> DownloadStringAsync(string url, object data = null, string contentType = null, string verb = null)
+        {
+            if (string.IsNullOrEmpty(verb))
+            {
+                if (data != null)
+                    verb = "POST";
+                else
+                    verb = "GET";
+            }
+
+            return await DownloadStringAsync(new HttpClientRequestSettings
+            {
+                Url = url,
+                HttpVerb = verb,
+                RequestContent = data,
+                RequestContentType = contentType
+            });
+        }
+
+
+        /// <summary>
+        /// Calls a URL and returns the raw, unretrieved HttpResponse. Also set on settings.Response and you 
         /// can read the response content from settings.Response.Content.ReadAsXXX() methods.
         /// </summary>
         /// <param name="settings">Pass HTTP request configuration parameters object to set the URL, Verb, Headers, content and more</param>
@@ -110,17 +151,32 @@ namespace Westwind.Utilities
                 try
                 {
                     settings.Response = await client.SendAsync(settings.Request);
+
+                    if (settings.ThrowExceptions && !settings.Response.IsSuccessStatusCode)
+                        throw new HttpRequestException(settings.Response.StatusCode.ToString() + " " + settings.Response.ReasonPhrase);
+                    
                     return settings.Response;
                 }
                 catch (Exception ex)
                 {
                     settings.ErrorException = ex;
                     settings.ErrorMessage = ex.GetBaseException().Message;
+
+                    if (settings.ThrowExceptions)
+                        throw ex;
+                    
                     return null;
                 }
             }            
         }
 
+
+        /// <summary>
+        /// Makes a JSON request that returns a JSON result.
+        /// </summary>
+        /// <typeparam name="TResult">Result type to deserialize to</typeparam>
+        /// <param name="settings">Configuration for this request</param>
+        /// <returns></returns>
         public static async Task<TResult> DownloadJsonAsync<TResult>(HttpClientRequestSettings settings)             
         {
             settings.RequestContentType = "application/json";
@@ -149,6 +205,17 @@ namespace Westwind.Utilities
             }
 
             return default;
+        }
+
+        public static async Task<TResult> DownloadJsonAsync<TResult>(string url, string verb = "GET", object data = null)
+        {
+            return await DownloadJsonAsync<TResult>(new HttpClientRequestSettings
+            {
+                Url = url,
+                HttpVerb = verb,
+                RequestContent = data,
+                RequestContentType = data != null ? "application/json" : null
+            });
         }
 
 
@@ -393,7 +460,7 @@ namespace Westwind.Utilities
         /// Useful if you need to return error messages on 500 and 400 responses
         /// from API requests.
         /// </summary>
-        public bool DontThrowOnErrorStatusCodes { get; set; }
+        public bool ThrowExceptions { get; set; }
 
         /// <summary>
         /// Http Protocol Version 1.1

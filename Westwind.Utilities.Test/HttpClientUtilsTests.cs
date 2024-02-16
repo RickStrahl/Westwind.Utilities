@@ -103,8 +103,7 @@ namespace Westwind.Utilities.Test
                 Url = "https://store.west-wind.com/api/account/authenticate",
                 HttpVerb = "POST",
                 RequestContent = json,
-                RequestContentType = "application/json",
-                Proxy = new WebProxy("http://localhost:8888")
+                RequestContentType = "application/json"
             };
 
             json = await HttpClientUtils.DownloadStringAsync(settings);
@@ -123,6 +122,43 @@ namespace Westwind.Utilities.Test
             
             Console.WriteLine(jobj);
             Console.WriteLine(((dynamic)jobj).message);
+        }
+
+
+
+        [TestMethod]
+        public async Task HttpRequestBadJsonPostWithExceptionsTest()
+        {
+            string json = """
+                          {
+                              "username": "test@test.com",
+                              "password": "kqm3ube0jnm!QKC9wcx"
+                          }
+                          """;
+            var settings = new HttpClientRequestSettings
+            {
+                Url = "https://store.west-wind.com/api/account/bogus",
+                HttpVerb = "POST",
+                RequestContent = json,
+                RequestContentType = "application/json",
+                ThrowExceptions = true
+            };
+            
+            try
+            {
+                json = await HttpClientUtils.DownloadStringAsync(settings);
+                Console.WriteLine(json);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);  // 404
+
+                var htmlErrorPage = await settings.GetResponseStringAsync();
+                Assert.IsNotNull(htmlErrorPage);
+                Assert.IsTrue(htmlErrorPage.StartsWith("<!DOCTYPE"));
+                //Console.WriteLine(htmlErrorPage);
+            }
+            
         }
 
     }
