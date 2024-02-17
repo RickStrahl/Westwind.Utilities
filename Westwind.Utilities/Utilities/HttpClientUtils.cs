@@ -90,8 +90,6 @@ namespace Westwind.Utilities
                     return null;
                 }
             }
-
-            return content;
         }
 
 
