@@ -14,14 +14,48 @@ namespace Westwind.Utilities.Test
     {
         public const string ConnectionString = "server=.;database=WestwindWebStore;integrated security=true;encrypt=false";
 
+        [TestInitialize]
+        public void Initialize()
+        {
+            // *** Set up the connection string
+            var manager = new UserTokenManager(ConnectionString);
+            if (!manager.IsUserTokenTable())
+                manager.CreateUserTokenSqlTable();
+        }
+
         [TestMethod]
         public void CreateTokenTest()
         {
             var manager = new UserTokenManager(ConnectionString);
-            var token = manager.CreateNewToken("1111", "Reference #1", "12345678");
+            var token = manager.CreateNewToken("1111", "Reference #1", "12345678", data: "Additional Data", scope: "AppName" );
 
             Assert.IsNotNull(token, manager.ErrorMessage);
             Console.WriteLine(token);
+        }
+
+        [TestMethod]
+        public void UpdateTokenTest()
+        {
+            // Create a token
+            var manager = new UserTokenManager(ConnectionString);
+            var token = manager.CreateNewToken("4444", "Reference #4", "12345678", data: "Additional Data", scope: "AppName");
+
+            Assert.IsNotNull(token, manager.ErrorMessage);
+      
+
+            // Update the token 
+            token = manager.CreateNewToken("4444", "Reference #5", "12345678", data: "Additional Data", scope: "AppName");
+            
+            Assert.IsNotNull(token, manager.ErrorMessage);
+            
+
+            // Retrieve the token and check the reference
+            var userToken = manager.GetToken(token);
+            Assert.IsNotNull(userToken, manager.ErrorMessage);
+            Assert.AreEqual("Reference #5", userToken.ReferenceId);
+
+            // remove the token
+            manager.DeleteToken(token);
         }
 
         [TestMethod]

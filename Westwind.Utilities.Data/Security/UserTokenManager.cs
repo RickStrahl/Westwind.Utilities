@@ -147,13 +147,17 @@ namespace Westwind.Utilities.Data.Security
         }
 
         /// <summary>
-        /// adds a new token record into the db and returns the new token id
+        /// Adds a new token record into the db and returns the new token id.
+        /// 
+        /// Parameters map to the modifiable user token table fields, so you can provide initial values.
         /// </summary>
         /// <param name="userId">A mapping user id that maps into a user/customer table of the application</param>
         /// <param name="referenceId">An optional reference id</param>
         /// <param name="tokenIdentifier">An optional token identifier that can be used to retrieve a token after creation. Must be 8 or more chars long or null if not provided</param>
+        /// <param name="scope">Optional scope identifier</param>
+        /// <param name="data">Optional additional data that can be stored</param>
         /// <returns>A new token Id</returns>
-        public string CreateNewToken(string userId, string referenceId = null, string tokenIdentifier = null)
+        public string CreateNewToken(string userId, string referenceId = null, string tokenIdentifier = null, string scope = null, string data = null)
         {
             var dt = DateTime.UtcNow;
 
@@ -165,16 +169,16 @@ namespace Westwind.Utilities.Data.Security
 
             string tokenId;
             int result;
-            using (var data = GetSqlData())
+            using (var db = GetSqlData())
             {
                 tokenId = null;
                 string sql;
                 result = -1;
 
-                var token = data.Find<UserToken>($"select Top 1 * from [{Tablename}] where userId=@0", userId);
+                var token = db.Find<UserToken>($"select Top 1 * from [{Tablename}] where userId=@0", userId);
 
                 // error - table doesn't exist?
-                if (!string.IsNullOrEmpty(data.ErrorMessage))
+                if (!string.IsNullOrEmpty(db.ErrorMessage))
                 {
                     if (!IsUserTokenTable() && CreateUserTokenSqlTable())
                     {
@@ -189,22 +193,22 @@ namespace Westwind.Utilities.Data.Security
 
                     sql = $@"
 insert into [{Tablename}]
-            (Id,UserId,ReferenceId,TokenIdentifier,Updated,Created,IsValidated) Values
-            (@0,@1,@2, @3,@4,@5,@6)
+            (Id,UserId,ReferenceId,TokenIdentifier,scope, data,Updated,Created,IsValidated) Values
+            (@0,@1,@2, @3,@4,@5,@6,@7,@8)
 ";
-                    result = data.ExecuteNonQuery(sql, tokenId, userId, referenceId, tokenIdentifier, dt, dt, false);
+                    result = db.ExecuteNonQuery(sql, tokenId, userId, referenceId, tokenIdentifier, scope, data, dt, dt, false );
                 }
                 else
                 {
                     // replace an existing token for this user id
                     tokenId = DataUtils.GenerateUniqueId(15);
-                    sql = $@"update [{Tablename}] set Id=@0, UserId=@1, ReferenceId=@2, TokenIdentifier=@3, Updated=@4, IsValidated=@5  where Id=@6";
-                    result = data.ExecuteNonQuery(sql, tokenId, userId, referenceId ?? token.ReferenceId, tokenIdentifier, dt, token.IsValidated, token.Id);
+                    sql = $@"update [{Tablename}] set Id=@0, UserId=@1, ReferenceId=@2, TokenIdentifier=@3, Scope=@4, Data=@5, Updated=@6, IsValidated=@7  where Id=@8";
+                    result = db.ExecuteNonQuery(sql, tokenId, userId, referenceId ?? token.ReferenceId, tokenIdentifier, scope, data, dt, token.IsValidated, token.Id);
                 }
 
                 if (result == -1)
                 {
-                    SetError(Resources.CouldntCreateUserToken +": " + data.ErrorMessage);
+                    SetError(Resources.CouldntCreateUserToken +": " + db.ErrorMessage);
                     return null;
                 }
             }
