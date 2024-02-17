@@ -48,6 +48,7 @@ using System.Globalization;
 
 using System.Xml.Serialization;
 using System.Diagnostics;
+using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities.Configuration
 {
@@ -123,6 +124,8 @@ namespace Westwind.Utilities.Configuration
                                string sectionName = null, 
                                object configData = null)
         {
+            provider = provider ?? Provider;
+
             // Initialization occurs only once
             if (InitializeCalled)
                return;
@@ -161,7 +164,7 @@ namespace Westwind.Utilities.Configuration
 
             Provider = provider;
             if (!Provider.Read(this) && !string.IsNullOrWhiteSpace(Provider.ErrorMessage))
-                Trace.WriteLine("Westwind.Utilities.Configuration.AppConfiguration initialization error: " + Provider.ErrorMessage);
+                Trace.WriteLine(Resources.ConfigurationInitializationError + ": " + Provider.ErrorMessage);
         }
 
         /// <summary>

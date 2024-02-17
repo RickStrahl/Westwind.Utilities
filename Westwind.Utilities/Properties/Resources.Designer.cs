@@ -88,6 +88,15 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configuration Initialization Error.
+        /// </summary>
+        public static string ConfigurationInitializationError {
+            get {
+                return ResourceManager.GetString("ConfigurationInitializationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configuration method no longer supported.
         /// </summary>
         public static string ConfigurationMethodNoLongerSupported {

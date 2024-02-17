@@ -214,4 +214,7 @@
   <data name="UserTokenNotFound" xml:space="preserve">
     <value>Token not found.</value>
   </data>
+  <data name="ConfigurationInitializationError" xml:space="preserve">
+    <value>Configuration Initialization Error</value>
+  </data>
 </root>

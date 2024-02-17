@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using Newtonsoft.Json;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Westwind.Utilities.Configuration.Tests
 {
@@ -108,5 +109,44 @@ namespace Westwind.Utilities.Configuration.Tests
             Assert.IsTrue(config.Password == "seekrit2");
             Assert.IsTrue(config.AppConnectionString == "server=.;database=unsecured");
         }
+
+        [TestMethod]
+        public void RawJsonFileWithSingletonTest()
+        {
+            var config = MyJsonConfiguration.Current;
+
+            Assert.IsNotNull(config);
+            
+            Console.WriteLine(JsonSerializationUtils.Serialize(config, false, true));            
+
+        }
     }
+
+    public class MyJsonConfiguration : AppConfiguration 
+    { 
+        public static MyJsonConfiguration Current { get; set; }
+
+        static MyJsonConfiguration()
+        {
+            var config = new MyJsonConfiguration();
+            // assign a provider explicitly
+            config.Provider = new JsonFileConfigurationProvider<MyJsonConfiguration>()
+            {
+                JsonConfigurationFile = "./SupportFiles/_MyJsonConfiguration.json"
+            };
+
+            // load and read the configuration
+            //config.Initialize();
+            config.Read();
+
+            Current = config;
+        }
+
+
+        public string MyString { get; set; } = "Default String";
+        public int SomeValue { get; set; } = -1;
+
+        
+    }
+
 }
