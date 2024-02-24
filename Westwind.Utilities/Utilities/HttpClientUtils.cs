@@ -399,7 +399,7 @@ namespace Westwind.Utilities
         /// <summary>
         /// An optional proxy to set for this request
         /// </summary>
-        public WebProxy Proxy { get; set; }
+        public IWebProxy Proxy { get; set; }
 
         /// <summary>
         /// Capture request string data that was actually sent to the server.
