@@ -49,37 +49,6 @@ namespace Westwind.Utilities
     {
 
         #region Open in or Start Process
-        /// <summary>
-        /// Opens a File or Folder in Explorer. If the path is a file
-        /// Explorer is opened in the parent folder with the file selected
-        /// </summary>
-        /// <param name="filename"></param>
-        public static bool OpenFileInExplorer(string filename)
-        {
-            if (string.IsNullOrEmpty(filename))
-                return false;
-
-            if (Directory.Exists(filename))
-                ShellUtils.GoUrl(filename);
-            else
-            {
-                // required as command Explorer command line doesn't allow mixed slashes
-                filename = FileUtils.NormalizePath(filename); 
-
-                if (!File.Exists(filename))
-                    filename = Path.GetDirectoryName(filename);
-
-                try
-                {
-                    Process.Start("explorer.exe", $"/select,\"{filename}\"");
-                }
-                catch
-                {   
-                    return false;
-                }
-            }
-            return true;
-        }
 
         /// <summary>
         /// Executes a Windows process with given command line parameters
@@ -272,38 +241,7 @@ namespace Westwind.Utilities
             }
         }
 
-        /// <summary>
-        /// Opens a Terminal window in the specified folder
-        /// </summary>
-        /// <param name="folder"></param>
-        /// <param  name="mode">Powershell, Command or Bash</param>
-        /// <returns>false if process couldn't be started - most likely invalid link</returns>
-        public static bool OpenTerminal(string folder, TerminalModes mode = TerminalModes.Powershell)
-        {
-            try
-            {
-                string cmd = null, args = null;
-
-                if (mode == TerminalModes.Powershell)
-                {
-                    cmd = "powershell.exe";
-                    args = "-noexit -command \"cd '{0}'\"";
-                }
-                else if(mode == TerminalModes.Command)
-                {
-                    cmd = "cmd.exe";
-                    args = "/k \"cd {0}\"";
-                }
-                
-                Process.Start(cmd,string.Format(args, folder));
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
-        }
-#endregion
+        #endregion
 
         #region Shell Execute Apis, URL Openening
 
@@ -432,6 +370,71 @@ namespace Westwind.Utilities
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// Opens a File or Folder in Explorer. If the path is a file
+        /// Explorer is opened in the parent folder with the file selected
+        /// </summary>
+        /// <param name="filename"></param>
+        public static bool OpenFileInExplorer(string filename)
+        {
+            if (string.IsNullOrEmpty(filename))
+                return false;
+
+            // Is it a directory? Just open
+            if (Directory.Exists(filename))
+                ShellExecute(filename);
+            else
+            {
+                // required as command Explorer command line doesn't allow mixed slashes
+                filename = FileUtils.NormalizePath(filename); 
+
+                if (!File.Exists(filename))
+                    filename = Path.GetDirectoryName(filename);
+
+                try
+                {
+                    Process.Start("explorer.exe", $"/select,\"{filename}\"");
+                }
+                catch
+                {   
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Opens a Terminal window in the specified folder
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param  name="mode">Powershell, Command or Bash</param>
+        /// <returns>false if process couldn't be started - most likely invalid link</returns>
+        public static bool OpenTerminal(string folder, TerminalModes mode = TerminalModes.Powershell)
+        {
+            try
+            {
+                string cmd = null, args = null;
+
+                if (mode == TerminalModes.Powershell)
+                {
+                    cmd = "powershell.exe";
+                    args = "-noexit -command \"cd '{0}'\"";
+                }
+                else if(mode == TerminalModes.Command)
+                {
+                    cmd = "cmd.exe";
+                    args = "/k \"cd {0}\"";
+                }
+                
+                Process.Start(cmd,string.Format(args, folder));
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
 
 
