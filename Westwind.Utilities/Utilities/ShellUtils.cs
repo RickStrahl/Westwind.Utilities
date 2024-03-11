@@ -61,7 +61,7 @@ namespace Westwind.Utilities
         public static int ExecuteProcess(string executable, 
                                         string arguments = null, 
                                         int timeoutMs = 0, 
-                                        ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden)
+                                        ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal)
         {
             Process process;
 
