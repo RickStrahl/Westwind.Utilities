@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
-		<Version>4.0.18</Version>
+		<Version>4.0.20</Version>
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
@@ -62,9 +62,8 @@
 	</ItemGroup>
 
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-	<!--<ItemGroup>-->
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
+	<ItemGroup Condition=" '$(TargetFramework)' != 'net462'">
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">

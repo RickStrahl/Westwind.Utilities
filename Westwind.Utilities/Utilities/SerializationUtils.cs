@@ -41,6 +41,7 @@ using System.Xml.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Diagnostics;
 using System.Runtime.Serialization;
+using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities
 {
@@ -92,6 +93,7 @@ namespace Westwind.Utilities
             }
             else
             {
+#if NETFULL
                 Stream fs = null;
                 try
                 {
@@ -108,6 +110,9 @@ namespace Westwind.Utilities
                     if (fs != null)
                         fs.Close();
                 }
+#else
+                throw new NotSupportedException( Resources.BinaryXmlSerializationNotSupported);
+#endif
             }
 
             return retVal;
@@ -194,13 +199,12 @@ namespace Westwind.Utilities
             return true;
         }
 
-
+#if NETFULL
         /// <summary>
         /// Serializes an object instance to a file.
         /// </summary>
         /// <param name="instance">the object instance to serialize</param>
         /// <param name="Filename"></param>
-        /// <param name="BinarySerialization">determines whether XML serialization or binary serialization is used</param>
         /// <returns></returns>
         public static bool SerializeObject(object instance, out byte[] resultBuffer, bool throwExceptions = false)
         {
@@ -231,6 +235,7 @@ namespace Westwind.Utilities
 
             return retVal;
         }
+#endif
 
         /// <summary>
         /// Serializes an object to an XML string. Unlike the other SerializeObject overloads
@@ -255,6 +260,7 @@ namespace Westwind.Utilities
             return xmlResultString;
         }
 
+#if NETFULL
         public static byte[] SerializeObjectToByteArray(object instance, bool throwExceptions = false)
         {
             byte[] byteResult = null;
@@ -264,7 +270,7 @@ namespace Westwind.Utilities
                         
             return byteResult;
         }
-
+#endif
 
 
                 /// <summary>
@@ -327,7 +333,7 @@ namespace Westwind.Utilities
             }
             else
             {
-
+#if NETFULL
                 BinaryFormatter serializer = null;
                 FileStream fs = null;
 
@@ -346,6 +352,9 @@ namespace Westwind.Utilities
                     if (fs != null)
                         fs.Close();
                 }
+#else
+                throw new NotSupportedException(Resources.BinaryXmlSerializationNotSupported);
+#endif
             }
 
             return instance;
@@ -372,6 +381,7 @@ namespace Westwind.Utilities
             return DeSerializeObject(reader, objectType);
         }
 
+#if NETFULL
         /// <summary>
         /// Deseializes a binary serialized object from  a byte array
         /// </summary>
@@ -407,7 +417,7 @@ namespace Westwind.Utilities
 
             return Instance;
         }
-
+#endif
 
         /// <summary>
         /// Returns a string of all the field value pairs of a given object.

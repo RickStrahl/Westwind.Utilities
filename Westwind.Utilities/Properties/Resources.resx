@@ -217,4 +217,7 @@
   <data name="ConfigurationInitializationError" xml:space="preserve">
     <value>Configuration Initialization Error</value>
   </data>
+  <data name="BinaryXmlSerializationNotSupported" xml:space="preserve">
+    <value>Binary XML Serialization is not supported in .NET Core</value>
+  </data>
 </root>

@@ -79,6 +79,15 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Binary XML Serialization is not supported in .NET Core.
+        /// </summary>
+        public static string BinaryXmlSerializationNotSupported {
+            get {
+                return ResourceManager.GetString("BinaryXmlSerializationNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Byte value greater than 20mb are not supported.
         /// </summary>
         public static string ByteValueGreaterThan20megsAreNotSupported {
