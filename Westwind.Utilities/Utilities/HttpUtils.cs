@@ -441,11 +441,11 @@ namespace Westwind.Utilities
 
             if (proxyAddress.Equals("default", StringComparison.OrdinalIgnoreCase))
             {
-                proxy = System.Net.WebRequest.GetSystemWebProxy();
+                proxy = WebRequest.GetSystemWebProxy();
             }
             else
             {
-                proxy = new System.Net.WebProxy(proxyAddress, bypassonLocal, bypassList);
+                proxy = new WebProxy(proxyAddress, bypassonLocal, bypassList);
             }
 
             return proxy;
