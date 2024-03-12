@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data;
+using System.Data.Common;
 using Westwind.Utilities;
 using Microsoft.CSharp.RuntimeBinder;
 using Westwind.Utilities.Data;
@@ -20,7 +21,7 @@ namespace Westwind.Utilities.Data.Tests
     [TestClass]
     public class DynamicDataReaderTests
     {
-		private string STR_ConnectionString = TestConfigurationSettings.WebStoreConnectionString;
+		private static string STR_ConnectionString = TestConfigurationSettings.WestwindToolkitConnectionString;
     
 
         private TestContext testContextInstance;
@@ -41,7 +42,6 @@ namespace Westwind.Utilities.Data.Tests
             }
         }
 
-        #region Additional test attributes
         //
         // You can use the following additional attributes as you write your tests:
         //
@@ -52,54 +52,64 @@ namespace Westwind.Utilities.Data.Tests
 			// warm up dynamic runtime
             dynamic test = new List<int>();
             var val = test.Count;
-        }
-        #endregion
 
-            [TestMethod]
-            public void BasicDataReaderTimerTests()
+
+            //DatabaseInitializer.InitializeDatabase();
+
+            // warm up data connection
+
+            using (SqlDataAccess data = new SqlDataAccess(STR_ConnectionString))
             {
-                var data = new SqlDataAccess(STR_ConnectionString);
-                var reader = data.ExecuteReader("select * from wws_items");
+                var readr = data.ExecuteReader("select top 1 * from Customers");
+                var x = readr.Read();
+            }
+        }
+
+        [TestMethod]
+        public void BasicDataReaderTimerTests()
+        {
+            DbDataReader reader;
+            using (var data = new SqlDataAccess(STR_ConnectionString))
+            {
+                reader = data.ExecuteReader("select * from Customers");
                 Assert.IsNotNull(reader, "Query Failure: " + data.ErrorMessage);
-                
+
+
                 StringBuilder sb = new StringBuilder();
 
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
-                
+
                 while (reader.Read())
                 {
-                    string sku  = reader["sku"] as string;
-                    string descript = reader["description"] as string;
+                    string firstName = reader["FirstName"] as string;
+                    string lastName = reader["LastName"] as string;
+                    string company = reader["Company"] as string;
 
-                    decimal? price;
-                    object t = reader["Price"];
-                    if (t == DBNull.Value)
-                        price = null;
-                    else
-                        price = (decimal)t;
-                    
-                    
-                    sb.AppendLine(sku + " " + descript + " " + price.Value.ToString("n2"));                    
+                    DateTime? entered = reader["Entered"] as DateTime?;
+                    string d = entered.HasValue ? entered.Value.ToString("d") : string.Empty;
+
+                    sb.AppendLine(firstName + " " + lastName + " " + company + " - " + entered.Value.ToString("d"));
                 }
 
                 watch.Stop();
 
-                reader.Close();
 
                 Console.WriteLine(watch.ElapsedMilliseconds.ToString());
-                Console.WriteLine(sb.ToString());                                
+                Console.WriteLine(sb.ToString());
             }
+        }
 
 
-            [TestMethod]
-            public void BasicDynamicDataReaderTimerTest()
+        [TestMethod]
+        public void BasicDynamicDataReaderTimerTest()
+        {
+            dynamic reader;
+            using (var data = new SqlDataAccess(STR_ConnectionString))
             {
-                var data = new SqlDataAccess(STR_ConnectionString);
-                dynamic reader = data.ExecuteDynamicDataReader("select * from wws_items");
+                reader = data.ExecuteDynamicDataReader("select * from customers");
 
                 Assert.IsNotNull(reader, "Query Failure: " + data.ErrorMessage);
-
 
                 StringBuilder sb = new StringBuilder();
 
@@ -109,11 +119,15 @@ namespace Westwind.Utilities.Data.Tests
 
                 while (reader.Read())
                 {
-                    string sku = reader.Sku;
-                    string descript = reader.Description;
-                    decimal? price = reader.Price;
 
-                    sb.AppendLine(sku + " " + descript + " " + price.Value.ToString("n2"));
+                    string firstName = reader.FirstName;
+                    string lastName = reader.LastName;
+                    string company = reader.Company;
+
+                    DateTime? entered = reader.Entered as DateTime?;
+                    string d = entered.HasValue ? entered.Value.ToString("d") : string.Empty;
+
+                    sb.AppendLine(firstName + " " + lastName + " " + company + " - " + entered.Value.ToString("d"));
                 }
 
                 watch.Stop();
@@ -123,6 +137,7 @@ namespace Westwind.Utilities.Data.Tests
                 Console.WriteLine(watch.ElapsedMilliseconds.ToString());
                 Console.WriteLine(sb.ToString());
             }
+        }
 
     }
 

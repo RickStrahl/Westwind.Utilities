@@ -97,6 +97,7 @@ namespace Westwind.Utilities.Test
 
         }
 
+#if NETFULL
         [TestMethod]
         public void XmlSerializerSizeTest()
         {
@@ -128,6 +129,7 @@ namespace Westwind.Utilities.Test
             Console.WriteLine("Xml: " + xml.Length + "  elapsed: " + watch.ElapsedMilliseconds + "ms");
             Console.WriteLine(xml);
         }
+#endif
 
         [TestMethod]
         public void JsonSerializerSizeTest()

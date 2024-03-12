@@ -5,8 +5,6 @@ namespace Westwind.Utilities.Test
 	{
 		public static string WestwindToolkitConnectionString { get; set; } =
 			"server=.;database=WestwindToolkitSamples;integrated security=true;MultipleActiveResultSets=true;encrypt=false";
-		public static string WebStoreConnectionString { get; set; } =
-			"server=.;database=Webstore;integrated security=true;MultipleActiveResultSets=true;encrypt=false";
 
 	    public static string SqliteConnectionString = "Data Source=./SupportFiles/AlbumViewerData.sqlite";
 
