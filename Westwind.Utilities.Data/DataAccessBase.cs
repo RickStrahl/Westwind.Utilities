@@ -128,6 +128,14 @@ namespace Westwind.Utilities.Data
         /// </summary>
         public object LastIdentityResult { get; set; }
 
+
+        /// <summary>
+        /// Command to retrieve the last identity key from the database - 
+        /// appended to auto-generated insert commands
+        /// </summary>
+        public string GetIdentityKeySqlCommand { get; set; } "select SCOPE_IDENTITY()";
+
+
         /// <summary>
         /// Create a DataAccess component with a specific database provider
         /// </summary>
@@ -1859,18 +1867,20 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         }
 
 
+
         /// <summary>
         /// Inserts an object into the database based on its type information.
         /// The properties must match the database structure and you can skip
         /// over fields in the propertiesToSkip list.        
         /// </summary>        
         /// <seealso cref="SaveEntity" />        
-        /// <param name="entity"></param>
-        /// <param name="table"></param>
-        /// <param name="KeyField"></param>
-        /// <param name="propertiesToSkip"></param>
+        /// <param name="entity">Entity data to insert into table</param>
+        /// <param name="table">Name of the table to update</param>        
+        /// <param name="propertiesToSkip">Comma delimited list of fields to skip in the entity update</param>
+        /// <param name="returnIdentityKey"
         /// <returns>
-        /// Scope Identity or Null (when returnIdentityKey is true
+        /// Null if the insert failed
+        /// Scope Identity (when returnIdentityKey is true or null if that fails)
         /// Otherwise affected records
         /// </returns>
         public object InsertEntity(object entity, string table, string propertiesToSkip = null, bool returnIdentityKey = true)
@@ -1882,32 +1892,33 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             {
                 if (returnIdentityKey)
                 {
-                    Command.CommandText += ";\r\n" + "select SCOPE_IDENTITY()";
+                    Command.CommandText += ";\r\n" + GetIdentityKeySqlCommand;
                     LastIdentityResult = ExecuteScalar(Command);
-                    return LastIdentityResult;
+                    return LastIdentityResult;                
                 }
 
                 int res = ExecuteNonQuery(Command);
                 if (res < 0)
                     return null;
-
+                
                 return res;
             }
         }
 
         
-        /// <summary>
+  /// <summary>
         /// Inserts an object into the database based on its type information.
         /// The properties must match the database structure and you can skip
         /// over fields in the propertiesToSkip list.        
         /// </summary>        
         /// <seealso cref="SaveEntity" />        
-        /// <param name="entity"></param>
-        /// <param name="table"></param>
-        /// <param name="KeyField"></param>
-        /// <param name="propertiesToSkip"></param>
+        /// <param name="entity">Entity data to insert into table</param>
+        /// <param name="table">Name of the table to update</param>        
+        /// <param name="propertiesToSkip">Comma delimited list of fields to skip in the entity update</param>
+        /// <param name="returnIdentityKey"
         /// <returns>
-        /// Scope Identity or Null (when returnIdentityKey is true
+        /// Null if the insert failed
+        /// Scope Identity (when returnIdentityKey is true or null if that fails)
         /// Otherwise affected records
         /// </returns>
         public async Task<object> InsertEntityAsync(object entity, string table, string propertiesToSkip = null, bool returnIdentityKey = true)
@@ -1919,7 +1930,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             {
                 if (returnIdentityKey)
                 {
-                    Command.CommandText += ";\r\n" + "select SCOPE_IDENTITY()";
+                    Command.CommandText += ";\r\n" + GetIdentityKeySqlCommand;
                     LastIdentityResult = await ExecuteScalarAsync(Command);
                     return LastIdentityResult;
                 }
