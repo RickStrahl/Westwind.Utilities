@@ -18,8 +18,6 @@ namespace Westwind.Utilities
     {
         public const string STR_MultipartBoundary = "----FormBoundary3vDSIXiW0WSTB551";
 
-
-
         /// <summary>
         /// Runs an Http request and returns success results as a string or null
         /// on failure or non-200/300 requests.
@@ -441,8 +439,6 @@ namespace Westwind.Utilities
                 return Response.Content.Headers.ContentLength > 0;
            }
         }
-
-
 
         /// <summary>
         /// The User Agent string sent to the server
