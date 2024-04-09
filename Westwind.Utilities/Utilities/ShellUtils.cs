@@ -119,16 +119,17 @@ namespace Westwind.Utilities
             string arguments,
             int timeoutMs,
             out StringBuilder output,
-            ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden)
+            ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden,
+            Action<bool> completionDelegate = null)
         {
-            return ExecuteProcess(executable, arguments, timeoutMs, out output, null, windowStyle);
+            return ExecuteProcess(executable, arguments, timeoutMs, out output, null, windowStyle, completionDelegate);
         }
 
 
         /// <summary>
         /// Executes a Windows process with given command line parameters
         /// and captures console output into a string.
-        ///
+        /// 
         /// Pass in a String Action that receives output from
         /// StdOut and StdError as it is written (one line at a time).
         /// </summary>
@@ -137,16 +138,19 @@ namespace Westwind.Utilities
         /// <param name="timeoutMs">Timeout of the process in milliseconds. Pass -1 to wait forever. Pass 0 to not wait.</param>
         /// <param name="writeDelegate">Delegate to let you capture streaming output of the executable to stdout and stderror.</param>
         /// <param name="windowStyle">Hidden, Normal etc.</param>
+        /// <param name="completionDelegate">delegate that is called when execute completes. Passed true if success or false if timeout or failed</param>
         /// <returns>process exit code or 0 if run and forget. 1460 for time out. -1 on error</returns>
         public static int ExecuteProcess(string executable,
             string arguments,
             int timeoutMs,
-            Action<string> writeDelegate,
-            ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden)
+            Action<string> writeDelegate = null,
+            ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden,
+            Action<bool> completionDelegate = null)
         {
-            return ExecuteProcess(executable, arguments, timeoutMs, out StringBuilder output, writeDelegate, windowStyle);
+            return ExecuteProcess(executable, arguments, timeoutMs, out StringBuilder output, writeDelegate, windowStyle, completionDelegate);
         }
 
+        private static Process process = null;
 
         /// <summary>
         /// Executes a Windows process with given command line parameters
@@ -162,15 +166,17 @@ namespace Westwind.Utilities
         /// <param name="output">StringBuilder that will receive StdOut and StdError output</param>
         /// <param name="writeDelegate">Action to capture stdout and stderror output for you to handle</param>
         /// <param name="windowStyle"></param>
+        /// <param name="completionDelegate">If waiting for completion you can be notified when the exection is complete</param>
         /// <returns>process exit code or 0 if run and forget. 1460 for time out. -1 on error</returns>
         private static int ExecuteProcess(string executable,
                                         string arguments,
                                         int timeoutMs,
                                         out StringBuilder output,
                                         Action<string> writeDelegate = null,
-                                        ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden)
+                                        ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden,
+                                        Action<bool> completionDelegate = null)
         {
-            Process process;
+            
 
             try
             {
@@ -204,23 +210,34 @@ namespace Westwind.Utilities
                             sb.AppendLine(args.Data);
                     };
 
+                    if (completionDelegate != null)
+                    {
+                        process.Exited += (sender, args) =>
+                        {
+                            var proc = sender as Process;
+                            completionDelegate?.Invoke(proc.ExitCode == 0);
+                        };
+                    }
+
                     process.Start();
 
                     process.BeginErrorReadLine();
                     process.BeginOutputReadLine();
-
-
+                    
                     if (timeoutMs < 0)
                         timeoutMs = 99999999; // indefinitely
 
                     if (timeoutMs > 0)
-                    {
+                    {                        
+                 
                         if (!process.WaitForExit(timeoutMs))
                         {
                             Console.WriteLine("Process timed out.");
                             output = null;
+                            completionDelegate?.Invoke(false);
                             return 1460;
                         }
+                        completionDelegate?.Invoke(true);
                     }
                     else
                     {

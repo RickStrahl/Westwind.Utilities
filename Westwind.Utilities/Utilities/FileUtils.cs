@@ -804,7 +804,7 @@ namespace Westwind.Utilities
         /// <param name="filespec"></param>
         /// <param name="recursive"></param>
         /// <returns>0 when no errors, otherwise number of files that have failed to delete (usually locked)</returns>
-        public static int DeleteFiles(string path, string filespec, bool recursive)
+        public static int DeleteFiles(string path, string filespec, bool recursive = false)
         {
             if (!Directory.Exists(path))
                 return 0;
