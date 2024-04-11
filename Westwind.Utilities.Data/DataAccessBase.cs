@@ -133,7 +133,7 @@ namespace Westwind.Utilities.Data
         /// Command to retrieve the last identity key from the database - 
         /// appended to auto-generated insert commands
         /// </summary>
-        public string GetIdentityKeySqlCommand { get; set; } "select SCOPE_IDENTITY()";
+        public string GetIdentityKeySqlCommand { get; set; } = "select SCOPE_IDENTITY()";
 
 
         /// <summary>
