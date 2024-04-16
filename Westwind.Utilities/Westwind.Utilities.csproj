@@ -67,19 +67,12 @@
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
-		<Reference Include="mscorlib" />
-		<Reference Include="System" />
-		<Reference Include="System.Core" />
+		<!-- explicitly required netFX dependencies -->
 		<Reference Include="Microsoft.CSharp" />
-		<Reference Include="System.Data" />
-		<Reference Include="System.Web" />
-		<Reference Include="System.Drawing" />
+		<Reference Include="System.Web" />		
 		<Reference Include="System.Security" />
-		<Reference Include="System.Xml" />
 		<Reference Include="System.Configuration" />
 	</ItemGroup>
-
-
 
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
