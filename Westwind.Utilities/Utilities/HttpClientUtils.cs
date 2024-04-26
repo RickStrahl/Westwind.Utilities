@@ -50,6 +50,7 @@ namespace Westwind.Utilities
                 }
                 catch (Exception ex)
                 {
+                    settings.HasErrors = true;
                     settings.ErrorException = ex;
                     settings.ErrorMessage = ex.GetBaseException().Message;
                     return null;
@@ -155,6 +156,7 @@ namespace Westwind.Utilities
                 }
                 catch (Exception ex)
                 {
+                    settings.HasErrors = true;
                     settings.ErrorException = ex;
                     settings.ErrorMessage = ex.GetBaseException().Message;
 
