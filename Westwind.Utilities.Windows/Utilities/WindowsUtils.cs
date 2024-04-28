@@ -24,7 +24,7 @@ namespace Westwind.Utilities
                 // The 'CurrentMajorVersionNumber' string value in the CurrentVersion key is new for Windows 10,
                 // and will most likely (hopefully) be there for some time before MS decides to change this - again...
                 if (TryGetRegistryKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentMajorVersionNumber",
-                    out major, Registry.LocalMachine)   )
+                    out major, Registry.LocalMachine))
                 {
                     return (uint)major;
                 }
@@ -127,7 +127,7 @@ namespace Westwind.Utilities
                 if (TryGetRegistryKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "InstallationType",
                     out installationType))
                 {
-                    return (uint) (installationType.Equals("Client") ? 0 : 1);
+                    return (uint)(installationType.Equals("Client") ? 0 : 1);
                 }
 
                 return 0;
@@ -146,11 +146,11 @@ namespace Westwind.Utilities
         public static string GetDotnetVersion()
         {
 #if NETCORE
-            if(!string.IsNullOrEmpty(DotnetVersion))
+            if (!string.IsNullOrEmpty(DotnetVersion))
                 return DotnetVersion;
 
             DotnetVersion = RuntimeInformation.FrameworkDescription;
-            return DotnetVersion;            
+            return DotnetVersion;
 #else
 
             if (!string.IsNullOrEmpty(DotnetVersion))
@@ -171,7 +171,7 @@ namespace Westwind.Utilities
             // RegEdit paste: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full
             if (releaseKey >= 533320)
                 DotnetVersion = "4.8.1";
-            else if (releaseKey >= 528040)  
+            else if (releaseKey >= 528040)
                 DotnetVersion = "4.8";
             else if (releaseKey >= 461808)
                 DotnetVersion = "4.7.2";
@@ -185,11 +185,11 @@ namespace Westwind.Utilities
                 DotnetVersion = "4.6.1";
             else if (releaseKey >= 393295)
                 DotnetVersion = "4.6";
-            else if ((releaseKey >= 379893))
+            else if (releaseKey >= 379893)
                 DotnetVersion = "4.5.2";
-            else if ((releaseKey >= 378675))
+            else if (releaseKey >= 378675)
                 DotnetVersion = "4.5.1";
-            else if ((releaseKey >= 378389))
+            else if (releaseKey >= 378389)
                 DotnetVersion = "4.5";
 
             // This line should never execute. A non-null release key should mean 
@@ -234,7 +234,7 @@ namespace Westwind.Utilities
             value = null;
             try
             {
-                RegistryKey rk= baseKey.OpenSubKey(path);
+                RegistryKey rk = baseKey.OpenSubKey(path);
                 if (rk == null) return false;
                 value = rk.GetValue(key);
                 return value != null;

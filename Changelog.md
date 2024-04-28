@@ -1,6 +1,22 @@
 # Westwind.Utilities Changelog
 
-### 4.1
+### 5.0 
+
+**Breaking Changes** 
+
+* **New Westwind.utilities.Windows Package**  
+Added a new package that moves the `WindowsUtils` class to the new package. Also a copied version of `HtmlUtils` has moved to this pacakge as it includes `System.Web` references. Several legacy, System.Web specific methods have been removed from `HtmlUtils` in the core library and now only exist in the Windows library:  
+  * HtmlUtils.ResolveUrl()
+  * HtmlUtils.ImageRef()
+  * HtmlUtils.Href()
+
+* **Westwind.Utilities.Data now uses `Microsoft.Data.SqlClient` for NETFX**  
+Switched over for both the netStandard and net472 targets to use `Microsoft.Data.SqlClient` for consistency. This will increase the size of distribution but it allows for support for latest SQL features.
+
+* **Removed Westwind Logging**  
+The old legacy logging library has been removed as it was severely data and introduced nasty dependencies. Apps that depend on it can stick to 4.x versions or move to some more modern logging abstraction.
+
+### 4.0.21
 
 * **StringUtils.GetLastCharacters()**  
 Retrieves up to the last n characters from the end of a string.
@@ -10,6 +26,9 @@ Determines if user is an Administrator on Windows.
 
 * **StringUtils.ToBase64String()/FromBase64String()**  
 Helper method that simplifies converting strings to and from Base64 without having to go through the intermediary byte conversion explicitly.
+
+* **Fix: HttpClientUtils HasErrors Result**  
+Fix `HttpClientRequestSettings.HasErrors` when requests hard fail due to network issues. 
 
 ### 4.0
 

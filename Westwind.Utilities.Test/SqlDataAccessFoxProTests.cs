@@ -11,7 +11,6 @@ using Westwind.Data.Test.Models;
 using Westwind.Utilities.Data;
 using System.Data;
 using Westwind.Utilities;
-using Westwind.Utilities.Logging;
 using System.Diagnostics;
 using System.IO;
 using Westwind.Utilities.Test;

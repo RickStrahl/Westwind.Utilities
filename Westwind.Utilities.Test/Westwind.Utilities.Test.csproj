@@ -17,7 +17,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Westwind.Utilities.Data\Westwind.Utilities.Data.csproj" />
-		<ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />    
+		<ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />
+		<ProjectReference Include="..\Westwind.Utilities.Windows\Westwind.Utilities.Windows.csproj" />
 	</ItemGroup>
 
 

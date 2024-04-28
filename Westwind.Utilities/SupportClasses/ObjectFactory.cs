@@ -22,7 +22,6 @@ namespace Westwind.Utilities
         static object _syncLock = new object();
 
 
-
         /// <summary>
         /// Returns a standard instance of an object.
         /// </summary>
@@ -33,48 +32,6 @@ namespace Westwind.Utilities
             return (T) Activator.CreateInstance(typeof(T), args);            
         }
 
-#if NETFULL
-
-		/// <summary>
-		/// Creates an instance of an object that is scoped to the
-		/// current Http Web Request. The instance
-		/// is cached in HttpContext.Current.Items collection and effectively
-		/// acts as a request Singleton.
-		/// </summary>
-		/// <param name="args"></param>        
-		/// <returns></returns>
-		public static T CreateWebRequestScopedObject(params object[] args)
-        {            
-            // if HttpContext is not available - load new 
-            // non request instance and return
-            if (HttpContext.Current == null)                             
-                return CreateObject(args);
-                        
-            // Create a unique Key for the Web Request/Context
-            // based on: Type name, Current Context and Thread
-            string key = GetUniqueObjectKey(args) +
-                        HttpContext.Current.GetHashCode().ToString("x");
-            
-            object item = HttpContext.Current.Items[key];
-
-            if (item == null)
-            {
-                // avoid multiple adds in high load
-                lock (_syncLock)
-                {
-                    // recheck the value
-                    item = HttpContext.Current.Items[key];
-                    if (item == null)
-                    {
-                        item = CreateObject(args);
-                        HttpContext.Current.Items[key] = item;
-                    }
-                }
-            }
-            
-            return (T) item;
-        }
-#endif
 		
         /// <summary>
         /// Create an instance scoped to a current thread.
@@ -115,22 +72,6 @@ namespace Westwind.Utilities
 
             return item;
         }
-
-#if NETFULL
-		/// <summary>
-		/// Creates either Web Request scoped object instance or value
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		public static T CreateWebRequestOrThreadScopedObject(params object[] args)               
-        {
-            if (HttpContext.Current != null)
-                // Create a request specific unique key 
-                return CreateWebRequestScopedObject(args);
-            else
-                return CreateThreadScopedObject(args);
-        }
-#endif
 		
 
         /// <summary>

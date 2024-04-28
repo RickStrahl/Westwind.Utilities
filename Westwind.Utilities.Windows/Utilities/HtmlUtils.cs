@@ -1,19 +1,15 @@
-using System;
-using System.Drawing;
-using System.IO;
-using System.Text;
+﻿using System;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Web;
-using System.Globalization;
-using System.Linq;
-using Westwind.Utilities.Properties;
 
-
-namespace Westwind.Utilities
+namespace Westwind.Utilities.Windows
 {
     /// <summary>
     /// Html string and formatting utilities
+    /// 
+    /// Use this class for backwards compatibility and support
+    /// for NETFX Windows .NET specific features. For .NET Core
+    /// use the HtmlUtils class in the main Westwind.Utilities namespace.
     /// </summary>
     public static class HtmlUtils
     {
@@ -145,14 +141,119 @@ namespace Westwind.Utilities
             //return sb.ToString();
         }
 
+
+
+        /// <summary>
+        /// Create an Href HTML link
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="url"></param>
+        /// <param name="target"></param>
+        /// <param name="additionalMarkup"></param>
+        /// <returns></returns>
+        public static string Href(string text, string url, string target = null, string additionalMarkup = null)
+        {
+#if NETFULL
+            if (url.StartsWith("~"))
+                url = ResolveUrl(url);
+#endif
+            return "<a href=\"" + url + "\" " +
+                (string.IsNullOrEmpty(target) ? string.Empty : "target=\"" + target + "\" ") +
+                (string.IsNullOrEmpty(additionalMarkup) ? string.Empty : additionalMarkup) +
+                ">" + text + "</a>";
+        }
+
+        /// <summary>
+        /// Creates an HREF HTML Link
+        /// </summary>
+        /// <param name="url"></param>
+        public static string Href(string url)
+        {
+            return Href(url, url, null, null);
+        }
+
+        /// <summary>
+        /// Returns an IMG link as a string. If the image is null
+        /// or empty a blank string is returned.
+        /// </summary>
+        /// <param name="imageUrl"></param>
+        /// <param name="additionalMarkup">any additional attributes added to the element</param>
+        /// <returns></returns>
+        public static string ImgRef(string imageUrl, string additionalMarkup = null)
+        {
+            if (string.IsNullOrEmpty(imageUrl))
+                return string.Empty;
+
+#if NETFULL
+            if (imageUrl.StartsWith("~"))
+                imageUrl = ResolveUrl(imageUrl);
+#endif
+
+            string img = "<img src=\"" + imageUrl + "\" ";
+
+            if (!string.IsNullOrEmpty("additionalMarkup"))
+                img += additionalMarkup + " ";
+
+            img += "/>";
+            return img;
+        }
+
+
+        /// <summary>
+        /// Resolves a URL based on the current HTTPContext
+        /// 
+        /// Note this method is added here internally only
+        /// to support the HREF() method and ~ expansion
+        /// on urls.
+        /// </summary>
+        /// <param name="originalUrl"></param>
+        /// <returns></returns>
+        internal static string ResolveUrl(string originalUrl)
+        {
+            if (string.IsNullOrEmpty(originalUrl))
+                return string.Empty;
+
+            // Absolute path - just return
+            if (originalUrl.IndexOf("://") != -1)
+                return originalUrl;
+
+            // Fix up image path for ~ root app dir directory
+            if (originalUrl.StartsWith("~"))
+            {
+
+#if NETFULL
+                //return VirtualPathUtility.ToAbsolute(originalUrl);
+                string newUrl = "";
+
+                if (HttpContext.Current != null)
+                {
+                    newUrl = HttpContext.Current.Request.ApplicationPath +
+                             originalUrl.Substring(1);
+                    newUrl = newUrl.Replace("//", "/"); // must fix up for root path
+                }
+                else
+                    // Not context: assume current directory is the base directory
+                    throw new ArgumentException("Invalid URL: Relative URL not allowed.");
+
+                // Just to be sure fix up any double slashes
+                return newUrl;
+#else
+                throw new ArgumentException("Invalid URL: Relative URL not allowed.");
+#endif
+            }
+
+            return originalUrl;
+        }
+
+
         /// <summary>
         /// Create an embedded image url for binary data like images and media
         /// </summary>
         /// <param name="imageBytes"></param>
         /// <param name="mimeType"></param>
         /// <returns></returns>
-        public static string BinaryToEmbeddedBase64(byte[] imageBytes, string mimeType = "image/png" )
-        {             
+        public static string BinaryToEmbeddedBase64(byte[] imageBytes, string mimeType = "image/png")
+        {
             var data = $"data:{mimeType};base64," + Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
             return data;
         }

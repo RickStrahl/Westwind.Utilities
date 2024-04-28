@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Westwind.Data.Test;
 using Westwind.Data.Test.Models;
-using Westwind.Utilities.Data;
 using System.Data;
-using Westwind.Utilities;
-using Westwind.Utilities.Logging;
 using System.Diagnostics;
 using Westwind.Utilities.Test;
+using Westwind.Utilities.Test.Models.Entities;
 
 namespace Westwind.Utilities.Data.Tests
 {

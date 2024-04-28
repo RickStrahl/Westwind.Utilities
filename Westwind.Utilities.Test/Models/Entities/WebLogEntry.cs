@@ -38,18 +38,19 @@ using System.Text;
 using System.Web;
 using System.Net;
 
-namespace Westwind.Utilities.Logging
+namespace Westwind.Utilities.Test.Models.Entities
+
 {
     /// <summary>
     /// A Web specific Log entry that includes information about the current Web Request
     /// </summary>
-    public class WebLogEntry : LogEntry 
+    public class WebLogEntry : LogEntry
     {
-        public WebLogEntry() { } 
-        public WebLogEntry(Exception ex) : base(ex) {}
+        public WebLogEntry() { }
+        public WebLogEntry(Exception ex) : base(ex) { }
 
 #if NETFULL
-		public WebLogEntry(Exception ex, HttpContext context) : base(ex) 
+        public WebLogEntry(Exception ex, HttpContext context) : base(ex)
         {
             UpdateFromRequest(context);
         }
@@ -65,7 +66,7 @@ namespace Westwind.Utilities.Logging
         }
         private string _Url = "";
 
-        
+
         /// <summary>
         /// The query string of the current request
         /// </summary>
@@ -107,7 +108,7 @@ namespace Westwind.Utilities.Logging
         }
         private string _Referrer = "";
 
-        
+
         public string UserAgent
         {
             get { return _UserAgent; }
@@ -128,9 +129,9 @@ namespace Westwind.Utilities.Logging
 
 
 #if NETFULL
-		public bool UpdateFromRequest()
+        public bool UpdateFromRequest()
         {
-            return UpdateFromRequest(HttpContext.Current);            
+            return UpdateFromRequest(HttpContext.Current);
         }
 
 
@@ -153,22 +154,171 @@ namespace Westwind.Utilities.Logging
             IpAddress = request.UserHostAddress;
             Url = request.FilePath;
             QueryString = request.QueryString.ToString();
-            
+
             if (request.UrlReferrer != null)
                 Referrer = request.UrlReferrer.ToString();
             UserAgent = request.UserAgent;
 
             if (request.TotalBytes > 0 && request.TotalBytes < 2048)
             {
-                PostData = Encoding.Default.GetString(request.BinaryRead(request.TotalBytes));                
+                PostData = Encoding.Default.GetString(request.BinaryRead(request.TotalBytes));
             }
             else if (request.TotalBytes > 2048)  // strip the result
             {
-                PostData = Encoding.Default.GetString(request.BinaryRead(2040)) + "...";                
+                PostData = Encoding.Default.GetString(request.BinaryRead(2040)) + "...";
             }
 
             return true;
         }
 #endif
-    }    
+
+
+    }
+
+    /// <summary>
+    /// Message object that contains information about the current error information
+    /// 
+    /// Note: a WebLogEntry specific to Web applications lives in the
+    /// Westwind.Web assembly.
+    /// </summary>
+    public class LogEntry
+    {
+
+        public LogEntry()
+        {
+        }
+
+        public LogEntry(Exception ex)
+        {
+            UpdateFromException(ex);
+        }
+
+        /// <summary>
+        /// The unique ID for this LogEntry
+        /// </summary>
+        public int Id
+        {
+            get { return _Id; }
+            set { _Id = value; }
+        }
+        private int _Id = 0;
+
+        /// <summary>
+        /// When this error occurred.
+        /// </summary>
+        public DateTime Entered
+        {
+            get { return _Entered; }
+            set { _Entered = value; }
+        }
+        private DateTime _Entered = DateTime.UtcNow;
+
+        /// <summary>
+        /// The Actual Error Message
+        /// </summary>
+        public string Message
+        {
+            get { return _Message; }
+            set { _Message = value; }
+        }
+        private string _Message = String.Empty;
+
+
+        /// <summary>
+        /// Determines the error level of the messages
+        /// </summary>
+        public ErrorLevels ErrorLevel
+        {
+            get { return _ErrorLevel; }
+            set { _ErrorLevel = value; }
+        }
+        private ErrorLevels _ErrorLevel = ErrorLevels.Error;
+
+
+        /// <summary>
+        /// Free form text field that contains extra data to display
+        /// </summary>
+        public string Details
+        {
+            get { return _Details; }
+            set { _Details = value; }
+        }
+        private string _Details = String.Empty;
+
+        /// <summary>
+        /// The type of exception that was thrown if an error occurred
+        /// </summary>
+        public string ErrorType
+        {
+            get { return _ErrorType; }
+            set { _ErrorType = value; }
+        }
+        private string _ErrorType = String.Empty;
+
+        /// <summary>
+        /// StackTrace in event of an exception
+        /// </summary>
+        public string StackTrace
+        {
+            get { return _StackTrace; }
+            set { _StackTrace = value; }
+        }
+        private string _StackTrace = String.Empty;
+
+
+        /// <summary>
+        /// Updates the current request as an error log entry and 
+        /// sets the ErrorType, Message and StackTrace properties
+        /// from the content of the passed exception
+        /// </summary>
+        /// <param name="ex"></param>
+        public void UpdateFromException(Exception ex)
+        {
+            ErrorLevel = ErrorLevels.Error;
+            ErrorType = ex.GetType().Name.Replace("Exception", "");
+            Message = ex.Message;
+            StackTrace = ex.StackTrace != null && ex.StackTrace.Length > 1490 ?
+                              ex.StackTrace.Substring(0, 1500) :
+                              ex.StackTrace;
+            Details = ex.Source;
+        }
+    }
+
+
+    [Flags]
+    public enum ErrorLevels
+    {
+        /// <summary>
+        /// A critical error occurred
+        /// </summary>          
+        Error = 1,
+        /// <summary>
+        /// A warning type message that drives attention to potential problems
+        /// </summary>
+        Warning = 2,
+        /// <summary>
+        /// Log Entry
+        /// </summary>
+        Info = 4,
+        /// <summary>
+        /// Debug message
+        /// </summary>
+        Debug = 8,
+        /// <summary>
+        /// Application level information log entries
+        /// </summary>
+        ApplicationInfo = 16,
+        /// <summary>
+        /// Application Level Error entries
+        /// </summary>
+        ApplicationError = 32,
+        /// <summary>
+        /// Empty - not assigned
+        /// </summary>        
+        None = 0,
+        /// <summary>
+        /// All ErrorLevels - used only for querying
+        /// </summary>            
+        All = 256
+    }
 }
