@@ -5,22 +5,20 @@
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
-		<AssemblyName>Westwind.Utilities</AssemblyName>
-		<AssemblyTitle>Westwind.Utilities</AssemblyTitle>
+		<AssemblyName>Westwind.Utilities.Windows</AssemblyName>
+		<AssemblyTitle>Westwind.Utilities.Windows</AssemblyTitle>
 		<NeutralLanguage>en-US</NeutralLanguage>
-		<PackageId>Westwind.Utilities</PackageId>
-		<RootNamespace>Westwind.Utilities</RootNamespace>
-		<Title>West Wind Utilities</Title>
-		<Description>.NET utility library that includes Application Configuration, lightweight ADO.NET Data Access Layer, logging, utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>
-		<Summary>Small library of general purpose utilities for .NET development that almost every application can use. Used as a core reference library for other West Wind libraries.</Summary>
+		<PackageId>Westwind.Utilities.Windows</PackageId>
+		<RootNamespace>Westwind.Utilities.Windows</RootNamespace>
+		<Title>West Wind Utilities Windows Specific Features</Title>
+		<Description>This sub-component of Westwind.Utilities extracts the Windows Specific features into a separate library to remove the Windows specific dependencies in the core library.</Description>
+		<Summary>Sub-Component of Westwind.Utilities to provide Windows specific features. Provided for backwards compatibility.</Summary>
 		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2024</PackageCopyright>
 		<PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<PackageProjectUrl>http://github.com/rickstrahl/westwind.utilities</PackageProjectUrl>
-
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageLicenseFile>LICENSE.MD</PackageLicenseFile>
-
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Copyright>Rick Strahl, West Wind Technologies, 2010-2024</Copyright>
 		<Company>West Wind Technologies</Company>
@@ -50,49 +48,29 @@
 		<DebugType>embedded</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 	</PropertyGroup>
-	
-
-	<ItemGroup>		
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-	</ItemGroup>
-	
-	<ItemGroup Condition=" '$(TargetFramework)' != 'net462'">	
-		
-	</ItemGroup>
 
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<!--<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />-->
-	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
 		<!-- explicitly required netFX dependencies -->
 		<Reference Include="Microsoft.CSharp" />
-	
+		<Reference Include="System.Web" />
 		<Reference Include="System.Security" />
 		<Reference Include="System.Configuration" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Compile Update="Properties\Resources.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Resources.resx</DependentUpon>
-		</Compile>
-	</ItemGroup>
-
-
-	<ItemGroup>
-		<EmbeddedResource Update="Properties\Resources.resx">
-			<Generator>PublicResXFileCodeGenerator</Generator>
-			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
+	<ItemGroup Condition=" '$(TargetFramework)' != 'net462' ">
+		<!-- explicitly required netFX dependencies -->
+		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="icon.png" Pack="true" PackagePath="" />
 		<None Include="LICENSE.MD" Pack="true" PackagePath="" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj" />
 	</ItemGroup>
 
 </Project>

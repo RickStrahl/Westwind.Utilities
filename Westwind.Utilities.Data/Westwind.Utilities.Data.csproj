@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
-		<Version>4.0.20</Version>
+		<Version>5.0</Version>
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
@@ -55,12 +55,9 @@
 		<DebugType>embedded</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 	</PropertyGroup>
+
+
 	<ItemGroup>
-	  <Compile Remove="Logging\SqlLogManager.cs" />
-	</ItemGroup>
-
-
-	<ItemGroup Condition=" '$(TargetFramework)' != 'net462'">
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
 	</ItemGroup>
 
@@ -69,8 +66,7 @@
 		<Reference Include="System" />
 		<Reference Include="System.Core" />
 		<Reference Include="Microsoft.CSharp" />
-		<Reference Include="System.Configuration" />
-		<Reference Include="System.Data" />
+		<Reference Include="System.Configuration" />	
 	</ItemGroup>
 
 	<ItemGroup>
