@@ -1,5 +1,10 @@
 # Westwind.Utilities Changelog
 
+### 5.0.1
+
+* **AsyncUtils.DelayExecution()**  
+Added a couple of handlers that allow delayed code execution off a timer. Pass in an Action to execute, a timeout and an optional error handler.
+
 ### 5.0 
 
 **Breaking Changes** 

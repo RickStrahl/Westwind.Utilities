@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -36,8 +37,8 @@ namespace Westwind.Utilities
         /// USAGE: AsyncUtil.RunSync(() => AsyncMethod());
         /// </summary>
         /// <param name="task">Task method to execute</param>
-        public static void RunSync(Func<Task> task, 
-                    CancellationToken cancellationToken, 
+        public static void RunSync(Func<Task> task,
+                    CancellationToken cancellationToken,
                     TaskCreationOptions taskCreation = TaskCreationOptions.None,
                     TaskContinuationOptions taskContinuation = TaskContinuationOptions.None,
                     TaskScheduler taskScheduler = null)
@@ -122,7 +123,69 @@ namespace Westwind.Utilities
         /// <param name="del">Action delegate that receives an Exception parameter you can use to log or otherwise handle (or ignore) any exceptions</param>
         public static void FireAndForget(this Task t, Action<Exception> del)
         {
-            t.ContinueWith( (tsk) => del?.Invoke(tsk.Exception), TaskContinuationOptions.OnlyOnFaulted);
+            t.ContinueWith((tsk) => del?.Invoke(tsk.Exception), TaskContinuationOptions.OnlyOnFaulted);
+        }
+
+
+        /// <summary>
+        /// Executes an Action after a delay
+        /// </summary>
+        /// <remarks>
+        /// Code is executed on a background thread, so if UI code is executed
+        /// make sure you marshal back to the UI thread using a Dispatcher or Control.Invoke().
+        /// </remarks>
+        /// <param name="delayMs">delay in Milliseconds</param>
+        /// <param name="action">Action to execute after delay</param>
+        public static void DelayExecution(int delayMs, Action action, Action<Exception> errorHandler = null)
+        {
+            var t = new System.Timers.Timer();
+            t.Interval = delayMs;
+            t.AutoReset = false;
+            t.Elapsed += (s, e) =>
+            {
+                t.Stop();
+                try
+                {
+                    action.Invoke();
+                }
+                catch(Exception ex)
+                {
+                    errorHandler?.Invoke(ex);
+                }
+                t.Dispose();
+            };
+            t.Start();
+        }
+
+        /// <summary>
+        /// Executes an Action after a delay with a parameter
+        /// </summary>
+        /// <remarks>
+        /// Code is executed on a background thread, so if UI code is executed
+        /// make sure you marshal back to the UI thread using a Dispatcher or Control.Invoke().
+        /// </remarks>
+        /// <param name="delayMs">delay in Milliseconds</param>
+        /// <param name="action">Action to execute after delay</param>
+        public static void DelayExecution<T>(int delayMs, Action<T> action, T parm = default, Action<Exception> errorHandler = null)
+        {
+            var t = new System.Timers.Timer();
+            t.Interval = delayMs;
+            t.AutoReset = false;
+            t.Elapsed += (s, e) =>
+            {
+                t.Stop();
+                try
+                {
+                    action.Invoke(parm);
+                }
+                catch(Exception ex)
+                {
+                    errorHandler?.Invoke(ex);
+                }
+                t.Dispose();
+            };
+            t.Start();
+            return;
         }
     }
 }
