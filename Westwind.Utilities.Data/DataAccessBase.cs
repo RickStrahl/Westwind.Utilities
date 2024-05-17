@@ -1117,6 +1117,33 @@ namespace Westwind.Utilities.Data
             }
         }
 
+
+        /// <summary>
+        /// Returns list of objects from a query.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public virtual List<T> QueryList<T>(DbCommand command, params object[] parameters)
+            where T : class, new()
+        {
+            var reader = ExecuteReader(command, parameters);
+
+            if (reader == null)
+                return null;
+
+            try
+            {
+                return DataUtils.DataReaderToObjectList<T>(reader, null);
+            }
+            catch (Exception ex)
+            {
+                SetError(ex);
+                return null;
+            }
+        }
+
         /// <summary>
         /// Returns list of objects from a query.
         /// </summary>
@@ -1132,6 +1159,36 @@ namespace Westwind.Utilities.Data
                 where T : class, new()
         {
             var reader = ExecuteReader(sql, parameters);
+
+            if (reader == null)
+                return null;
+
+            try
+            {
+                return DataUtils.DataReaderToObjectList<T>(reader, propertiesToSkip);
+            }
+            catch (Exception ex)
+            {
+                SetError(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Returns list of objects from a query.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql">Sql Statement string</param>
+        /// <param name="propertiesToSkip">Comma delimited list of property names to skip</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
+        /// <returns></returns>
+        public virtual List<T> QueryListWithExclusions<T>(DbCommand command, string propertiesToSkip, params object[] parameters)
+            where T : class, new()
+        {
+            var reader = ExecuteReader(command, parameters);
 
             if (reader == null)
                 return null;
