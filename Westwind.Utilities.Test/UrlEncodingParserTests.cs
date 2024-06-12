@@ -43,6 +43,24 @@ namespace Westwind.Utilities.Tests
         }
 
         [TestMethod]
+        public void QueryStringNullTest()
+        {
+            var query = new UrlEncodingParser(null);                        
+            Assert.IsTrue(query.Count == 0);
+
+            query.Set("id", "3123");
+            Assert.IsTrue(query.Count == 1);
+            
+            Assert.IsTrue(query["id"] == "3123");
+
+            query = new UrlEncodingParser(null);
+            var nvCol = query.Parse(null);
+
+            Assert.IsTrue(nvCol != null);
+            Assert.IsTrue(nvCol.Count == 0);
+        }
+
+        [TestMethod]
         public void QueryStringMultipleTest()
         {
             string str = "http://mysite.com/page1?id=3123&format=json&format=xml";
@@ -69,7 +87,6 @@ namespace Westwind.Utilities.Tests
 
             Assert.IsTrue(url ==
                           "http://mysite.com/page1?id=3123&format=json&format=xml&multiple=1&multiple=2&multiple=3");
-
         }
 
         [TestMethod]

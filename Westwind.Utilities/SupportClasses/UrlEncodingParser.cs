@@ -77,36 +77,39 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public NameValueCollection Parse(string query)
         {
+            if (string.IsNullOrEmpty(query))
+            {
+                Clear();
+                return this;
+            }
+
             if (Uri.IsWellFormedUriString(query, UriKind.Absolute))
                 Url = query;
 
-            if (string.IsNullOrEmpty(query))
-                Clear();
-            else
+
+
+            int index = query.IndexOf('?');
+            if (index > -1)
             {
-                int index = query.IndexOf('?');
-                if (index > -1)
-                {
-                    if (query.Length >= index + 1)
-                        query = query.Substring(index + 1);
-                }
+                if (query.Length >= index + 1)
+                    query = query.Substring(index + 1);
+            }
 
-                var pairs = query.Split('&');
-                foreach (var pair in pairs)
+            var pairs = query.Split('&');
+            foreach (var pair in pairs)
+            {
+                int index2 = pair.IndexOf('=');
+                if (index2 > 0)
                 {
-                    int index2 = pair.IndexOf('=');
-                    if (index2 > 0)
+                    var val = pair.Substring(index2 + 1);
+                    if (!string.IsNullOrEmpty(val))
                     {
-                        var val = pair.Substring(index2 + 1);
-                        if (!string.IsNullOrEmpty(val))                           
-                        {
-                            if (DecodePlusSignsAsSpaces)
-                                val = val.Replace("+", " ");
-                            val = Uri.UnescapeDataString(val);
-                        }
-
-                        Add(pair.Substring(0, index2),val);
+                        if (DecodePlusSignsAsSpaces)
+                            val = val.Replace("+", " ");
+                        val = Uri.UnescapeDataString(val);
                     }
+
+                    Add(pair.Substring(0, index2), val);
                 }
             }
 
