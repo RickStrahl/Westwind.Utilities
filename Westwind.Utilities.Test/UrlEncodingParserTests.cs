@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Westwind.Utilities;
+using System.Data.Entity;
 
 namespace Westwind.Utilities.Tests
 {
@@ -59,6 +60,25 @@ namespace Westwind.Utilities.Tests
             Assert.IsTrue(nvCol != null);
             Assert.IsTrue(nvCol.Count == 0);
         }
+
+        [TestMethod]
+        public void QueryValuesNullTest()
+        {
+            var query = new UrlEncodingParser(null);
+            query["test"] = "1234";
+            query["id"] = null;
+            query["name"] = "Anita";
+
+            var c = query["id"];
+            Assert.IsTrue(c == string.Empty);
+
+            var qs= query.ToString();
+            Console.WriteLine(qs);
+
+            // id should not be in the query
+            Assert.IsTrue(!qs.Contains("id=&"));
+        }
+
 
         [TestMethod]
         public void QueryStringMultipleTest()

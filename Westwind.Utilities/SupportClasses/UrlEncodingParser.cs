@@ -35,6 +35,22 @@ namespace Westwind.Utilities
         public bool DecodePlusSignsAsSpaces { get; set; }
 
         /// <summary>
+        /// override indexer to ensure we always non-null value
+        /// </summary>
+        public string this[string key]
+        {
+            get
+            {
+                return base[key] ?? string.Empty;                
+            }
+            set
+            {
+                base[key] = value ?? string.Empty;
+            }
+        }
+
+
+        /// <summary>
         /// Always pass in a UrlEncoded data or a URL to parse from
         /// unless you are creating a new one from scratch.
         /// </summary>
@@ -132,6 +148,8 @@ namespace Westwind.Utilities
 
                 foreach (var val in values)
                 {
+                    if (string.IsNullOrEmpty(val)) continue;
+
                     query += key + "=" + Uri.EscapeDataString(val) + "&";
                 }
             }
