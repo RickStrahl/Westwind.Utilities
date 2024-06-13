@@ -1,9 +1,16 @@
 # Westwind.Utilities Changelog
 
-### 5.0.1
+### 5.0.3
 
 * **AsyncUtils.DelayExecution()**  
 Added a couple of handlers that allow delayed code execution off a timer. Pass in an Action to execute, a timeout and an optional error handler.
+
+* **VersionUtils.FormatVersion()**  
+A generic and configurable string formatter that makes it easier to display version strings more consistently by specifying the number of tokens to display and which `.0` tokens to trim (and leave).
+
+* **Fix: UrlEncodingParser Null Value Handling**  
+Fix null values in the query collection from blowing up the parser and string output. Null values explicitly assigned or missing values now return `string.Empty` - no more null returns.
+
 
 ### 5.0 
 
