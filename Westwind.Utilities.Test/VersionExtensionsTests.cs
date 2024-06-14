@@ -51,25 +51,32 @@ namespace Westwind.Utilities.Tests
 
         [TestMethod]
         public void MaxTokenProvidedTest()
-        {
-            // using defaults  2 min, 2 max
+        {           
             var version = new Version("8.0.0.2");
-            string verString = version.FormatVersion(3,4);
+            string verString = version.FormatVersion(3, 4);
             Assert.AreEqual(verString, "8.0.0.2");
 
-
+            // trim .0
             version = new Version("8.0.1.0");
-            verString = version.FormatVersion(3,4);
+            verString = version.FormatVersion(3, 4);
             Assert.AreEqual(verString, "8.0.1");
 
+            // all 4
             version = new Version("8.3.1.2");
-            verString = version.FormatVersion(3,4);
+            verString = version.FormatVersion(3, 4);
             Assert.AreEqual(verString, "8.3.1.2");
 
             version = new Version("8.3.1.2");
             verString = version.FormatVersion(2, 3);
             Assert.AreEqual(verString, "8.3.1");
 
+            // trim of 3rd 0  8.3.0 -> 8.3
+            version = new Version("8.3.0.2");
+            verString = version.FormatVersion(2, 3);
+            Console.WriteLine(verString);
+            Assert.AreEqual(verString, "8.3");
+
+            // no trim because we look at all 4
             version = new Version("8.3.0.2");
             verString = version.FormatVersion(2, 4);
             Assert.AreEqual(verString, "8.3.0.2");

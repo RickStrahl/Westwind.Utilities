@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 
 namespace Westwind.Utilities
 {
@@ -11,6 +12,8 @@ namespace Westwind.Utilities
         /// up to the trimTokens count provided. By default
         /// displays Major.Minor and then displays any
         /// Build and/or revision if non-zero	
+        /// 
+        /// More info: https://weblog.west-wind.com/posts/2024/Jun/13/C-Version-Formatting
         /// </summary>
         /// <param name="version">Version to format</param>
         /// <param name="minTokens">Minimum number of component tokens of the version to display</param>
@@ -35,6 +38,9 @@ namespace Westwind.Utilities
             for (int i = 0; i < minTokens; i++)
             {
                 baseVersion += "." + items[i];
+
+                
+                
             }
 
             var extendedVersion = string.Empty;
