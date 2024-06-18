@@ -28,21 +28,25 @@ namespace Westwind.Utilities
 
             var items = new int[] { version.Major, version.Minor, version.Build, version.Revision };
 
-            //items = items[0..maxTokens];
-            items = items.Take(maxTokens).ToArray();
-
-            var baseVersion = string.Empty;
-            for (int i = 0; i < minTokens; i++)
+            var length = maxTokens;
+            for (length = maxTokens; length > minTokens; length--)
             {
-                baseVersion += "." + items[i];
+                if (items[length - 1] != 0)
+                {
+                    break;
+                }
             }
 
-            var extendedVersion = string.Empty;
-            for (int i = minTokens; i < maxTokens; i++)
+            var builder = new StringBuilder(length * 11);
+
+            for (int i = 0; i < length; i++)
             {
-                extendedVersion += "." + items[i];
+                builder
+                    .Append(items[i])
+                    .Append(".");
             }
-            return baseVersion.TrimStart('.') + extendedVersion.TrimEnd('.', '0');
+
+            return builder.ToString(0, builder.Length - 1);
         }
 
 
