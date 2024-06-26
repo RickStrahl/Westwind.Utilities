@@ -29,26 +29,14 @@ namespace Westwind.Utilities
             if (maxTokens > 4)
                 maxTokens = 4;
 
-            var items = new int[] { version.Major, version.Minor, version.Build, version.Revision };
+            var items = new [] { version.Major, version.Minor, version.Build, version.Revision };
 
-            //items = items[0..maxTokens];
-            items = items.Take(maxTokens).ToArray();
-
-            var baseVersion = string.Empty;
-            for (int i = 0; i < minTokens; i++)
+            int tokens = maxTokens;
+            while (tokens > minTokens && items[tokens - 1] == 0)
             {
-                baseVersion += "." + items[i];
-
-                
-                
+                tokens--;
             }
-
-            var extendedVersion = string.Empty;
-            for (int i = minTokens; i < maxTokens; i++)
-            {
-                extendedVersion += "." + items[i];
-            }
-            return baseVersion.TrimStart('.') + extendedVersion.TrimEnd('.', '0');
+            return version.ToString(tokens);
         }
 
 
@@ -67,5 +55,25 @@ namespace Westwind.Utilities
             return ver.FormatVersion(minTokens, maxTokens);
         }
 
+
+        /// <summary>
+        /// Compare two version strings.
+        /// </summary>
+        /// <param name="versionToCompare">Semantic Version string</param>
+        /// <param name="versionToCompareAgainst">Semantic Version string</param>
+        /// <returns>0 - equal, 1 - greater than compareAgainst,  -1 - smaller than, -2  - Version Format error </returns>
+        public static int CompareVersions(string versionToCompare, string versionToCompareAgainst)
+        {
+            try
+            {
+                var v1 = new Version(versionToCompare);
+                var v2 = new Version(versionToCompareAgainst);
+                return v1.CompareTo(v2);
+            }
+            catch
+            {
+                return -2;
+            }
+        }
     }
 }
