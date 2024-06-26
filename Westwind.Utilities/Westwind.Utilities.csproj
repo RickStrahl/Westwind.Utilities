@@ -46,6 +46,7 @@
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net462'">
 		<DefineConstants>NETFULL</DefineConstants>
 	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
 		<DebugType>embedded</DebugType>
 		<DebugSymbols>true</DebugSymbols>
@@ -64,7 +65,7 @@
 	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<!--<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />-->
-	</ItemGroup>
+	</ItemGroup>	
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
 		<!-- explicitly required netFX dependencies -->
@@ -74,6 +75,7 @@
 		<Reference Include="System.Configuration" />
 	</ItemGroup>
 
+		
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
 			<DesignTime>True</DesignTime>

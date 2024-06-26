@@ -373,6 +373,52 @@ namespace Westwind.Utilities
             return originalUrl;
         }
 #endif
+        #region Url Parsing
 
+        /// <summary>
+        /// Returns the base URL of a site from a full URL
+        /// </summary>
+        /// <param name="url">An absolute scheme path (http:// or file:// or ftp:// etc) </param>
+        /// <returns></returns>
+        public string GetSiteBasePath(string url)
+        {
+            var uri = new Uri(url);
+            return $"{uri.Scheme}://{uri.Authority}/";
+        }
+
+        /// <summary>
+        /// Returns the path portion of an absolute URL optionally with the query string and fragment
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="pathOptions"></param>
+        /// <returns></returns>
+        public string GetRelativeUrlPath(string url, PathReturnOptions pathOptions = PathReturnOptions.PathOnly )
+        {
+            var uri = new Uri(url);
+
+            switch (pathOptions)
+            {
+                case PathReturnOptions.PathOnly:
+                    return uri.AbsolutePath;
+                case PathReturnOptions.PathAndQuery:
+                    return uri.PathAndQuery;
+                case PathReturnOptions.PathAndHash:
+                    return uri.AbsolutePath + uri.Fragment;
+                case PathReturnOptions.PathAndQueryAndHash:
+                    return uri.PathAndQuery + uri.Fragment;
+            }
+
+            return uri.PathAndQuery;
+        }
+
+        #endregion
+    }
+
+    public enum PathReturnOptions
+    {
+        PathOnly,
+        PathAndQuery,
+        PathAndHash,
+        PathAndQueryAndHash,        
     }
 }
