@@ -380,7 +380,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="url">An absolute scheme path (http:// or file:// or ftp:// etc) </param>
         /// <returns></returns>
-        public string GetSiteBasePath(string url)
+        public static string GetSiteBasePath(string url)
         {
             var uri = new Uri(url);
             return $"{uri.Scheme}://{uri.Authority}/";
@@ -392,7 +392,7 @@ namespace Westwind.Utilities
         /// <param name="url"></param>
         /// <param name="pathOptions"></param>
         /// <returns></returns>
-        public string GetRelativeUrlPath(string url, PathReturnOptions pathOptions = PathReturnOptions.PathOnly )
+        public static string GetRelativeUrlPath(string url, PathReturnOptions pathOptions = PathReturnOptions.PathOnly )
         {
             var uri = new Uri(url);
 
