@@ -243,6 +243,24 @@ namespace Westwind.Utilities
 
         #region String Casing
 
+        
+        /// <summary>
+        /// Compares to strings for equality ignoring case.
+        /// Uses OrdinalIgnoreCase
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="compareTo"></param>
+        /// <returns></returns>
+        public static bool EqualsNoCase(this string text, string compareTo)
+        {
+            if (text == null && compareTo == null)
+                return true;
+            if (text == null || compareTo == null)
+                return false;   
+            
+            return text.Equals(compareTo, StringComparison.OrdinalIgnoreCase);
+        }
+
         /// <summary>
         /// Return a string in proper Case format
         /// </summary>
