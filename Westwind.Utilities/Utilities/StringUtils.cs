@@ -554,9 +554,134 @@ namespace Westwind.Utilities
 
             return full.Substring(full.Length - rightCharCount);
         }
-
         #endregion
 
+        #region String 'Many' Operations
+
+        /// <summary>
+        /// Checks many a string for multiple string values to start with
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="matchValues"></param>
+        /// <returns></returns>
+        public static bool StartsWithMany(this string str, params string[] matchValues)
+        {
+            foreach (var value in matchValues)
+            {
+                if (str.StartsWith(value))
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks many a string for multiple string values to start with
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="matchValues"></param>
+        /// <returns></returns>
+        public static bool StartsWithMany(this string str, StringComparison compare, params string[] matchValues)
+        {
+            foreach (var value in matchValues)
+            {
+                if (str.StartsWith(value, compare))
+                    return true;
+            }
+
+            return false;
+        }
+
+
+        /// <summary>
+        /// Checks a string form multiple contained string values
+        /// </summary>
+        /// <param name="str">String to match</param>
+        /// <param name="matchValues">Matches to find in the string</param>
+        /// <returns></returns>
+        public static bool ContainsMany(this string str, params string[] matchValues)
+        {
+            foreach (var value in matchValues)
+            {
+                if (str.Contains(value))
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks a string form multiple contained string values
+        /// </summary>
+        /// <param name="str">String to match</param>
+        /// <param name="compare">Type of comparison</param>
+        /// <param name="matchValues">Matches to find in the string</param>
+        /// <returns></returns>
+        public static bool ContainsMany(this string str, StringComparison compare, params string[] matchValues)
+        {
+            foreach (var value in matchValues)
+            {
+                if (str.Contains(value, compare))
+                    return true;
+            }
+
+            return false;
+        }
+
+
+        /// <summary>
+        /// Checks a string form multiple contained string values
+        /// </summary>
+        /// <param name="str">String to match</param>
+        /// <param name="matchValues">Matches to find in the string</param>
+        /// <returns></returns>
+        public static bool ContainsMany(this string str, params char[] matchValues)
+        {
+            foreach (var value in matchValues)
+            {
+                if (str.Contains(value))
+                    return true;
+            }
+
+            return false;
+        }
+
+#if NET6_0_OR_GREATER
+        /// <summary>
+        /// Checks a string form multiple contained string values
+        /// </summary>
+        /// <param name="str">String to match</param>
+        /// <param name="compare">Type of comparison</param>
+        /// <param name="matchValues">Matches to find in the string</param>
+        /// <returns></returns>
+        public static bool ContainsMany(this string str, StringComparison compare, params char[] matchValues)
+        {
+            foreach (var value in matchValues)
+            {
+                if (str.Contains(value, compare))
+                    return true;
+            }
+
+            return false;
+        }
+#endif
+        /// <summary>
+        /// Replaces multiple matches with a new value
+        /// </summary>
+        /// <param name="str">String to work on</param>
+        /// <param name="matchValues">String values to match</param>
+        /// <param name="replaceWith">String to replace with</param>
+        /// <returns></returns>
+        public static string ReplaceMany(this string str, string[] matchValues, string replaceWith)
+        {
+            foreach (var value in matchValues)
+            {
+                str = str.Replace(value, replaceWith);
+            }
+
+            return str;
+        }
+#endregion
         #region String Parsing
         /// <summary>
         /// Determines if a string is contained in a list of other strings
