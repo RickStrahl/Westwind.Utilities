@@ -12,7 +12,9 @@ using Westwind.Utilities.Properties;
 namespace Westwind.Utilities
 {
 	/// <summary>
-	/// Class that provides a number of encryption utilities.
+	/// Class that provides a number of encryption helper utilities to 
+    /// make it easier to create hashes and two-way encryption, create
+    /// checksums and more.
 	/// </summary>
 	/// <remarks>
 	/// For best compatibility across platforms of the Encrypt/Decrypt methods use 
@@ -27,8 +29,8 @@ namespace Westwind.Utilities
         public static string EncryptionKey = "41a3f131dd91";
 
 		/// <summary>
-		/// Global configuration propery that can be overridden to
-		/// set the key size used for Encrypt/Decript operations.
+		/// Global configuration property that can be overridden to
+		/// set the key size used for Encrypt/Decrypt operations.
 		/// Choose between 16 bytes (not recommended except for
 		/// backwards compatibility) or 24 bytes (works both in
 		/// NET Full and NET Core)
@@ -82,27 +84,31 @@ namespace Westwind.Utilities
         /// <returns></returns>
 		public static byte[] EncryptBytes(byte[] inputBytes, byte[] encryptionKey, CipherMode cipherMode = CipherMode.ECB)
 		{
-			var des = TripleDES.Create(); //new TripleDESCryptoServiceProvider();
-			des.Mode = cipherMode;
+            using (var des = TripleDES.Create()) //new TripleDESCryptoServiceProvider();
+            {
+                des.Mode = cipherMode;
 
-
-			if (EncryptionKeySize == 16)
-			{
-				var hash = MD5.Create();
-				des.Key = hash.ComputeHash(encryptionKey);
-			}
-			else
-			{
-				var hash =   SHA256.Create();
-				des.Key = hash.ComputeHash(encryptionKey)
-							  .Take(EncryptionKeySize)
-							  .ToArray();
-			}
+                if (EncryptionKeySize == 16)
+                {
+                    using (var hash = MD5.Create())
+                    {
+                        des.Key = hash.ComputeHash(encryptionKey);
+                    }
+                }
+                else
+                {
+                    using (var hash =   SHA256.Create())
+                    {
+                        des.Key = hash.ComputeHash(encryptionKey)
+                            .Take(EncryptionKeySize)
+                            .ToArray();
+                    }
+                }
 		
-			ICryptoTransform Transform = des.CreateEncryptor();
-
-			byte[] Buffer = inputBytes;
-			return Transform.TransformFinalBlock(Buffer, 0, Buffer.Length);
+                var transform = des.CreateEncryptor();
+                byte[] buffer = inputBytes;
+                return transform.TransformFinalBlock(buffer, 0, buffer.Length);
+            }
 		}
 
         
@@ -223,25 +229,32 @@ namespace Westwind.Utilities
             if (decryptBuffer == null || decryptBuffer.Length == 0)
                 return null;
 
-			var des = TripleDES.Create();
-			des.Mode = cipherMode;
+            using (var des = TripleDES.Create())
+            {
+                des.Mode = cipherMode;
 			
-	        if (EncryptionKeySize == 16)
-	        {
-		        var hash = MD5.Create();
-		        des.Key = hash.ComputeHash(encryptionKey);
-	        }
-	        else
-	        {
-		        var hash = SHA256.Create();
-		        des.Key = hash.ComputeHash(encryptionKey)
-			        .Take(EncryptionKeySize)
-			        .ToArray();
-	        }
+                if (EncryptionKeySize == 16)
+                {
+                    using (var hash = MD5.Create())
+                    {
+                        des.Key = hash.ComputeHash(encryptionKey);
+                    }
+                }
+                else
+                {
+                    using (var hash = SHA256.Create())
+                    {
+                        des.Key = hash.ComputeHash(encryptionKey)
+                            .Take(EncryptionKeySize)
+                            .ToArray();
+                    }
+                }
 
-			ICryptoTransform Transform = des.CreateDecryptor();
+                var transform = des.CreateDecryptor();
+                return transform.TransformFinalBlock(decryptBuffer, 0, decryptBuffer.Length);
+            }
 
-            return Transform.TransformFinalBlock(decryptBuffer, 0, decryptBuffer.Length);
+           
         }
 
         /// <summary>

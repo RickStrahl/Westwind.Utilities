@@ -1,15 +1,19 @@
 ﻿
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using Microsoft.Win32;
 
-namespace Westwind.Utilities
+namespace Westwind.Utilities.Windows
 {
 
     /// <summary>
     /// Windows specific system and information helpers
     /// Helper class that provides Windows and .NET Version numbers.    
     /// </summary>
+    #if NET6_0_OR_GREATER
+    [SupportedOSPlatform("windows")]
+    #endif
     public static class WindowsUtils
     {
         /// <summary>

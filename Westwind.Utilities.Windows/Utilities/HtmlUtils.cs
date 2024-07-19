@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -11,6 +12,9 @@ namespace Westwind.Utilities.Windows
     /// for NETFX Windows .NET specific features. For .NET Core
     /// use the HtmlUtils class in the main Westwind.Utilities namespace.
     /// </summary>
+#if NET6_0_OR_GREATER
+    [SupportedOSPlatform("windows")]
+#endif
     public static class HtmlUtils
     {
         /// <summary>
