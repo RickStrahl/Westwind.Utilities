@@ -407,9 +407,6 @@ namespace Westwind.Utilities
             else if (buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 0xfe && buffer[3] == 0xff)
                 enc = Encoding.UTF32;
 
-            else if (buffer[0] == 0x2b && buffer[1] == 0x2f && buffer[2] == 0x76)
-                enc = Encoding.UTF7;
-
             return enc;
         }
 
@@ -428,22 +425,25 @@ namespace Westwind.Utilities
 	        try
 	        {
 	            byte[] checkSum;
-	            using (FileStream stream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.Read))
-	            {
+                using (FileStream stream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
                     HashAlgorithm md = null;
 
-                    if(hashAlgorithm == "MD5")
-	                    md = new MD5CryptoServiceProvider();
+                    if (hashAlgorithm == "MD5")
+                        md = MD5.Create();
                     else if (hashAlgorithm == "SHA256")
-	                    md = new SHA256Managed();
-                    else if(hashAlgorithm == "SHA512")
-	                    md = new SHA512Managed();
-	                else if (hashAlgorithm == "SHA1")
-	                    md = new SHA1Managed();
-                    else	                   
-	                    md = new MD5CryptoServiceProvider();
+                        md = SHA256.Create();
+                    else if (hashAlgorithm == "SHA512")
+                        md = SHA512.Create();
+                    else if (hashAlgorithm == "SHA1")
+                        md = SHA1.Create();
+                    else
+                        md = MD5.Create();
 
-                    checkSum = md.ComputeHash(stream);
+                    using (md)
+                    {
+                        checkSum = md.ComputeHash(stream);
+                    }
 	            }
 
 	            return StringUtils.BinaryToBinHex(checkSum);
@@ -508,7 +508,16 @@ namespace Westwind.Utilities
             if (direction == FindFileInHierarchyDirection.Down)
                 so = SearchOption.AllDirectories;
 
-            var files = dir.GetFiles(searchFile, so);
+            FileInfo[] files;
+            try
+            {
+                files = dir.GetFiles(searchFile, so);
+            }
+            catch
+            {                
+                return null;  // permissions error most likely
+            }
+
             if (files.Length > 0)
                 return files[0].FullName;  // closest match
 

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -89,12 +88,12 @@ namespace Westwind.Utilities
 
 			if (EncryptionKeySize == 16)
 			{
-				MD5CryptoServiceProvider hash = new MD5CryptoServiceProvider();
+				var hash = MD5.Create();
 				des.Key = hash.ComputeHash(encryptionKey);
 			}
 			else
 			{
-				SHA256CryptoServiceProvider hash = new SHA256CryptoServiceProvider();
+				var hash =   SHA256.Create();
 				des.Key = hash.ComputeHash(encryptionKey)
 							  .Take(EncryptionKeySize)
 							  .ToArray();
@@ -229,12 +228,12 @@ namespace Westwind.Utilities
 			
 	        if (EncryptionKeySize == 16)
 	        {
-		        MD5CryptoServiceProvider hash = new MD5CryptoServiceProvider();
+		        var hash = MD5.Create();
 		        des.Key = hash.ComputeHash(encryptionKey);
 	        }
 	        else
 	        {
-		        SHA256CryptoServiceProvider hash = new SHA256CryptoServiceProvider();
+		        var hash = SHA256.Create();
 		        des.Key = hash.ComputeHash(encryptionKey)
 			        .Take(EncryptionKeySize)
 			        .ToArray();
@@ -729,16 +728,16 @@ namespace Westwind.Utilities
             switch (hashAlgorithm.ToUpper())
             {
                 case "SHA1":
-                    hash = new SHA1Managed();
+                    hash = SHA1.Create();
                     break;
                 case "SHA256":
-                    hash = new SHA256Managed();
+                    hash = SHA256.Create();
                     break;
                 case "SHA384":
-                    hash = new SHA384Managed();
+                    hash = SHA384.Create();
                     break;
                 case "SHA512":
-                    hash = new SHA512Managed();
+                    hash = SHA512.Create();
                     break;
                 case "HMACMD5":
                     hash = new HMACMD5(saltBytes);
@@ -754,19 +753,18 @@ namespace Westwind.Utilities
                     break;
                 default:
                     // default to MD5
-                    hash = new MD5CryptoServiceProvider();
+                    hash = MD5.Create();
                     break;
             }
+            using (hash)
+            {
+                byte[] hashBytes = hash.ComputeHash(plainTextWithSaltBytes);
 
-            byte[] hashBytes = hash.ComputeHash(plainTextWithSaltBytes);
-            
+                if (useBinHex)
+                    return BinaryToBinHex(hashBytes);
 
-            hash.Dispose();
-
-            if (useBinHex)
-                return BinaryToBinHex(hashBytes);
-
-            return Convert.ToBase64String(hashBytes);
+                return Convert.ToBase64String(hashBytes);
+            }
         }
 #endregion
 
@@ -856,20 +854,31 @@ namespace Westwind.Utilities
                 {
                     if (mode == "SHA256")
                     {
-                        var sha = new SHA256Managed();
-                        byte[] checksum = sha.ComputeHash(stream);
+                        byte[] checksum;
+                        using (var sha = SHA256.Create())
+                        {
+                            checksum = sha.ComputeHash(stream);
+                        }
+
                         return BinaryToBinHex(checksum);
                     }
                     if (mode == "SHA512")
                     {
-                        var sha = new SHA512Managed();
-                        byte[] checksum = sha.ComputeHash(stream);
+                        byte[] checksum;
+                        using (var sha = SHA512.Create())
+                        {
+                            checksum = sha.ComputeHash(stream);
+                        }
+
                         return BinaryToBinHex(checksum);
                     }
                     if (mode == "MD5")
                     {
-                        var md = new MD5CryptoServiceProvider();
-                        byte[] checkSum = md.ComputeHash(stream);
+                        byte[] checkSum;
+                        using (var md = MD5.Create())
+                        {
+                            checkSum = md.ComputeHash(stream);
+                        }
 
                         return BinaryToBinHex(checkSum);
                     }
@@ -895,20 +904,31 @@ namespace Westwind.Utilities
             {
                 if (mode == "SHA256")
                 {
-                    var sha = new SHA256Managed();
-                    byte[] checksum = sha.ComputeHash(stream);                   
+                    byte[] checksum;
+                    using (var sha =  SHA256.Create())
+                    {
+                        checksum = sha.ComputeHash(stream);
+                    }
+
                     return BinaryToBinHex(checksum);
                 }
                 if (mode == "SHA512")
                 {
-                    var sha = new SHA512Managed();
-                    byte[] checksum = sha.ComputeHash(stream);
+                    byte[] checksum;
+                    using (var sha = SHA512.Create())
+                    {
+                        checksum = sha.ComputeHash(stream);
+                    }
+
                     return BinaryToBinHex(checksum);
                 }
                 if (mode == "MD5")
                 {
-                    var md = new MD5CryptoServiceProvider();
-                    byte[] checkSum = md.ComputeHash(stream);
+                    byte[] checkSum;
+                    using (var md = MD5.Create())
+                    {
+                        checkSum = md.ComputeHash(stream);
+                    }
 
                     return BinaryToBinHex(checkSum);
                 }

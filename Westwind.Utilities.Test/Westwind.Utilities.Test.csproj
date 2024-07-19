@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0;net472;</TargetFrameworks>
+		<TargetFrameworks>net8.0;net472</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
@@ -21,10 +22,6 @@
 		<ProjectReference Include="..\Westwind.Utilities.Windows\Westwind.Utilities.Windows.csproj" />
 	</ItemGroup>
 
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0'">
-      <!--<PackageReference Include="Microsoft.Data.SqLite" Version="2.1.0"/>-->
-  </ItemGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net8.0'">
 		<DefineConstants>NETSTANDARD2_0;NETCORE;NETSTANDARD</DefineConstants>
 	  

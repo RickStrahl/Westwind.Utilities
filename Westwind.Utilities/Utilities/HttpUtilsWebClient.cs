@@ -11,6 +11,7 @@ namespace Westwind.Utilities
     /// </summary>
     public class HttpUtilsWebClient : WebClient
     {
+#pragma warning disable SYSLIB0014
         /// <summary>
         /// Intializes this instance of WebClient with settings values
         /// </summary>
@@ -40,6 +41,7 @@ namespace Westwind.Utilities
 
             }            
         }
+#pragma warning restore SYSLIB0014
 
         internal HttpRequestSettings Settings { get; set; }
         internal HttpWebResponse Response { get; set; }
@@ -81,7 +83,9 @@ namespace Westwind.Utilities
                     return ex?.Response;
                 }
 
-                throw ex;
+#pragma warning disable CA2200
+                throw;
+#pragma warning restore CA2200
             }
 
             return Response;
@@ -100,7 +104,9 @@ namespace Westwind.Utilities
                     return ex?.Response;
                 }
 
-                throw ex;
+#pragma warning disable CA2200
+                throw;
+#pragma warning restore CA2200
             }
 
             return Response;

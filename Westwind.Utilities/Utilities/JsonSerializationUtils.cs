@@ -101,10 +101,10 @@ namespace Westwind.Utilities
                 jsonResult = sw.ToString();
                 writer.Close();
             }
-            catch (Exception ex)
+            catch
             {
                 if (throwExceptions)
-                    throw ex;
+                    throw;
 
                 jsonResult = null;
             }

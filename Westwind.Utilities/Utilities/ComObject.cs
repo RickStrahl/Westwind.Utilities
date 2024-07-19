@@ -2,6 +2,7 @@
 using System.Dynamic;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace Westwind.Utilities
 {
@@ -13,6 +14,9 @@ namespace Westwind.Utilities
     /// Credit to: https://github.com/bubibubi/EntityFrameworkCore.Jet/blob/3.1-preview/src/System.Data.Jet/ComObject.cs
     /// Added here with slight interface modifications
     /// </summary>
+    #if NET6_0_OR_GREATER
+    [SupportedOSPlatform("windows")]
+    #endif
     public class ComObject : DynamicObject, IDisposable
     {
         internal object _instance;

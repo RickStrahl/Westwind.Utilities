@@ -252,7 +252,9 @@ namespace Westwind.Utilities
 
             try
             {
+#pragma warning disable SYSLIB0014
                 WebClient http = new WebClient();
+#pragma warning restore SYSLIB0014
                 string Result = http.DownloadString(url);
             }
             catch {}

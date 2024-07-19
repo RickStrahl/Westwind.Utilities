@@ -39,6 +39,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Versioning;
 
 
 namespace Westwind.Utilities
@@ -176,6 +177,9 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="progId"></param>
         /// <returns></returns>
+#if NET6_0_OR_GREATER
+        [SupportedOSPlatform("windows")]
+#endif
         public static object CreateComInstance(string progId)
         {
             Type type = Type.GetTypeFromProgID(progId);

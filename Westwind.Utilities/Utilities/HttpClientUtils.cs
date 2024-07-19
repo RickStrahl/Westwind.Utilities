@@ -84,7 +84,9 @@ namespace Westwind.Utilities
                     settings.ErrorMessage = ex.GetBaseException().Message;
 
                     if(settings.ThrowExceptions)
-                        throw ex;
+#pragma warning disable CA2200
+                        throw;
+#pragma warning restore CA2200
 
                     return null;
                 }
@@ -161,7 +163,9 @@ namespace Westwind.Utilities
                     settings.ErrorMessage = ex.GetBaseException().Message;
 
                     if (settings.ThrowExceptions)
-                        throw ex;
+#pragma warning disable CA2200
+                        throw;
+#pragma warning restore CA2200
                     
                     return null;
                 }

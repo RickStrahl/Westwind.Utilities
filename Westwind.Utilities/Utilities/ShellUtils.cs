@@ -1,4 +1,6 @@
-﻿#region 
+﻿#pragma warning disable SYSLIB0014
+
+#region 
 /*
  **************************************************************
  *  Author: Rick Strahl 
@@ -596,6 +598,7 @@ namespace Westwind.Utilities
             string responseText = string.Empty;
             errorMessage = null;
 
+
             using (WebClient Http = new WebClient())
             {
                 try
@@ -662,3 +665,4 @@ namespace Westwind.Utilities
         Bash
     }
 }
+#pragma warning restore SYSLIB0014

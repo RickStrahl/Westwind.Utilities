@@ -88,7 +88,7 @@ namespace Westwind.Utilities.Test
             Console.WriteLine(html);
         }
 
-
+#if NET6_0_OR_GREATER
         [TestMethod]
         public async Task HttpRequestBadJsonPostTest()
         {
@@ -160,7 +160,7 @@ namespace Westwind.Utilities.Test
             }
             
         }
-
+#endif
     }
 
 }

@@ -319,9 +319,11 @@ namespace Westwind.Utilities.InternetTools
 		{
 			try 
 			{
-				WebRequest =  (HttpWebRequest) System.Net.WebRequest.Create(Url);                
+#pragma warning disable SYSLIB0014
+                WebRequest =  (HttpWebRequest) System.Net.WebRequest.Create(Url);                
+#pragma warning restore SYSLIB0014
                 
- 			}
+            }
 			catch (Exception ex)
 			{
 				ErrorMessage = ex.Message;
@@ -575,7 +577,9 @@ namespace Westwind.Utilities.InternetTools
 
             if (WebRequest == null)
             {
+#pragma warning disable SYSLIB0014
                 WebRequest = (HttpWebRequest)System.Net.WebRequest.Create(url);
+#pragma warning restore SYSLIB0014
                 //WebRequest.Headers.Add("Cache","no-cache");                
             }
 
@@ -784,8 +788,11 @@ namespace Westwind.Utilities.InternetTools
 
 				if (WebRequest == null) 
 				{
-					WebRequest =  (HttpWebRequest) System.Net.WebRequest.Create(url);                    
-					//WebRequest.Headers.Add("Cache","no-cache");
+
+#pragma warning disable SYSLIB0014
+                    WebRequest =  (HttpWebRequest) System.Net.WebRequest.Create(url);                    
+#pragma warning restore SYSLIB0014
+                    //WebRequest.Headers.Add("Cache","no-cache");
 				}
 				
 				WebRequest.UserAgent = UserAgent;
@@ -1102,8 +1109,6 @@ namespace Westwind.Utilities.InternetTools
                             encoding = Encoding.UTF8;
                         else if (charset.Contains("utf-16"))
                             encoding = Encoding.Unicode;
-                        else if (charset.Contains("utf-7"))
-                            encoding = Encoding.UTF7;
                         else if (charset.Contains("utf-32"))
                             encoding = Encoding.UTF32;                        
                         else
@@ -1143,8 +1148,6 @@ namespace Westwind.Utilities.InternetTools
                             encoding = Encoding.UTF8;
                         else if (charset.Contains("utf-16"))
                             encoding = Encoding.Unicode;
-                        else if (charset.Contains("utf-7"))
-                            encoding = Encoding.UTF7;
                         else if (charset.Contains("utf-32"))
                             encoding = Encoding.UTF32;
                         else

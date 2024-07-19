@@ -37,7 +37,7 @@ namespace Westwind.Utilities
         /// <summary>
         /// override indexer to ensure we always non-null value
         /// </summary>
-        public string this[string key]
+        public new string this[string key]
         {
             get
             {
