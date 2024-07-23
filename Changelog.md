@@ -8,6 +8,9 @@ Added a couple of handlers that allow delayed code execution off a timer. Pass i
 * **VersionUtils.FormatVersion()**  
 A generic and configurable string formatter that makes it easier to display version strings more consistently by specifying the number of tokens to display and which `.0` tokens to trim (and leave).
 
+* **AsyncUtils.Timeout() - Task.Timeout Extension Method**  
+Added `AsyncUtil.Timeout()` that allows you to wait on a task with a timeout.
+
 * **Fix: UrlEncodingParser Null Value Handling**  
 Fix null values in the query collection from blowing up the parser and string output. Null values explicitly assigned or missing values now return `string.Empty` - no more null returns.
 

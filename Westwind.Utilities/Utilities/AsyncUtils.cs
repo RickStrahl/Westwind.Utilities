@@ -126,6 +126,20 @@ namespace Westwind.Utilities
             t.ContinueWith((tsk) => del?.Invoke(tsk.Exception), TaskContinuationOptions.OnlyOnFaulted);
         }
 
+        /// <summary>
+        /// Wait for a task to complete with a timeout
+        /// 
+        /// Exceptions are thrown as normal if the task fails as
+        /// </summary>
+        /// <param name="task">Task to wait on</param>
+        /// <param name="timeoutMs">timeout to allow</param>
+        /// <returns>True if completed in time, false if timed out. If true task is completed and you can read the result</returns>
+        public static async Task<bool> Timeout(this Task task, int timeoutMs)
+        {
+            var completed = await Task.WhenAny(task, Task.Delay(timeoutMs));
+            return completed == task;
+        }
+
 
         /// <summary>
         /// Executes an Action after a delay
@@ -187,5 +201,11 @@ namespace Westwind.Utilities
             t.Start();
             return;
         }
+    }
+
+    public static class TaskExtensions
+    {
+
+
     }
 }
