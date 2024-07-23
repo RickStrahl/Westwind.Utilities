@@ -137,9 +137,35 @@ namespace Westwind.Utilities
         public static async Task<bool> Timeout(this Task task, int timeoutMs)
         {
             var completed = await Task.WhenAny(task, Task.Delay(timeoutMs));
-            return completed == task;
+            
+            if (task.IsFaulted)
+                throw task.Exception.GetBaseException();
+
+            return completed == task && task.IsCompleted;
         }
 
+
+        /// <summary>
+        /// Wait for a task with a result and a timeout. If the task times out an
+        /// the `default` value is returned.        
+        /// </summary>        
+        /// <param name="task">Task to wait on</param>
+        /// <param name="timeoutMs">timeout to allow</param>        
+        /// <returns>Tuple result: true/false whether it timed out and result value (on success))</returns>
+        public static async Task<TResult> TimeoutWithResult<TResult>(this Task<TResult> task, int timeoutMs)
+        {                       
+            var completed = await Task.WhenAny(task, Task.Delay(timeoutMs));     
+            
+            if (task.IsFaulted)
+                throw task.Exception.GetBaseException();
+
+            if (completed == task && task.IsCompleted)
+            {
+                return task.Result;
+            }
+
+            return default;
+        }
 
         /// <summary>
         /// Executes an Action after a delay
@@ -203,9 +229,4 @@ namespace Westwind.Utilities
         }
     }
 
-    public static class TaskExtensions
-    {
-
-
-    }
 }
