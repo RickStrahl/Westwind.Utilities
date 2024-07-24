@@ -840,7 +840,7 @@ namespace Westwind.Utilities
                 var dirs = Directory.GetDirectories(path);
                 foreach (string dir in dirs)
                 {
-                    failed = failed + DeleteFiles(dir, filespec, recursive);
+                    failed =+ DeleteFiles(dir, filespec, recursive);
                 }
             }
 

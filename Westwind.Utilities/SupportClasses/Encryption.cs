@@ -806,38 +806,36 @@ namespace Westwind.Utilities
         /// <summary>
         /// Encodes a string to a gzip compressed memory buffer
         /// </summary>
-        /// <param name="Input"></param>
+        /// <param name="input"></param>
         /// <returns></returns>
-        public static byte[] GZipMemory(string Input)
+        public static byte[] GZipMemory(string input)
         {
-            return GZipMemory(Encoding.UTF8.GetBytes(Input));
+            return GZipMemory(Encoding.UTF8.GetBytes(input));
         }
 
         /// <summary>
         /// Encodes a file to a gzip memory buffer
         /// </summary>
-        /// <param name="Filename"></param>
-        /// <param name="IsFile"></param>
+        /// <param name="filename"></param>
+        /// <param name="isFile"></param>
         /// <returns></returns>
-        public static byte[] GZipMemory(string Filename, bool IsFile)
+        public static byte[] GZipMemory(string filename, bool isFile)
         {
-            string InputFile = Filename;
-            byte[] Buffer = File.ReadAllBytes(Filename);
-            return GZipMemory(Buffer);
+            byte[] buffer = File.ReadAllBytes(filename);
+            return GZipMemory(buffer);
         }
 
         /// <summary>
         /// Encodes one file to another file that is gzip compressed.
         /// File is overwritten if it exists and not locked.
         /// </summary>
-        /// <param name="Filename"></param>
-        /// <param name="OutputFile"></param>
+        /// <param name="filename"></param>
+        /// <param name="outputFile"></param>
         /// <returns></returns>
-        public static bool GZipFile(string Filename, string OutputFile)
-        {
-            string InputFile = Filename;
-            byte[] Buffer = File.ReadAllBytes(Filename);
-            FileStream fs = new FileStream(OutputFile, FileMode.OpenOrCreate, FileAccess.Write);
+        public static bool GZipFile(string filename, string outputFile)
+        {            
+            byte[] Buffer = File.ReadAllBytes(filename);
+            FileStream fs = new FileStream(outputFile, FileMode.OpenOrCreate, FileAccess.Write);
             GZipStream GZip = new GZipStream(fs, CompressionMode.Compress);
             GZip.Write(Buffer, 0, Buffer.Length);
             GZip.Close();
