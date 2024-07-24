@@ -1105,7 +1105,7 @@ namespace Westwind.Utilities
         {
             int offset = hex.StartsWith("0x") ? 2 : 0;
             if ((hex.Length % 2) != 0)
-                throw new ArgumentException(String.Format(Resources.InvalidHexStringLength, hex.Length));
+                throw new ArgumentException(string.Format(Resources.InvalidHexStringLength, hex.Length));
 
             byte[] ret = new byte[(hex.Length - offset) / 2];
 
@@ -1130,12 +1130,16 @@ namespace Westwind.Utilities
             if (data == null)
                 return null;
 
-            StringBuilder sb = new StringBuilder(data.Length * 2);
-            foreach (byte val in data)
+            char[] c = new char[data.Length * 2];
+            int b;
+            for (int i = 0; i < data.Length; i++)
             {
-                sb.AppendFormat("{0:x2}", val);
+                b = data[i] >> 4;
+                c[i * 2] = (char)(55 + b + (((b - 10) >> 31) & -7));
+                b = data[i] & 0xF;
+                c[i * 2 + 1] = (char)(55 + b + (((b - 10) >> 31) & -7));
             }
-            return sb.ToString();
+            return new string(c).ToLower();
         }
 
         /// <summary>
