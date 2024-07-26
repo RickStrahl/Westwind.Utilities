@@ -1,6 +1,6 @@
 # Westwind.Utilities Changelog
 
-### 5.0.3
+### 5.0.7
 
 * **AsyncUtils.DelayExecution()**  
 Added a couple of handlers that allow delayed code execution off a timer. Pass in an Action to execute, a timeout and an optional error handler.
@@ -10,6 +10,9 @@ A generic and configurable string formatter that makes it easier to display vers
 
 * **AsyncUtils.Timeout() - Task.Timeout Extension Method**  
 Added `AsyncUtil.Timeout()` that allows you to wait on a task with a timeout.
+
+* **StringUtils 'Many' Operations**  
+String extension methods that operate on 'many' values for various string operations: `EqualsMany()`, `ContainsMany()`, `StartsWithMany()`, `ReplaceMany()`
 
 * **Fix: UrlEncodingParser Null Value Handling**  
 Fix null values in the query collection from blowing up the parser and string output. Null values explicitly assigned or missing values now return `string.Empty` - no more null returns.

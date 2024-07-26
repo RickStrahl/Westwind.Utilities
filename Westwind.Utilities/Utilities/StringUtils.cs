@@ -665,6 +665,42 @@ namespace Westwind.Utilities
             return false;
         }
 #endif
+
+        /// <summary>
+        /// Checks to see if a string contains any of a set of values
+        /// </summary>
+        /// <param name="str">String to check</param>
+        /// <param name="compare">Comparison mode</param>
+        /// <param name="matchValues">Strings to check for</param>
+        /// <returns></returns>
+        public static bool EqualsMany(this string str, StringComparison compare, params string[] matchValues)
+        {
+            foreach (var value in matchValues)
+            {
+                if (str.Equals(value, compare))
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks to see if a string contains any of a set of values.
+        /// </summary>
+        /// <param name="str">String to compare</param>        
+        /// <param name="matchValues">String values to compare to</param>
+        /// <returns></returns>
+        public static bool EqualsMany(this string str,  params string[] matchValues)
+        {
+            foreach (var value in matchValues)
+            {
+                if (str.Equals(value))
+                    return true;
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Replaces multiple matches with a new value
         /// </summary>
@@ -681,7 +717,9 @@ namespace Westwind.Utilities
 
             return str;
         }
-#endregion
+        #endregion
+
+
         #region String Parsing
         /// <summary>
         /// Determines if a string is contained in a list of other strings
