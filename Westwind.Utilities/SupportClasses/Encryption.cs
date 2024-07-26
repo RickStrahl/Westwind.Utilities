@@ -35,7 +35,7 @@ namespace Westwind.Utilities
 		/// backwards compatibility) or 24 bytes (works both in
 		/// NET Full and NET Core)
 		/// </summary>
-#if NETFULL
+#if NETFRAMEWORK
 		public static int EncryptionKeySize = 16;  // set for full framework compatibility with previous version
 #else
 	    public static int EncryptionKeySize = 24;  // this is the default for .NET Core (doesn't support 16)

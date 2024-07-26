@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          � West Wind Technologies, 2009-2013
+ *          (c) West Wind Technologies, 2009-2024
  *          http://www.west-wind.com/ 
  * 
  * Created: 09/12/2009
@@ -177,7 +177,7 @@ namespace Westwind.Utilities.Configuration
         protected virtual IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)
         {
 			// dynamically construct the generic provider type
-#if NETFULL
+#if NETFRAMEWORK
 			var providerType = typeof(ConfigurationFileConfigurationProvider<>);
 #else
 			var providerType = typeof(JsonFileConfigurationProvider<>);
