@@ -134,6 +134,7 @@ namespace Westwind.Utilities
         /// <param name="task">Task to wait on</param>
         /// <param name="timeoutMs">timeout to allow</param>
         /// <returns>True if completed in time, false if timed out. If true task is completed and you can read the result</returns>
+        /// <exception cref="Exception">Any exceptions thrown by the task code</exception>"
         public static async Task<bool> Timeout(this Task task, int timeoutMs)
         {
             var completed = await Task.WhenAny(task, Task.Delay(timeoutMs));
@@ -151,7 +152,9 @@ namespace Westwind.Utilities
         /// </summary>        
         /// <param name="task">Task to wait on</param>
         /// <param name="timeoutMs">timeout to allow</param>        
-        /// <returns>Tuple result: true/false whether it timed out and result value (on success))</returns>
+        /// <returns>Task result on success. Or exceptions for timeout or task operation exception</returns>
+        /// <exception cref="TimeoutException">Thrown if the task times out</exception>
+        /// <exception cref="Exception">Any exceptions thrown by the task code</exception>
         public static async Task<TResult> TimeoutWithResult<TResult>(this Task<TResult> task, int timeoutMs)
         {                       
             var completed = await Task.WhenAny(task, Task.Delay(timeoutMs));     
@@ -164,7 +167,7 @@ namespace Westwind.Utilities
                 return task.Result;
             }
 
-            return default;
+            throw new TimeoutException();
         }
 
         /// <summary>
