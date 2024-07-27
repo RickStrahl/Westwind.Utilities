@@ -2,17 +2,17 @@
 
 ### 5.0.7
 
+* **StringUtils 'Many' Operations**  
+String extension methods that operate on 'many' values for various string operations: `EqualsMany()`, `ContainsMany()`, `StartsWithMany()`, `ReplaceMany()`
+
 * **AsyncUtils.DelayExecution()**  
 Added a couple of handlers that allow delayed code execution off a timer. Pass in an Action to execute, a timeout and an optional error handler.
 
+* **AsyncUtils.Timeout() and TimeoutWithResult()**  
+Task extension method that provide for timing out Task execution. Two overloads one that returns true/false and one that returns a value (similar to `Task.WaitAsync()` new in .NET 8.0 but not available prior).
+
 * **VersionUtils.FormatVersion()**  
 A generic and configurable string formatter that makes it easier to display version strings more consistently by specifying the number of tokens to display and which `.0` tokens to trim (and leave).
-
-* **AsyncUtils.Timeout() - Task.Timeout Extension Method**  
-Added `AsyncUtil.Timeout()` that allows you to wait on a task with a timeout.
-
-* **StringUtils 'Many' Operations**  
-String extension methods that operate on 'many' values for various string operations: `EqualsMany()`, `ContainsMany()`, `StartsWithMany()`, `ReplaceMany()`
 
 * **Fix: UrlEncodingParser Null Value Handling**  
 Fix null values in the query collection from blowing up the parser and string output. Null values explicitly assigned or missing values now return `string.Empty` - no more null returns.
