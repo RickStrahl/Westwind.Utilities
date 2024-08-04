@@ -509,7 +509,7 @@ namespace Westwind.Utilities
             if (text.Length > length)
             {
                 text = text.Substring(0, length);
-                text = text.Substring(0, text.LastIndexOf(" ")) + "…";
+                text = text.Substring(0, text.LastIndexOf(" ")) + "â€¦";
             }
 
             if (!text.Contains("\n"))
@@ -556,7 +556,7 @@ namespace Westwind.Utilities
         }
         #endregion
 
-        #region String 'Many' Operations
+        #region String 'Any' and 'Many' Operations
 
         /// <summary>
         /// Checks many a string for multiple string values to start with
@@ -564,7 +564,7 @@ namespace Westwind.Utilities
         /// <param name="str"></param>
         /// <param name="matchValues"></param>
         /// <returns></returns>
-        public static bool StartsWithMany(this string str, params string[] matchValues)
+        public static bool StartsWithAny(this string str, params string[] matchValues)
         {
             foreach (var value in matchValues)
             {
@@ -581,7 +581,7 @@ namespace Westwind.Utilities
         /// <param name="str"></param>
         /// <param name="matchValues"></param>
         /// <returns></returns>
-        public static bool StartsWithMany(this string str, StringComparison compare, params string[] matchValues)
+        public static bool StartsWithAny(this string str, StringComparison compare, params string[] matchValues)
         {
             foreach (var value in matchValues)
             {
@@ -599,7 +599,7 @@ namespace Westwind.Utilities
         /// <param name="str">String to match</param>
         /// <param name="matchValues">Matches to find in the string</param>
         /// <returns></returns>
-        public static bool ContainsMany(this string str, params string[] matchValues)
+        public static bool ContainsAny(this string str, params string[] matchValues)
         {
             foreach (var value in matchValues)
             {
@@ -617,7 +617,7 @@ namespace Westwind.Utilities
         /// <param name="compare">Type of comparison</param>
         /// <param name="matchValues">Matches to find in the string</param>
         /// <returns></returns>
-        public static bool ContainsMany(this string str, StringComparison compare, params string[] matchValues)
+        public static bool ContainsAny(this string str, StringComparison compare, params string[] matchValues)
         {
             foreach (var value in matchValues)
             {
@@ -635,7 +635,7 @@ namespace Westwind.Utilities
         /// <param name="str">String to match</param>
         /// <param name="matchValues">Matches to find in the string</param>
         /// <returns></returns>
-        public static bool ContainsMany(this string str, params char[] matchValues)
+        public static bool ContainsAny(this string str, params char[] matchValues)
         {
             foreach (var value in matchValues)
             {
@@ -654,7 +654,7 @@ namespace Westwind.Utilities
         /// <param name="compare">Type of comparison</param>
         /// <param name="matchValues">Matches to find in the string</param>
         /// <returns></returns>
-        public static bool ContainsMany(this string str, StringComparison compare, params char[] matchValues)
+        public static bool ContainsAny(this string str, StringComparison compare, params char[] matchValues)
         {
             foreach (var value in matchValues)
             {
@@ -673,7 +673,7 @@ namespace Westwind.Utilities
         /// <param name="compare">Comparison mode</param>
         /// <param name="matchValues">Strings to check for</param>
         /// <returns></returns>
-        public static bool EqualsMany(this string str, StringComparison compare, params string[] matchValues)
+        public static bool EqualsAny(this string str, StringComparison compare, params string[] matchValues)
         {
             foreach (var value in matchValues)
             {
@@ -690,7 +690,7 @@ namespace Westwind.Utilities
         /// <param name="str">String to compare</param>        
         /// <param name="matchValues">String values to compare to</param>
         /// <returns></returns>
-        public static bool EqualsMany(this string str,  params string[] matchValues)
+        public static bool EqualsAny(this string str,  params string[] matchValues)
         {
             foreach (var value in matchValues)
             {
