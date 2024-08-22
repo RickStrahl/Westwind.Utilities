@@ -202,10 +202,12 @@ namespace Westwind.Utilities
 
         /// <summary>
         /// Returns a string representation of the errors in this collection.
-        /// The string is separated by CR LF after each line.
+        /// The string is separated by CR LF after each line but it
+        /// uses an optional string prefix on each line.
         /// </summary>
+        /// <param name="prefixLine">A string prefix that pre-pended on each error line (plus a space)</param>
         /// <returns></returns>
-        public override string ToString(string prefixLine)
+        public string ToString(string prefixLine)
         {
             if (Count < 1)
                 return string.Empty;
@@ -214,7 +216,7 @@ namespace Westwind.Utilities
 
             foreach (ValidationError Error in this)
             {
-                sb.AppendLine(prefixLine + " " + Error.Message);
+                sb.AppendLine($"{prefixLine} {Error.Message}");
             }
 
             return sb.ToString();
