@@ -201,6 +201,26 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
+        /// Returns a string representation of the errors in this collection.
+        /// The string is separated by CR LF after each line.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString(string prefixLine)
+        {
+            if (Count < 1)
+                return string.Empty;
+
+            StringBuilder sb = new StringBuilder(128);
+
+            foreach (ValidationError Error in this)
+            {
+                sb.AppendLine(prefixLine + " " + Error.Message);
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// Returns an HTML representation of the errors in this collection.
         /// The string is returned as an HTML unordered list.
         /// </summary>

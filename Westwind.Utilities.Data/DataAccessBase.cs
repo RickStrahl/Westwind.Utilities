@@ -677,6 +677,7 @@ namespace Westwind.Utilities.Data
         /// <param name="parameters">
         /// DbParameters (CreateParameter()) for named parameters
         /// or use @0,@1 parms in SQL and plain values
+        /// or new { parm1=value, parm2 = value2}
         /// </param>
         /// <returns></returns>
         /// <summary>

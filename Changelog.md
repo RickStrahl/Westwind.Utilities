@@ -3,7 +3,7 @@
 ### 5.0.7
 
 * **StringUtils 'Many' Operations**  
-String extension methods that operate on 'many' values for various string operations: `EqualsMany()`, `ContainsMany()`, `StartsWithMany()`, `ReplaceMany()`
+String extension methods that operate on 'many' values for various string operations: `EqualsMany()`, `ContainsMany()`, `StartsWithMany()`, `ReplaceMany()`. The finds 
 
 * **AsyncUtils.DelayExecution()**  
 Added a couple of handlers that allow delayed code execution off a timer. Pass in an Action to execute, a timeout and an optional error handler.
