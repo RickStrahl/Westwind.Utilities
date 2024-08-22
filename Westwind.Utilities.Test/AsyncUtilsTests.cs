@@ -86,12 +86,12 @@ namespace Westwind.Utilities.Test
                 // returns int - 100 on success and 0 (default) on failure
                 result = await taskToComplete.TimeoutWithResult<int>(1000);
             }
-            catch(TimeoutException ex)
+            catch(TimeoutException)
             {
                 Assert.IsTrue(true);
                 return;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Assert.Fail("This task should have timed out and there should be no execution exception");
             }
@@ -136,7 +136,7 @@ namespace Westwind.Utilities.Test
             {
                 Assert.Fail("Task should not have timed out: " + ex.Message);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Assert.IsTrue(true);
                 return;
@@ -157,12 +157,12 @@ namespace Westwind.Utilities.Test
                 result = await DoSomething(1000).WaitAsync(TimeSpan.FromSeconds(2));
             }
             // Capture Timeout
-            catch (TimeoutException ex)
+            catch (TimeoutException)
             {
                 Assert.Fail("This task method should not have timed out.");
             }
             // Fires on Exception in taskToComplete
-            catch (Exception ex)
+            catch (Exception)
             {
                 Assert.Fail("This task method should not fail with exceptions.");
             }
@@ -180,8 +180,7 @@ namespace Westwind.Utilities.Test
         private async Task<int> DoThrow(int timeout)
         {
             await Task.Delay(timeout);
-            throw new Exception("Exception thrown in task method DoThrow");
-            return 100;
+            throw new Exception("Exception thrown in task method DoThrow");            
         }
     }
 
