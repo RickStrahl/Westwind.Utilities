@@ -14,6 +14,7 @@
 
 Supports the following Targets:
 
+* .NET 8.0,6.0
 * .NET Standard 2.0
 * .NET 4.62+
 
