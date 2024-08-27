@@ -1,5 +1,8 @@
 # Westwind.Utilities 
 
+![](Westwind.Utilities/icon.png)
+
+
 | Library                 | Versions and Stats                                                                                                                                                                                      |
 |-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Westwind.Utilities      | <a href="https://www.nuget.org/packages/Westwind.Utilities/">![](https://img.shields.io/nuget/v/Westwind.Utilities.svg)</a> ![](https://img.shields.io/nuget/dt/Westwind.Utilities.svg)                 |
@@ -7,6 +10,7 @@
 | Documentation           | <a href="https://docs.west-wind.com/westwind.utilities/">![](https://img.shields.io/badge/documentation-blue.svg)</a>                                                                                   |
 
 ### A general purpose utility and helper library for .NET development
+
 
 Supports the following Targets:
 
