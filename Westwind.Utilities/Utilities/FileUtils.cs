@@ -729,6 +729,33 @@ namespace Westwind.Utilities
             }
         }
 
+
+        /// <summary>
+        /// Async Read all bytes. Use only with NetFx
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<byte[]> ReadAllBytesAsync(string filename)
+        {
+            if (filename == null)
+                throw new ArgumentNullException(nameof(filename));
+
+            using (var sourceStream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true))
+            {
+                var buffer = new byte[sourceStream.Length];
+                int bytesRead = 0;
+                while (bytesRead < buffer.Length)
+                {
+                    int read = await sourceStream.ReadAsync(buffer, bytesRead, buffer.Length - bytesRead);
+                    if (read == 0)
+                        break;
+                    bytesRead += read;
+                }
+                return buffer;
+            }
+        }
+
         /// <summary>
         /// Writes out text file content asynchronously.Use only with NetFx.
         /// </summary>
@@ -737,10 +764,34 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static async Task WriteAllTextAsync(string filename, string text, Encoding encoding)
         {
+            if (filename == null)
+                throw new ArgumentNullException(nameof(filename));
+
             using (var stream = new FileStream(filename, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan))
             {
                 var bytes = encoding.GetBytes(text ?? string.Empty);
                 await stream.WriteAsync(bytes, 0, bytes.Length);
+            }
+        }
+
+
+        /// <summary>
+        /// Async Write all bytes. Use only with NetFx
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task WriteAllBytesAsync(string filename, byte[] bytes)
+        {
+            if (filename == null)
+                throw new ArgumentNullException(nameof(filename));
+            if (bytes == null)
+                throw new ArgumentNullException(nameof(bytes));
+
+            using (var destinationStream = new FileStream(filename, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
+            {
+                await destinationStream.WriteAsync(bytes, 0, bytes.Length);
             }
         }
 
