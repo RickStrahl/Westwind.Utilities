@@ -7,6 +7,7 @@
 |-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Westwind.Utilities      | <a href="https://www.nuget.org/packages/Westwind.Utilities/">![](https://img.shields.io/nuget/v/Westwind.Utilities.svg)</a> ![](https://img.shields.io/nuget/dt/Westwind.Utilities.svg)                 |
 | Westwind.Utilities.Data | <a href="https://www.nuget.org/packages/Westwind.Utilities.Data/">![](https://img.shields.io/nuget/v/Westwind.Utilities.Data.svg)</a>  ![](https://img.shields.io/nuget/dt/Westwind.Utilities.Data.svg) |
+| Westwind.Utilities.Windows | <a href="https://www.nuget.org/packages/Westwind.Utilities.Windows/">![](https://img.shields.io/nuget/v/Westwind.Utilities.Windows.svg)</a>  ![](https://img.shields.io/nuget/dt/Westwind.Utilities.Windows.svg) |
 | Documentation           | <a href="https://docs.west-wind.com/westwind.utilities/">![](https://img.shields.io/badge/documentation-blue.svg)</a>                                                                                   |
 
 ### A general purpose utility and helper library for .NET development
