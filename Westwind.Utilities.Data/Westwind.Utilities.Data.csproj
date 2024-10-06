@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net462;net8.0;net6.0;netstandard2.0</TargetFrameworks>
-		<Version>5.0.8</Version>
+		<TargetFrameworks>net462;net8.0;net9.0;net6.0;netstandard2.0</TargetFrameworks>
+		<Version>5.0.9</Version>
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
@@ -24,7 +24,7 @@
 		<PackageLicenseFile>LICENSE.MD</PackageLicenseFile>
 
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Copyright>Rick Strahl, West Wind Technologies, 2010-2023</Copyright>
+		<Copyright>Rick Strahl, West Wind Technologies, 2010-2024</Copyright>
 		<RepositoryType>Github</RepositoryType>
 		<Company>West Wind Technologies</Company>
 		<RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
@@ -58,7 +58,7 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">

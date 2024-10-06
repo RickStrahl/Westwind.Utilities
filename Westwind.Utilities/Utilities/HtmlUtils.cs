@@ -16,6 +16,9 @@ namespace Westwind.Utilities
         /// <returns>Returns an HTML string of the converted text</returns>
         public static string FixHTMLForDisplay(string html)
         {
+            if (string.IsNullOrEmpty(html))
+                return html;
+
             html = html.Replace("<", "&lt;");
             html = html.Replace(">", "&gt;");
             html = html.Replace("\"", "&quot;");
@@ -29,6 +32,9 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static string StripHtml(string html)
         {
+            if (string.IsNullOrEmpty(html))
+                return html;
+
             html = Regex.Replace(html, @"<(.|\n)*?>", string.Empty);
             html = html.Replace("\t", " ");
             html = html.Replace("\r\n", string.Empty);
@@ -72,7 +78,6 @@ namespace Westwind.Utilities
                 text = text.Replace("</pre>", "__/pre__");
                 PreTag = true;
             }
-
 
             // fix up line breaks into <br><p>
             text = DisplayMemo(System.Net.WebUtility.HtmlEncode(text)); //HttpUtility.HtmlEncode(Text));
@@ -182,6 +187,8 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static string HtmlAbstract(string html, int length)
         {
+            if (string.IsNullOrEmpty(html))
+                return string.Empty;    
             return StringUtils.TextAbstract(StripHtml(html), length);
         }
 

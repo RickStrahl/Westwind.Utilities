@@ -1,4 +1,6 @@
 # Westwind.Utilities Changelog
+
+
 ### 5.0.9
 
 * **Add HttpClientUtils support for .NET Framework**  
@@ -6,6 +8,9 @@ The HttpClientUtils class now works on .NET Framework. It was previously only su
 
 * **Add FileUtils.ReadAllBytesAsync() and WriteAllBytesAsync()**  
 Support functions for .NET Framework to support missing `System.IO.File` async methods.
+
+* **Update Microsoft.Data.SqlClient**  
+Microsoft finally fixed the vulnerability related Azure dependencies in Microsoft.Data.SqlClient.
 
 
 ### 5.0.7

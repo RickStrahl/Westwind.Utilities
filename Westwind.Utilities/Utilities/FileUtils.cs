@@ -342,6 +342,9 @@ namespace Westwind.Utilities
 
         /// <summary>
         /// Adds a trailing slash to a path if there isn't one.
+        /// 
+        /// Allows you to explicitly specify the path separator character
+        /// rather than using the default OS path separator.
         /// </summary>
         /// <param name="path">A file system path</param>
         /// <param name="slashchar">Character to use as trailing character</param>
