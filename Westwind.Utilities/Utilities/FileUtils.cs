@@ -107,7 +107,6 @@ namespace Westwind.Utilities
 
                 Uri relativeUri = baseUri.MakeRelativeUri(uri: fullUri);
                 
-
                 // Uri's use forward slashes so convert back to backward slahes
                 var path = relativeUri.ToString().Replace(oldValue: "/", newValue: pathChar);
 
@@ -203,12 +202,28 @@ namespace Westwind.Utilities
                 return path;
 
             if (path.StartsWith("~"))
-            {
-                var userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                path = path.Replace("~", userPath);
+            {                
+                path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + path.TrimStart('~');                
             }
-
             return Environment.ExpandEnvironmentVariables(path);
+        }
+
+        /// <summary>
+        /// Changes any path that starts with the Windows user path into a ~ path instead
+        /// </summary>
+        /// <param name="path">Any windows path</param>
+        /// <returns>~ replaces c:\users\someuser in path string, otherwise original path is returned</returns>
+        public static string TildefyUserPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return path;
+
+            string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+            if (path.StartsWith(userPath, StringComparison.InvariantCultureIgnoreCase))
+                return path.Replace(userPath, "~", true, null);
+
+            return path;
         }
 
         /// <summary>

@@ -1,5 +1,9 @@
 # Westwind.Utilities Changelog
 
+### 5.0.10
+
+* **FileUtils.TildefyUserPath()**  
+Replaces the user path with the `~` to make the path generic. Useful if you store file or folder info in configuration files in a shared location that can be accessed from different computers. You can use `FileUtils.ExpandPathEnvironmentVariables()` to expand the `~` in addition to environment variables.
 
 ### 5.0.9
 
