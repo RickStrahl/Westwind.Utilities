@@ -98,6 +98,31 @@ namespace Westwind.Utilities.Test
 
         }
 
+        [TestMethod]
+        public void TildefyPathTest()
+        {
+
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Projects\\Markdown Monster");
+            var result = FileUtils.TildefyUserPath(path);
+
+            Assert.IsTrue(result.StartsWith("~"));
+            Assert.IsTrue(result.Contains("Projects\\Markdown Monster"));
+            Console.WriteLine(result);
+
+            path = null;
+            result = FileUtils.TildefyUserPath(path);            
+            Assert.IsTrue(result == null);
+
+            path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            result = FileUtils.TildefyUserPath(path);
+            Assert.IsTrue(result == "~");
+
+
+            path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\";
+            result = FileUtils.TildefyUserPath(path);
+            Assert.IsTrue(result == "~\\");
+        }
+
 
 
         [TestMethod]

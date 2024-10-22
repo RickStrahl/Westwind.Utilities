@@ -221,7 +221,11 @@ namespace Westwind.Utilities
             string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
             if (path.StartsWith(userPath, StringComparison.InvariantCultureIgnoreCase))
+#if NET6_0_OR_GREATER
                 return path.Replace(userPath, "~", true, null);
+#else
+                return StringUtils.ReplaceString(path, userPath, "~", true);
+#endif
 
             return path;
         }
@@ -295,7 +299,7 @@ namespace Westwind.Utilities
             return Path.Combine(tempPath, filename + extension);
         }
 
-        #endregion
+#endregion
 
         #region File and Path Normalization
 
