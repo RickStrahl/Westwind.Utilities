@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace System.IO
 {
@@ -18,7 +19,7 @@ namespace System.IO
         {
             if (encoding == null)
                 encoding = Encoding.Unicode;
-
+            ms.Position = 0;
             return encoding.GetString(ms.ToArray());
         }
 
@@ -58,6 +59,48 @@ namespace System.IO
                 s.CopyTo(ms);
                 s.Position = 0;
                 return ms.AsString(encoding);
+            }
+        }
+
+        /// <summary>
+        /// Returns bytes from a stream
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static byte[] AsBytes(this Stream s)
+        {            
+            if (s is MemoryStream ms)
+            {                
+                ms.Position = 0;
+                return ms.ToArray();
+            }
+
+            using (ms = new MemoryStream() {  Capacity = Math.Max( 256, (int) s.Length ) })
+            {                                
+                s.CopyTo(ms);
+                s.Position = 0;
+                return ms.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Returns bytes from a stream
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static async Task<byte[]> AsBytesAsync(this Stream s)
+        {
+            if (s is MemoryStream ms)
+            {
+                ms.Position = 0;
+                return ms.ToArray();
+            }
+
+            using (ms = new MemoryStream() { Capacity = Math.Max(256, (int)s.Length) })
+            {
+                await s.CopyToAsync(ms);
+                s.Position = 0;
+                return ms.ToArray();
             }
         }
     }
