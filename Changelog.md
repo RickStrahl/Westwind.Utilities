@@ -1,9 +1,12 @@
 # Westwind.Utilities Changelog
 
-### 5.0.10
+### 5.0.12
 
 * **FileUtils.TildefyUserPath()**  
 Replaces the user path with the `~` to make the path generic. Useful if you store file or folder info in configuration files in a shared location that can be accessed from different computers. You can use `FileUtils.ExpandPathEnvironmentVariables()` to expand the `~` in addition to environment variables.
+
+* **Basic PasswordScrubber Class for Json and Sql Connections**  
+Added a very basic Password scrubber that attempts to scrub passwords for keys you provide. By default `password` and `pwd` are parsed but you can scrub any values that you need specifically. Two methods: `ScrubJsonValues()` and `ScrubSqlConnectionValues()`.
 
 ### 5.0.9
 
