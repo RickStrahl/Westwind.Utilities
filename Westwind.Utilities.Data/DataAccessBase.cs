@@ -1785,7 +1785,10 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             {
                 if (!Property.CanRead)
                     continue;
-                if (!Property.PropertyType.IsValueType && Property.PropertyType.Name != "String")
+       
+                if (!Property.PropertyType.IsValueType && 
+                    Property.PropertyType.Name != "String" &&
+                    Property.PropertyType.Name != "Byte[]")
                     continue;
 
                 string Name = Property.Name;
@@ -1867,7 +1870,9 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 if (Property == null)
                     continue;
 
-                if (!Property.PropertyType.IsValueType && Property.PropertyType.Name != "String")
+                if (!Property.PropertyType.IsValueType &&
+                    Property.PropertyType.Name != "String" &&
+                    Property.PropertyType.Name != "Byte[]")
                     continue;
 
                 object Value = Property.GetValue(entity, null);
@@ -2045,7 +2050,9 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             {
                 if (!Property.CanRead)
                     continue;
-                if (!Property.PropertyType.IsValueType && Property.PropertyType.Name != "String")
+                if (!Property.PropertyType.IsValueType &&
+                    Property.PropertyType.Name != "String" && 
+                    Property.PropertyType.Name != "Byte[]")
                     continue;
 
                 string Name = Property.Name; 

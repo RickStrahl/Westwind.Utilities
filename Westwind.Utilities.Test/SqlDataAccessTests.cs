@@ -540,5 +540,18 @@ namespace Westwind.Utilities.Data.Tests
                 Assert.IsTrue(db.DoesTableExist("customers"));
             }
         }
+
+        [TestMethod]
+        public void BinaryDataTest()
+        {
+            using (var db = new SqlDataAccess(STR_ConnectionString))
+            {
+                var customer = new Customer();
+                Assert.IsTrue(db.GetEntity(customer, "customers", "Id", 1), db.ErrorMessage);
+
+                customer.Binary = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+                Assert.IsTrue(db.UpdateEntity(customer, "customers", "Id", "Id"), db.ErrorMessage);
+            }
+        }
     }
 }

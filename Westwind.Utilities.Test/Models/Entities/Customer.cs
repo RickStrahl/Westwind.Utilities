@@ -28,6 +28,8 @@ namespace Westwind.Data.Test.Models
         public DateTime Entered { get; set; }
         public DateTime Updated { get; set; }
 
+        public byte[] Binary { get; set;  }
+
         public List<Order> Orders { get; set; }
 
         public Customer()
