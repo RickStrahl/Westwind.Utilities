@@ -916,7 +916,7 @@ namespace Westwind.Utilities.InternetTools
 					}
 				}
 
-                if ((WebRequest.Method == "POST" || WebRequest.Method == "PUT") &&
+                if ((WebRequest.Method == "POST" || WebRequest.Method == "PUT" || WebRequest.Method == "PATCH") &&
                     _PostData == null)
                 {
                     WebRequest.ContentLength = 0;
