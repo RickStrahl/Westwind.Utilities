@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http;
-using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -61,9 +60,24 @@ namespace Westwind.Utilities
                     if (settings.Response.IsSuccessStatusCode)
                     {
                         // http 201 no content may return null and be success
+
+                        if (settings.HasResponseContent)
+                        {
+                            if (settings.MaxResponseSize > 0)
+                            {
+                                using (var stream = await settings.Response.Content.ReadAsStreamAsync())
+                                {
+                                    var buffer = new byte[settings.MaxResponseSize];
+                                    _ = await stream.ReadAsync(buffer, 0, settings.MaxResponseSize);
+                                    content = settings.Encoding.GetString(buffer);
+                                }
+                            }
+                            else
+                            {
+                                content = await settings.Response.Content.ReadAsStringAsync();
+                            }                            
+                        }
                         
-                        if (settings.HasResponseContent)                            
-                             content = await settings.Response.Content.ReadAsStringAsync();
                         return content;
                     }
 
@@ -146,18 +160,18 @@ namespace Westwind.Utilities
             using (var client = GetHttpClient(null, settings))
             {
                 try
-                {
+                {                    
                     settings.Response = await client.SendAsync(settings.Request);
 
                     if (settings.ThrowExceptions && !settings.Response.IsSuccessStatusCode)
                         throw new HttpRequestException(settings.Response.StatusCode.ToString() + " " + settings.Response.ReasonPhrase);
-                    
+
                     return settings.Response;
                 }
                 catch (Exception ex)
                 {
                     settings.HasErrors = true;
-                    settings.ErrorException = ex;
+                    settings.ErrorException = ex;                    
                     settings.ErrorMessage = ex.GetBaseException().Message;
 
                     if (settings.ThrowExceptions)
@@ -230,14 +244,19 @@ namespace Westwind.Utilities
             if (settings == null)
                 settings = new HttpClientRequestSettings();
 
-
             handler = handler ?? new HttpClientHandler()
             {
                 Proxy = settings.Proxy,
-                Credentials = settings.Credentials
+                Credentials = settings.Credentials,                
             };
 
+#if NETCORE
+            if (settings.IgnoreCertificateErrors)
+                handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+#endif
+
             var client = new HttpClient(handler);
+            
 
             settings.Request = new HttpRequestMessage
             {
@@ -246,6 +265,7 @@ namespace Westwind.Utilities
                 Version = new Version(settings.HttpVersion)
             };
 
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(settings.UserAgent);
 
             foreach (var header in settings.Headers)
             {
@@ -296,6 +316,7 @@ namespace Westwind.Utilities
             if (string.IsNullOrEmpty(header) || string.IsNullOrEmpty(value))
                 return;
 
+            
             var lheader = header.ToLower();
 
 
@@ -429,7 +450,7 @@ namespace Westwind.Utilities
                 if (Response != null)
                     return Response.StatusCode;
 
-                return HttpStatusCode.OK;
+                return HttpStatusCode.Unused;
             }
         }
 
@@ -485,6 +506,16 @@ namespace Westwind.Utilities
         /// The full Execption object if an error occurred
         /// </summary>
         public Exception ErrorException { get; set; }
+
+        public int MaxResponseSize { get; set; }
+
+        /// <summary>
+        /// if true ignores most certificate errors (expired, not trusted)
+        /// </summary>
+#if !NETCORE
+        [Obsolete("This property is not supported in .NET Framework.")]
+#endif
+        public bool IgnoreCertificateErrors { get; set; }
 
         public HttpClientRequestSettings()
         {
@@ -570,7 +601,11 @@ namespace Westwind.Utilities
                 ErrorException = ex;
                 return null;
             }
-        }   
+        }
 
+        public override string ToString()
+        {
+            return $"{HttpVerb} {Url}   {ErrorMessage}";
+        }
     }
 }

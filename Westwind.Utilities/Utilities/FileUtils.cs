@@ -419,7 +419,7 @@ namespace Westwind.Utilities
 
             byte[] buffer = new byte[5];
             FileStream file = new FileStream(srcFile, FileMode.Open);
-            file.Read(buffer, 0, 5);
+            _ = file.Read(buffer, 0, 5);
             file.Close();
 
             if (buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf)

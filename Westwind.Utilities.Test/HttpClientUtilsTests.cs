@@ -40,18 +40,18 @@ namespace Westwind.Utilities.Test
                 Url = "http://west-wind.com/bogus.html"
             };
             string html = await HttpClientUtils.DownloadStringAsync(settings);
-            
+
 
             // result is a 404 with content but success has no result (null)
             Assert.IsNull(html);
 
-            Assert.IsTrue(settings.HasErrors); 
+            Assert.IsTrue(settings.HasErrors);
             Assert.IsTrue(settings.ResponseStatusCode == HttpStatusCode.NotFound);
 
             var content = await settings.GetResponseStringAsync();
 
             Assert.IsNotNull(content);
-            Console.WriteLine(content);            
+            Console.WriteLine(content);
         }
 
         [TestMethod]
@@ -80,7 +80,7 @@ namespace Westwind.Utilities.Test
                 Url = "https://west-wind.com/wconnect/Testpage.wwd",
                 HttpVerb = "POST",
                 RequestContent = "FirstName=Rick&Company=West+Windx",
-                RequestContentType = "application/x-www-form-urlencoded"                
+                RequestContentType = "application/x-www-form-urlencoded"
             });
 
             Assert.IsNotNull(html);
@@ -111,14 +111,14 @@ namespace Westwind.Utilities.Test
 
             json = await settings.GetResponseStringAsync();
 
-            Assert.IsNotNull(json,"Error content not retrieved.");
+            Assert.IsNotNull(json, "Error content not retrieved.");
 
             Console.WriteLine(json);
 
             // 
-            var jobj  = await settings.GetResponseJson<JObject>();
+            var jobj = await settings.GetResponseJson<JObject>();
             Assert.IsNotNull(jobj);
-            
+
             Console.WriteLine(jobj);
             Console.WriteLine(((dynamic)jobj).message);
         }
@@ -136,13 +136,13 @@ namespace Westwind.Utilities.Test
                           """;
             var settings = new HttpClientRequestSettings
             {
-                Url = "https://store.west-wind.com/api/account/bogus",
+                Url = "https://albumviewer.west-wind.com/api/account/bogus",
                 HttpVerb = "POST",
                 RequestContent = json,
                 RequestContentType = "application/json",
                 ThrowExceptions = true
             };
-            
+
             try
             {
                 json = await HttpClientUtils.DownloadStringAsync(settings);
@@ -157,7 +157,26 @@ namespace Westwind.Utilities.Test
                 Assert.IsTrue(htmlErrorPage.StartsWith("<!DOCTYPE"));
                 //Console.WriteLine(htmlErrorPage);
             }
-            
+
+        }
+
+
+        [TestMethod]
+        public async Task HttpMaxResponseSizeTest()
+        {
+            int maxSize = 200;
+            string html = await HttpClientUtils.DownloadStringAsync(new HttpClientRequestSettings
+            {
+                Url = "http://west-wind.com/wconnect/Testpage.wwd",
+                HttpVerb = "HEAD",                
+                MaxResponseSize = maxSize
+            });
+
+
+            Assert.IsNotNull(html);
+            Assert.IsTrue(html.Length <= maxSize);
+            Console.WriteLine(html);
         }
     }
+
 }

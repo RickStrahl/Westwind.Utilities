@@ -453,8 +453,8 @@ namespace Westwind.Utilities.InternetTools
 				FileStream loFile = new FileStream(fileName,System.IO.FileMode.Open,System.IO.FileAccess.Read);
 
 				lcFile = new byte[loFile.Length];
-				loFile.Read(lcFile,0,(int) loFile.Length);
-				loFile.Close();
+                _ = loFile.Read(lcFile,0,(int) loFile.Length);
+                loFile.Close();
 			}
 			catch(Exception e) 
 			{
