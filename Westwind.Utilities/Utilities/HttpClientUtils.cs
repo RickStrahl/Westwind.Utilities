@@ -164,7 +164,7 @@ namespace Westwind.Utilities
                     settings.Response = await client.SendAsync(settings.Request);
 
                     if (settings.ThrowExceptions && !settings.Response.IsSuccessStatusCode)
-                        throw new HttpRequestException(settings.Response.StatusCode.ToString() + " " + settings.Response.ReasonPhrase);
+                        throw new HttpRequestException(settings.ResponseStatusCode + " " + settings.Response.ReasonPhrase);
 
                     return settings.Response;
                 }
@@ -522,7 +522,7 @@ namespace Westwind.Utilities
             HttpVerb = "GET";
             Headers = new Dictionary<string, string>();
             Encoding = Encoding.UTF8;
-            UserAgent = "West Wind .NET Http Client";
+            UserAgent = "West Wind .NET Http Client";            
         }
 
         /// <summary>
