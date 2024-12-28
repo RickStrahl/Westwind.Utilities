@@ -97,12 +97,12 @@ namespace Westwind.Utilities.Configuration
         /// if not - automatically calls it without parameters
         /// </summary>
         protected bool InitializeCalled = false;
-        
+
         /// <summary>
         /// Default constructor of this class SHOULD ALWAYS be implemented in
         /// every subclass to allow serialization instantiation and setting
-		/// of initial property values.
-        /// </summary>         
+        /// of initial property values.
+        /// </summary>                 
         public AppConfiguration()
         { }
 

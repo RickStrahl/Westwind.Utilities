@@ -225,6 +225,32 @@ namespace Westwind.Utilities.Configuration.Tests
             config.MaxDisplayListItems = 15;
             config.Write();
         }
+
+        [TestMethod]
+        public void NoConstructorWriteConfiguration2Test2()
+        {
+            var config = new NoConstructorConfiguration();
+            Assert.IsNotNull(config, "Configuration object is null");
+
+            config = NoConstructorConfiguration.New();
+            Assert.IsNotNull(config, "Static New(): Configuration object is null");
+        }
+
+        public class NoConstructorConfiguration : AppConfiguration
+        {
+            public string ApplicationName { get; set; }
+            public DebugModes DebugMode { get; set; }
+            public int MaxDisplayListItems { get; set; }
+            public bool SendAdminEmailConfirmations { get; set; }
+
+            public static NoConstructorConfiguration New()
+            {
+                var config = new NoConstructorConfiguration();
+                config.Initialize();
+                return config;
+            }
+        }
+
     }
 }
 #endif

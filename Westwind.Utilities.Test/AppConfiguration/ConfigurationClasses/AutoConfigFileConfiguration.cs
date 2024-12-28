@@ -18,7 +18,7 @@ namespace Westwind.Utilities.Configuration.Tests
     /// When using XML, String, Database the default constructor 
     /// needs to be left at default to avoid recursive loading
     /// </summary>
-    class AutoConfigFileConfiguration : Westwind.Utilities.Configuration.AppConfiguration
+    public class AutoConfigFileConfiguration : Westwind.Utilities.Configuration.AppConfiguration
     {
         public string ApplicationName { get; set; }
         public DebugModes DebugMode { get; set; }
@@ -57,7 +57,7 @@ namespace Westwind.Utilities.Configuration.Tests
     /// to read configuration information immediately from
     /// itself so no explicit call to Initialize is required
     /// </summary>
-    class AutoConfigFile2Configuration : AppConfiguration
+    public class AutoConfigFile2Configuration : AppConfiguration
     {
         public string ApplicationName { get; set; }
         public DebugModes DebugMode { get; set; }
@@ -73,6 +73,21 @@ namespace Westwind.Utilities.Configuration.Tests
 
             // Automatically initialize this one
             this.Initialize();
+        }
+    }
+
+    public class NoConstructorConfiguration : AppConfiguration
+    {
+        public string ApplicationName { get; set; }
+        public DebugModes DebugMode { get; set; }
+        public int MaxDisplayListItems { get; set; }
+        public bool SendAdminEmailConfirmations { get; set; }
+
+        public static NoConstructorConfiguration New()
+        {
+            var config = new NoConstructorConfiguration();
+            config.Initialize();
+            return config;
         }
     }
 }
