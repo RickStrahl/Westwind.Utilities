@@ -44,17 +44,21 @@ using Westwind.Utilities;
 
 namespace Westwind.Utilities.InternetTools
 {
-	/// <summary>
-	/// An HTTP wrapper class that abstracts away the common needs for adding post keys
-	/// and firing update events as data is received. This class is real easy to use
-	/// with many common operations requiring single method calls.
+    /// <summary>
+    /// An HTTP wrapper class that abstracts away the common needs for adding post keys
+    /// and firing update events as data is received. This class is real easy to use
+    /// with many common operations requiring single method calls.
     ///
     /// The class also provides automated cookie and state handling, GZip compression
     /// decompression, simplified proxy and authentication mechanisms to provide a 
     /// simple single level class interface. The underlying WebRequest is also 
     /// exposed so you will not loose any functionality from the .NET BCL class.
-	/// </summary>
-	public class HttpClient : IDisposable
+    /// </summary>
+#if NET6_0_OR_GREATER
+    [Obsolete("This class is obsolete in .NET Core as it uses the old HttpWebRequest class. Please use System.Net.HttpClient or " +
+        "Westwind.Utilities.HttpClientUtils (for async operation) or Westwind.Utilities.HttpUtils (for sync operations)")]
+#endif
+    public class HttpClient : IDisposable
 	{
 		/// <summary>
 		/// Determines how data is POSTed when when using AddPostKey() and other methods
@@ -1480,10 +1484,16 @@ namespace Westwind.Utilities.InternetTools
         {
             set
             {
+
                 if (value)
-                   ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(CheckCertificateCallback);
+#pragma warning disable SYSLIB0014
+                    ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(CheckCertificateCallback);
+#pragma warning restore SYSLIB0014
                 else
-                   ServicePointManager.ServerCertificateValidationCallback -= new RemoteCertificateValidationCallback(CheckCertificateCallback);
+#pragma warning disable SYSLIB0014
+                    ServicePointManager.ServerCertificateValidationCallback -= new RemoteCertificateValidationCallback(CheckCertificateCallback);
+#pragma warning restore SYSLIB0014
+
             }            
         }
 
