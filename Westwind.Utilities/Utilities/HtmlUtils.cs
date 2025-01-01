@@ -154,8 +154,7 @@ namespace Westwind.Utilities
             return data;
         }
 
-#if NETCORE
-
+#if NET6_0_OR_GREATER
         /// <summary>
         /// Decoded an embedded base64 resource string into its binary content and mime type
         /// </summary>

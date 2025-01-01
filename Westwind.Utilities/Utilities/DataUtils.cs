@@ -35,11 +35,7 @@ using System;
 using System.Data;
 using System.Linq;
 
-//#if NETCORE
-//    using Microsoft.Data.SqlClient;
-//#else
-//    using System.Data.SqlClient;
-//#endif
+
 
 using System.Reflection;
 using System.Collections.Generic;

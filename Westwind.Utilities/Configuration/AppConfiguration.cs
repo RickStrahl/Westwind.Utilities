@@ -32,20 +32,6 @@
 #endregion
 
 using System;
-
-using System.Collections.Specialized;
-using System.Configuration;
-using System.Reflection;
-using System.Xml;
-using System.Globalization;
-
-//#if NETCORE
-//    using Microsoft.Data.SqlClient;
-//#else
-//    using System.Data.SqlClient;
-//#endif
-
-
 using System.Xml.Serialization;
 using System.Diagnostics;
 using Westwind.Utilities.Properties;
@@ -373,6 +359,3 @@ namespace Westwind.Utilities.Configuration
         }
     }
 }
-
-
-              

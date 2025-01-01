@@ -311,7 +311,7 @@ namespace Westwind.Utilities
         {
             bool success = true;
 
-#if NETCORE
+#if NET6_0_OR_GREATER
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.OSDescription.Contains("microsoft-standard");
 #else
             bool isWindows = true;
@@ -325,7 +325,7 @@ namespace Westwind.Utilities
             }
             catch
             {
-#if NETCORE
+#if NET6_0_OR_GREATER
                 // hack because of this: https://github.com/dotnet/corefx/issues/10361
                 if (isWindows)
                 {

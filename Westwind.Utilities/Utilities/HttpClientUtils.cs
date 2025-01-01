@@ -250,7 +250,7 @@ namespace Westwind.Utilities
                 Credentials = settings.Credentials,                
             };
 
-#if NETCORE
+#if NET6_0_OR_GREATER
             if (settings.IgnoreCertificateErrors)
                 handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
 #endif
@@ -512,7 +512,7 @@ namespace Westwind.Utilities
         /// <summary>
         /// if true ignores most certificate errors (expired, not trusted)
         /// </summary>
-#if !NETCORE
+#if !NET6_0_OR_GREATER
         [Obsolete("This property is not supported in .NET Framework.")]
 #endif
         public bool IgnoreCertificateErrors { get; set; }
