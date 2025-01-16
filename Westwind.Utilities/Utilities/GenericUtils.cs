@@ -21,5 +21,26 @@ namespace Westwind.Utilities
         {
             return list.Contains(item);
         }
+
+        /// <summary>
+        /// A string is contained in a list of strings
+        /// </summary>
+        /// <param name="item">string to look for</param>
+        /// <param name="list">list of strings</param>
+        /// <param name="caseSensitive"></param>
+        /// <returns></returns>
+        public static bool Inlist(string item,  bool caseSensitive, params string[] list)
+        {
+            if (caseSensitive)
+                return list.Contains(item);
+
+            foreach (var listItem in list)
+            {
+                if (listItem.Equals(item, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
+        }
     }
 }

@@ -653,7 +653,7 @@ namespace Westwind.Utilities
         /// <summary>
         /// The default SQL date used by InitializeDataRowWithBlanks. Considered a blank date instead of null.
         /// </summary>
-        public static DateTime MinimumSqlDate = DateTime.Parse("01/01/1900");
+        internal static DateTime MinimumSqlDate = DateTime.Parse("01/01/1900");
 
         /// <summary>
         /// Initializes a Datarow containing NULL values with 'empty' values instead.
