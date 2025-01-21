@@ -54,14 +54,14 @@ namespace Westwind.Utilities
     {
         #region Basic String Tasks
 
-
         /// <summary>
-        /// Trims a sub string from a string. 
+        /// Trims the beginning of a string by a matching string
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="textToTrim"></param>
-        /// <returns></returns>        
-        public static string TrimStart(string text, string textToTrim, bool caseInsensitive)
+        /// <param name="text">Text to trim</param>
+        /// <param name="textToTrim">Text to trim with</param>
+        /// <param name="caseInsensitive">If true ignore case</param>
+        /// <returns>Trimmed string if match is found</returns>        
+        public static string TrimStart(string text, string textToTrim, bool caseInsensitive = false)
         {            
             while (true)
             {
@@ -80,6 +80,41 @@ namespace Westwind.Utilities
             }
             return text;
         }
+
+        /// <summary>
+        /// Trims the end of a string  with a matching string
+        /// </summary>
+        /// <param name="text">Text to trim</param>
+        /// <param name="textToTrim">Text to trim with</param>
+        /// <param name="caseInsensitive">If true ignore case</param>
+        /// <returns>Trimmed string if match is found</returns>   
+        public static string TrimEnd(string text, string textToTrim, bool caseInsensitive = false)
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
+            while (true)
+            {
+                var idx = text.LastIndexOf(textToTrim);
+                if (idx == -1)
+                    return text;
+
+                string match = text.Substring(idx, textToTrim.Length);
+
+                if (match == textToTrim ||
+                    (caseInsensitive && match.Equals(textToTrim, StringComparison.OrdinalIgnoreCase)))
+                {
+                    if (text.Length <= match.Length)
+                        text = "";
+                    else
+                        text = text.Substring(0, idx);
+                }
+                else
+                    break;
+            }
+            return text;
+        }
+
 
         /// <summary>
         /// Trims a string to a specific number of max characters
