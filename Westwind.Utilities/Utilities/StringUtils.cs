@@ -93,16 +93,17 @@ namespace Westwind.Utilities
             if (string.IsNullOrEmpty(text))
                 return text;
 
+
             while (true)
             {
                 var idx = text.LastIndexOf(textToTrim);
                 if (idx == -1)
                     return text;
 
-                string match = text.Substring(idx, textToTrim.Length);
+                string match = text.Substring(text.Length - textToTrim.Length, textToTrim.Length);
 
                 if (match == textToTrim ||
-                    (caseInsensitive && match.Equals(textToTrim, StringComparison.OrdinalIgnoreCase)))
+                    (!caseInsensitive && match.Equals(textToTrim, StringComparison.OrdinalIgnoreCase)))
                 {
                     if (text.Length <= match.Length)
                         text = "";
