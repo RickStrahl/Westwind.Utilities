@@ -85,9 +85,9 @@ namespace Westwind.Utilities
         /// provided.
         /// </summary>
         /// <param name="fullPath">The path to convert. Can be either a file or a directory</param>
-        /// <param name="basePath">The base path on which relative processing is based. Should be a directory.</param>
+        /// <param name="basePath">The base path on which relative processing is based. Should be a directory!</param>
         /// <returns>
-        /// String of the relative path.
+        /// String of the relative path. Path is returned in OS specific path format.
         /// 
         /// Examples of returned values:
         ///  test.txt, ..\test.txt, ..\..\..\test.txt, ., .., subdir\test.txt
@@ -96,19 +96,21 @@ namespace Westwind.Utilities
 		{
             try
             {
-                var pathChar = Path.DirectorySeparatorChar.ToString();
-
                 // ForceBasePath to a path
+                var pathChar = Path.DirectorySeparatorChar.ToString();
                 if (!basePath.EndsWith(value: pathChar))
                     basePath += pathChar;
 
                 Uri baseUri = new Uri(uriString: basePath);
                 Uri fullUri = new Uri(uriString: fullPath);
 
-                Uri relativeUri = baseUri.MakeRelativeUri(uri: fullUri);
-                
-                // Uri's use forward slashes so convert back to backward slahes
-                var path = relativeUri.ToString().Replace(oldValue: "/", newValue: pathChar);
+                string relativeUri = baseUri.MakeRelativeUri(uri: fullUri).ToString();
+
+                if (relativeUri.StartsWith("file://"))
+                    return fullPath;  // invalid path that can't be made relative 
+
+                // Uri's use forward slashes - convert back to backward slases if OS uses                
+                var path = relativeUri.Replace(oldValue: "/", newValue: pathChar);
 
                 return Uri.UnescapeDataString(path);
             }
@@ -118,6 +120,29 @@ namespace Westwind.Utilities
             }
         }
 
+        /// <summary>
+        /// Compares two files and returns a relative path to the second file
+        /// </summary>
+        /// <param name="filePath">The path that is the current path you're working with</param>
+        /// <param name="compareToPath">The path that that you want to reference</param>
+        /// <param name="noOsPathFixup">If true won't fix up the path for current OS (ie. returns original path delimiters via Uri comparison)</param>
+        /// <returns>Relative path if possible otherwise original path</returns>
+        public static string GetRelativeFilePath(string filePath, string compareToPath, bool noOsPathFixup = false)
+        {
+            Uri fromUri = new Uri("file://" + filePath);
+            Uri toUri = new Uri("file://" + compareToPath);
+
+            string path = fromUri.MakeRelativeUri(toUri).ToString();
+
+            if (path.StartsWith("file://"))
+                return filePath;  // invalid path that can't be made relative 
+
+            if (!noOsPathFixup) { 
+                var pathChar = Path.DirectorySeparatorChar.ToString();
+                path = path.Replace(oldValue: "/", newValue: pathChar);
+            }
+            return path;
+        }
 
         /// <summary>
         /// Returns a short form Windows path (using ~8 char segment lengths)
