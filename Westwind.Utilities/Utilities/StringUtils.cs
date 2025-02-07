@@ -62,7 +62,7 @@ namespace Westwind.Utilities
         /// <param name="caseInsensitive">If true ignore case</param>
         /// <returns>Trimmed string if match is found</returns>        
         public static string TrimStart(string text, string textToTrim, bool caseInsensitive = false)
-        {            
+        {
             while (true)
             {
                 string match = text.Substring(0, textToTrim.Length);
@@ -176,11 +176,11 @@ namespace Westwind.Utilities
 
             int lastPos = 0;
             int count = 0;
-           
-            while (count < stringInstance )
+
+            while (count < stringInstance)
             {
                 var len = source.Length - lastPos;
-                lastPos = source.IndexOf(matchString, lastPos,len,stringComparison);
+                lastPos = source.IndexOf(matchString, lastPos, len, stringComparison);
                 if (lastPos == -1)
                     break;
 
@@ -200,7 +200,7 @@ namespace Westwind.Utilities
         /// <param name="matchChar"></param>
         /// <param name="charInstance"></param>
         /// <returns></returns>
-        public static int IndexOfNth(this string source, char matchChar, int charInstance)        
+        public static int IndexOfNth(this string source, char matchChar, int charInstance)
         {
             if (string.IsNullOrEmpty(source))
                 return -1;
@@ -214,8 +214,8 @@ namespace Westwind.Utilities
                 if (source[i] == matchChar)
                 {
                     count++;
-                    if (count == charInstance)                 
-                        return i;                 
+                    if (count == charInstance)
+                        return i;
                 }
             }
             return -1;
@@ -239,14 +239,14 @@ namespace Westwind.Utilities
             int count = 0;
 
             while (count < charInstance)
-            {                
+            {
                 lastPos = source.LastIndexOf(matchString, lastPos, lastPos, stringComparison);
                 if (lastPos == -1)
                     break;
 
                 count++;
                 if (count == charInstance)
-                    return lastPos;                
+                    return lastPos;
             }
             return -1;
         }
@@ -264,7 +264,7 @@ namespace Westwind.Utilities
                 return -1;
 
             int count = 0;
-            for (int i = source.Length-1 ; i > -1; i--)
+            for (int i = source.Length - 1; i > -1; i--)
             {
                 if (source[i] == matchChar)
                 {
@@ -279,7 +279,7 @@ namespace Westwind.Utilities
 
         #region String Casing
 
-        
+
         /// <summary>
         /// Compares to strings for equality ignoring case.
         /// Uses OrdinalIgnoreCase
@@ -292,8 +292,8 @@ namespace Westwind.Utilities
             if (text == null && compareTo == null)
                 return true;
             if (text == null || compareTo == null)
-                return false;   
-            
+                return false;
+
             return text.Equals(compareTo, StringComparison.OrdinalIgnoreCase);
         }
 
@@ -336,7 +336,7 @@ namespace Westwind.Utilities
                     sb.Append(ch);
                     nextUpper = true;
                     continue;
-                }                       
+                }
 
                 if (nextUpper)
                     sb.Append(char.ToUpper(ch));
@@ -414,11 +414,11 @@ namespace Westwind.Utilities
 
             if (caseSensitive)
             {
-                at1 = source.IndexOf(beginDelim,StringComparison.CurrentCulture);
+                at1 = source.IndexOf(beginDelim, StringComparison.CurrentCulture);
                 if (at1 == -1)
                     return string.Empty;
 
-                at2 = source.IndexOf(endDelim, at1 + beginDelim.Length,StringComparison.CurrentCulture);
+                at2 = source.IndexOf(endDelim, at1 + beginDelim.Length, StringComparison.CurrentCulture);
             }
             else
             {
@@ -449,6 +449,26 @@ namespace Westwind.Utilities
             return string.Empty;
         }
 
+        /// <summary>
+        /// Strips characters of a string that follow the specified delimiter
+        /// </summary>
+        /// <param name="value">String to work with</param>
+        /// <param name="delimiter">String to search for from end of string</param>
+        /// <param name="caseSensitive">by default ignores case, set to true to care</param>
+        /// <returns>stripped string, or original string if delimiter was not found</returns>
+        public static string StripAfter(this string value, string delimiter, bool caseSensitive = false)
+        {
+            if (string.IsNullOrEmpty(value))
+                return value;
+
+            var pos = caseSensitive ?
+                         value.LastIndexOf(delimiter) : 
+                         value.LastIndexOf(delimiter, StringComparison.OrdinalIgnoreCase);
+            if (pos < 0)
+                return value;
+
+            return value.Substring(0, pos);
+        }
 
         /// <summary>
         /// String replace function that supports replacing a specific instance with 
@@ -522,12 +542,12 @@ namespace Westwind.Utilities
         /// <returns>Trimmed string</returns>
         public static string Truncate(this string text, int maxLength)
         {
-            if (string.IsNullOrEmpty(text) || text.Length <= maxLength) 
+            if (string.IsNullOrEmpty(text) || text.Length <= maxLength)
                 return text;
 
             return text.Substring(0, maxLength);
         }
-        
+
         /// <summary>
         /// Returns an abstract of the provided text by returning up to Length characters
         /// of a text string. If the text is truncated a ... is appended.
@@ -569,12 +589,13 @@ namespace Westwind.Utilities
         {
             if (string.IsNullOrEmpty(value))
                 return terminatorString;
-                    
-            if(value.EndsWith(terminatorString))
+
+            if (value.EndsWith(terminatorString))
                 return value;
 
             return value + terminatorString;
         }
+
 
 
         /// <summary>
@@ -726,7 +747,7 @@ namespace Westwind.Utilities
         /// <param name="str">String to compare</param>        
         /// <param name="matchValues">String values to compare to</param>
         /// <returns></returns>
-        public static bool EqualsAny(this string str,  params string[] matchValues)
+        public static bool EqualsAny(this string str, params string[] matchValues)
         {
             foreach (var value in matchValues)
             {
@@ -779,7 +800,7 @@ namespace Westwind.Utilities
         /// <param name="ignoreCase">If true ignores case for the list value matches</param>
         public static bool IsStringInList(string stringList, string valueToFind, char separator = ',', bool ignoreCase = false)
         {
-            var tokens = stringList.Split(new [] {separator}, StringSplitOptions.RemoveEmptyEntries);
+            var tokens = stringList.Split(new[] { separator }, StringSplitOptions.RemoveEmptyEntries);
             if (tokens.Length == 0)
                 return false;
 
@@ -815,14 +836,14 @@ namespace Westwind.Utilities
         public static string[] GetLines(this string s, int maxLines = 0)
         {
             if (s == null)
-                return new string[] {};
-           
+                return new string[] { };
+
             s = s.Replace("\r\n", "\n");
 
-            if (maxLines <  1)
+            if (maxLines < 1)
                 return s.Split(new char[] { '\n' });
 
-            return s.Split(new char[] {'\n'}).Take(maxLines).ToArray();
+            return s.Split(new char[] { '\n' }).Take(maxLines).ToArray();
         }
 
         /// <summary>
@@ -886,10 +907,10 @@ namespace Westwind.Utilities
         {
             if (string.IsNullOrEmpty(s) || startPosition == 0 && maxCharacters > s.Length)
                 return s;
-            
+
             if (startPosition > s.Length - 1)
                 return null;
-            
+
             var available = s.Length - startPosition;
 
             return s.Substring(startPosition, Math.Min(available, maxCharacters));
@@ -946,7 +967,7 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static List<string> TokenizeString(ref string text, string start, string end, string replaceDelimiter = "#@#")
         {
-            var strings = new List<string>();            
+            var strings = new List<string>();
             var matches = tokenizeRegex.Matches(text);
 
             int i = 0;
@@ -989,9 +1010,9 @@ namespace Westwind.Utilities
         /// <param name="defaultValue">Optional default text if parsing fails</param>
         /// <param name="formatProvider">Optional NumberFormat provider. Defaults to current culture's number format</param>
         /// <returns></returns>
-        public static int ParseInt(string input, int defaultValue=0, IFormatProvider numberFormat = null)
+        public static int ParseInt(string input, int defaultValue = 0, IFormatProvider numberFormat = null)
         {
-            
+
             if (numberFormat == null)
                 numberFormat = CultureInfo.CurrentCulture.NumberFormat;
 
@@ -1090,7 +1111,7 @@ namespace Westwind.Utilities
         {
             if (string.IsNullOrEmpty(text))
                 return string.Empty;
-            
+
             return Uri.EscapeDataString(text);
         }
 
@@ -1101,7 +1122,7 @@ namespace Westwind.Utilities
         /// <param name="text"></param>
         /// <returns></returns>
         public static string UrlEncodePathSafe(string text)
-        { 
+        {
             string escaped = UrlEncode(text);
             return escaped.Replace(".", "%2E").Replace("#", "%23");
         }
@@ -1248,7 +1269,7 @@ namespace Westwind.Utilities
             if (encoding == null)
                 encoding = Encoding.Unicode;
 
-            return encoding.GetString(buffer);            
+            return encoding.GetString(buffer);
         }
 
         /// <summary>
@@ -1263,7 +1284,7 @@ namespace Westwind.Utilities
             if (bytes == null)
                 return null;
 
-            return Convert.ToBase64String(bytes);                
+            return Convert.ToBase64String(bytes);
         }
 
         /// <summary>
@@ -1367,10 +1388,10 @@ namespace Westwind.Utilities
                     type = LineFeedTypes.Lf;
             }
 
-            if (type == LineFeedTypes.Lf)            
-                return text.Replace("\r\n", "\n");            
-            
-            return text.Replace("\r\n", "*@\r@*").Replace("\n","\r\n").Replace("*@\r@*","\r\n");
+            if (type == LineFeedTypes.Lf)
+                return text.Replace("\r\n", "\n");
+
+            return text.Replace("\r\n", "*@\r@*").Replace("\n", "\r\n").Replace("*@\r@*", "\r\n");
         }
 
         /// <summary>
@@ -1454,7 +1475,7 @@ namespace Westwind.Utilities
         /// <param name="text"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        public static Stream StringToStream(string text, Encoding encoding =null)
+        public static Stream StringToStream(string text, Encoding encoding = null)
         {
             if (encoding == null)
                 encoding = Encoding.Default;
@@ -1516,9 +1537,9 @@ namespace Westwind.Utilities
             {
                 return propertyString.Replace(extract, "");
             }
-            
+
             // NOTE: Value is not XML encoded - we only retrieve based on named nodes so no conflict
-            string xmlLine = "<" + key + ">" +value + "</" + key + ">";
+            string xmlLine = "<" + key + ">" + value + "</" + key + ">";
 
             // replace existing
             if (extract != string.Empty)
@@ -1576,7 +1597,7 @@ namespace Westwind.Utilities
                     default:
                         uint i = c;
                         if (i < 32)  // || i > 255
-                            sb.Append($"\\u{i:x4}" );
+                            sb.Append($"\\u{i:x4}");
                         else
                             sb.Append(c);
                         break;
