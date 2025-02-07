@@ -1,6 +1,12 @@
 # Westwind.Utilities Changelog
 
-### 5.0.12
+### 5.0.15
+
+* **StringUtils.StripAfter()**  
+Method that strips text after a matched delimiter at the end of the string or returns the original string.
+
+* **FileUtils.GetRelativeFilePath()**  
+Compares two file paths and returns a relative path to the second file from the first. This version works with files, while `GetRelativePath()` works with a base folder (slightly different behavior).
 
 * **FileUtils.TildefyUserPath()**  
 Replaces the user path with the `~` to make the path generic. Useful if you store file or folder info in configuration files in a shared location that can be accessed from different computers. You can use `FileUtils.ExpandPathEnvironmentVariables()` to expand the `~` in addition to environment variables.
