@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net462;net8.0;net9.0;netstandard2.0</TargetFrameworks>
-		<Version>5.1.2.1</Version>
+		<TargetFrameworks>net472;net9.0;net8.0</TargetFrameworks>
+		<Version>5.1.4</Version>
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
@@ -24,7 +24,7 @@
 		<PackageLicenseFile>LICENSE.MD</PackageLicenseFile>
 
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Copyright>Rick Strahl, West Wind Technologies, 2010-2024</Copyright>
+		<Copyright>Rick Strahl, West Wind Technologies, 2010-2025</Copyright>
 		<RepositoryType>Github</RepositoryType>
 		<Company>West Wind Technologies</Company>
 		<RepositoryUrl>https://github.com/RickStrahl/Westwind.Utilities</RepositoryUrl>
@@ -45,23 +45,23 @@
 		<DefineConstants>RELEASE</DefineConstants>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(TargetFramework)' != 'net462'">
+	<PropertyGroup Condition="'$(TargetFramework)' != 'net472'">
 		<DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
 	</PropertyGroup>
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'net462'">
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net472'">
 		<DefineConstants>NETFULL</DefineConstants>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
 		<DebugType>embedded</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 	</PropertyGroup>
 
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
 	</ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
 		<Reference Include="mscorlib" />
 		<Reference Include="System" />
 		<Reference Include="System.Core" />
