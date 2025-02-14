@@ -23,9 +23,20 @@ namespace Westwind.Utilities.Data.Security
 
         public string Tablename { get; set; } = "UserTokens";
 
+        /// <summary>
+        /// The duration that a token is valid for in seconds
+        /// </summary>
         public int TokenTimeoutSeconds { get; set; } = 1800;
 
+        /// <summary>
+        /// If true won't check if a token already exists for a given
+        /// user. If false only one token per user is allowed.
+        /// </summary>
+        public bool AllowMultipleTokensPerUser { get; set; }
+
         public string ErrorMessage { get; set; }
+
+       
 
         public UserTokenManager(string connectionString = null)
         {
@@ -187,7 +198,7 @@ namespace Westwind.Utilities.Data.Security
                 }
 
 
-                if (token == null)
+                if (AllowMultipleTokensPerUser || token == null)
                 {
                     tokenId = DataUtils.GenerateUniqueId(15);
 
