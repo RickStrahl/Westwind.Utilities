@@ -1,9 +1,12 @@
 # Westwind.Utilities Changelog
 
-### 5.0.15
+### 5.1.15
 
 * **StringUtils.StripAfter()**  
 Method that strips text after a matched delimiter at the end of the string or returns the original string.
+
+* **StringUtils.ReplaceLastNthInstance()**  
+Method that replaces the last nth instance of a sub string in an existing string.
 
 * **FileUtils.GetRelativeFilePath()**  
 Compares two file paths and returns a relative path to the second file from the first. This version works with files, while `GetRelativePath()` works with a base folder (slightly different behavior).

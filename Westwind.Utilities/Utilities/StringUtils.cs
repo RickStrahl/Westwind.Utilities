@@ -504,6 +504,7 @@ namespace Westwind.Utilities
             return origString.Substring(0, at1) + replaceWith + origString.Substring(at1 + findString.Length);
         }
 
+
         /// <summary>
         /// Replaces a substring within a string with another substring with optional case sensitivity turned off.
         /// </summary>
@@ -512,8 +513,10 @@ namespace Westwind.Utilities
         /// <param name="replaceString">The string to replace found string wiht</param>
         /// <param name="caseInsensitive">If true case insensitive search is performed</param>
         /// <returns>updated string or original string if no matches</returns>
-        public static string ReplaceString(string origString, string findString,
-            string replaceString, bool caseInsensitive)
+#if NET6_0_OR_GREATER
+        [Obsolete("You can use native `string.Replce()` with StringComparison in .NET Core")]
+#endif
+        public static string ReplaceString(string origString, string findString, string replaceString, bool caseInsensitive)
         {
             int at1 = 0;
             while (true)
@@ -532,6 +535,33 @@ namespace Westwind.Utilities
             }
 
             return origString;
+        }
+
+        /// <summary>
+        /// Replaces the last nth occurrence of a string within a string with another string
+        /// </summary>
+        /// <param name="source">Souce string</param>
+        /// <param name="oldValue">Value to replace</param>
+        /// <param name="newValue">Value to replace with</param>
+        /// <param name="instanceFromEnd">The instance from the end to replace</param>
+        /// <param name="compare">String comparison mode</param>
+        /// <returns>replaced string or original string if replacement is not found</returns>
+        public static string ReplaceLastNthInstance(string source, string oldValue, string newValue, int instanceFromEnd = 1, StringComparison compare = StringComparison.CurrentCulture)
+        {
+            if (instanceFromEnd <= 0 || source == null || oldValue == null)  return source; // Invalid n value
+
+            int lastIndex = source.Length;
+            
+            // Traverse the string backwards
+            while (instanceFromEnd > 0)
+            {
+                lastIndex = source.LastIndexOf(oldValue, lastIndex - 1, compare);
+                if (lastIndex == -1) return source; // If not found, return the original string
+                instanceFromEnd--;
+            }
+
+            // Replace the found occurrence
+            return source.Substring(0, lastIndex) + newValue + source.Substring(lastIndex + oldValue.Length);
         }
 
         /// <summary>
