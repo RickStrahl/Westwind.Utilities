@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          © West Wind Technologies, 2009
+ *          ï¿½ West Wind Technologies, 2009
  *          http://www.west-wind.com/
  * 
  * Created: 09/12/2009
@@ -55,7 +55,7 @@ namespace Westwind.Utilities.InternetTools
     /// exposed so you will not loose any functionality from the .NET BCL class.
     /// </summary>
 #if NET6_0_OR_GREATER
-    [Obsolete("This class is obsolete in .NET Core as it uses the old HttpWebRequest class. Please use System.Net.HttpClient or " +
+    [Obsolete("Westwind.HttpClient is obsolete in .NET Core as it uses the old HttpWebRequest class. Please use System.Net.HttpClient or " +
         "Westwind.Utilities.HttpClientUtils (for async operation) or Westwind.Utilities.HttpUtils (for sync operations)")]
 #endif
     public class HttpClient : IDisposable
