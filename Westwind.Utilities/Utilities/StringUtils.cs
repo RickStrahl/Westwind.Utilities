@@ -484,8 +484,11 @@ namespace Westwind.Utilities
             string replaceWith, int instance, bool caseInsensitive)
         {
             if (instance == -1)
+#if NET6_0_OR_GREATER
+                return origString.Replace(findString, replaceWith, StringComparison.OrdinalIgnoreCase);
+#else
                 return ReplaceString(origString, findString, replaceWith, caseInsensitive);
-
+#endif
             int at1 = 0;
             for (int x = 0; x < instance; x++)
             {
