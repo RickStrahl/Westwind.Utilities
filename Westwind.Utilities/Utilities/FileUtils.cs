@@ -121,7 +121,7 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Compares two files and returns a relative path to the second file
+        /// Compares two files and returns a relative path to the second file.     
         /// </summary>
         /// <param name="filePath">The path that is the current path you're working with</param>
         /// <param name="compareToPath">The path that that you want to reference</param>
@@ -146,21 +146,34 @@ namespace Westwind.Utilities
 
 
         /// <summary>
-        /// Resolves a relative file path to a base file or directory absolute path
+        /// Resolves an absolute path from a relative file path to a base file or directory
         /// </summary>
-        /// <param name="baseFilePath">Base file or folder which relativeFile is relative to</param>
-        /// <param name="relativeFile">The path to resolve</param>
+        /// <param name="basePath">Base file or folder which relativeFile is relative to.
+        /// If you pass a folder, terminate the folder with a path character!</param>
+        /// <param name="relativeFile">The path to resolve against the base path</param>
         /// <returns></returns>
-        public static string ResolvePath(string basePath, string relativeFile, bool baseIsDirectory = false)
+        public static string ResolvePath(string basePath, string relativeFile)
         {
-            if (string.IsNullOrEmpty(basePath) || string.IsNullOrEmpty(relativeFile))
+            if (string.IsNullOrEmpty(basePath) ||
+                string.IsNullOrEmpty(relativeFile))
                 return relativeFile;
 
-            if (!baseIsDirectory)
-                basePath = Path.GetDirectoryName(basePath); // Extract the directory
+            var baseUri = new Uri(basePath);
+            var relativeUri = new Uri(relativeFile, UriKind.Relative);
+            var relUri = new Uri(baseUri, relativeUri);
 
-            return Path.GetFullPath(Path.Combine(basePath, relativeFile));
+            return relUri.LocalPath;
         }
+        //public static string ResolvePath(string basePath, string relativeFile, bool baseIsDirectory = false)
+        //{
+        //    if (string.IsNullOrEmpty(basePath) || string.IsNullOrEmpty(relativeFile))
+        //        return relativeFile;
+
+        //    if (!baseIsDirectory)
+        //        basePath = Path.GetDirectoryName(basePath); // Extract the directory
+
+        //    return Path.GetFullPath(Path.Combine(basePath, relativeFile));
+        //}
 
         /// <summary>
         /// Returns a short form Windows path (using ~8 char segment lengths)
