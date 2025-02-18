@@ -14,6 +14,9 @@ Compares two file paths and returns a relative path to the second file from the 
 * **FileUtils.ResolvePath()**   
 Returns an absolute file path for a relative path and a base file or folder.
 
+* **FileUtils.IsRelativePath()**  
+Checks a path string if a path is a relative path (ie. not rooted). Doesn't compare against another file, but simply checks whether the file meets the criteria for a relative Url.
+
 * **FileUtils.TildefyUserPath()**  
 Replaces the user path with the `~` to make the path generic. Useful if you store file or folder info in configuration files in a shared location that can be accessed from different computers. You can use `FileUtils.ExpandPathEnvironmentVariables()` to expand the `~` in addition to environment variables.
 

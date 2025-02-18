@@ -164,31 +164,27 @@ namespace Westwind.Utilities
 
             return relUri.LocalPath;
         }
-        //public static string ResolvePath(string basePath, string relativeFile, bool baseIsDirectory = false)
-        //{
-        //    if (string.IsNullOrEmpty(basePath) || string.IsNullOrEmpty(relativeFile))
-        //        return relativeFile;
-
-        //    if (!baseIsDirectory)
-        //        basePath = Path.GetDirectoryName(basePath); // Extract the directory
-
-        //    return Path.GetFullPath(Path.Combine(basePath, relativeFile));
-        //}
-
+        
         /// <summary>
-        /// Returns a short form Windows path (using ~8 char segment lengths)
-        /// that can help with long filenames.
+        /// Checks to see if a given local file or directory is a relative path
         /// </summary>
-        /// <remarks>
-        /// IMPORTANT: File has to exist when this function is called otherwise
-        /// `null` is returned.
-        ///
-        /// Path has to be fully qualified (no relative paths)
-        /// 
-        /// Max shortened file size is MAX_PATH (260) characters
-        /// </remarks>
-        /// <param name="path">Long Path syntax</param>
-        /// <returns>Shortened 8.3 syntax or null on failure</returns>
+        /// <param name="path">path to check</param>
+        /// <returns></returns>
+        public static bool IsRelativePath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return false;
+
+            if (path.StartsWith("."))
+                return true;
+
+            if (path.StartsWith("/") || path.StartsWith("\\") || 
+                path.Contains(":\\") || path.StartsWith("file:"))
+                return false;
+
+            return true;            
+        }
+
         public static string GetShortPath(string path)
         {
             if (string.IsNullOrEmpty(path))
