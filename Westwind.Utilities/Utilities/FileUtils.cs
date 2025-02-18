@@ -144,6 +144,24 @@ namespace Westwind.Utilities
             return path;
         }
 
+
+        /// <summary>
+        /// Resolves a relative file path to a base file or directory absolute path
+        /// </summary>
+        /// <param name="baseFilePath">Base file or folder which relativeFile is relative to</param>
+        /// <param name="relativeFile">The path to resolve</param>
+        /// <returns></returns>
+        public static string ResolvePath(string basePath, string relativeFile, bool baseIsDirectory = false)
+        {
+            if (string.IsNullOrEmpty(basePath) || string.IsNullOrEmpty(relativeFile))
+                return relativeFile;
+
+            if (!baseIsDirectory)
+                basePath = Path.GetDirectoryName(basePath); // Extract the directory
+
+            return Path.GetFullPath(Path.Combine(basePath, relativeFile));
+        }
+
         /// <summary>
         /// Returns a short form Windows path (using ~8 char segment lengths)
         /// that can help with long filenames.
