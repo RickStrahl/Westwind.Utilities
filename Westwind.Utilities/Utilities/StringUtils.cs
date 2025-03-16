@@ -598,7 +598,9 @@ namespace Westwind.Utilities
             if (text.Length > length)
             {
                 text = text.Substring(0, length);
-                text = text.Substring(0, text.LastIndexOf(" ")) + "…";
+                var idx = text.LastIndexOf(' ');
+                if (idx > -1)
+                    text = text.Substring(0, idx) + "…";              
             }
 
             if (!text.Contains("\n"))

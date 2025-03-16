@@ -102,6 +102,8 @@ namespace Westwind.Utilities
         /// Ensures safe operation of a task without await even if
         /// an execution fails with an exception. This forces the
         /// exception to be cleared unlike a non-continued task.
+        /// 
+        /// Exceptions are silently ignored.
         /// </summary>
         /// <param name="t">Task Instance</param>
         public static void FireAndForget(this Task t)
