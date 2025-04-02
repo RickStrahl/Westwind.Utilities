@@ -794,7 +794,9 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Replaces multiple matches with a new value
+        /// Replaces multiple matches with a single new value
+        ///         
+        /// This version takes an array of strings as input
         /// </summary>
         /// <param name="str">String to work on</param>
         /// <param name="matchValues">String values to match</param>
@@ -808,6 +810,27 @@ namespace Westwind.Utilities
             }
 
             return str;
+        }
+
+        /// <summary>
+        /// Replaces multiple matches with a single new value. 
+        /// 
+        /// This version takes a comma delimited list of strings
+        /// </summary>
+        /// <param name="str">String to work on</param>
+        /// <param name="valuesToMatch">Comma delimited list of values. Values are start and end trimmed</param>
+        /// <param name="replaceWith">String to replace with</param>
+        /// <returns></returns>
+        public static string ReplaceMany(this string str, string valuesToMatch, string replaceWith)
+        {
+            if (string.IsNullOrEmpty(valuesToMatch))
+                return str;
+
+            var matchValues = valuesToMatch.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(v => v.Trim())
+                .ToArray();
+
+            return ReplaceMany(str, matchValues, replaceWith);
         }
         #endregion
 
@@ -839,7 +862,7 @@ namespace Westwind.Utilities
             if (tokens.Length == 0)
                 return false;
 
-            var comparer = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.InvariantCulture;
+            var comparer = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
             foreach (var tok in tokens)
             {
                 if (tok.Trim().Equals(valueToFind, comparer))
