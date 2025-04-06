@@ -883,14 +883,14 @@ namespace Westwind.Utilities
         /// <param name="targetDirectory">Target folder </param>
         /// <param name="deleteFirst">if set deletes the folder before copying</param>
         /// <param name="recursive">if set copies files recursively</param>
-        public static void CopyDirectory(string sourceDirectory, string targetDirectory, bool deleteFirst = false, bool recursive = true )
+        public static void CopyDirectory(string sourceDirectory, string targetDirectory, bool deleteFirst = false, bool recursive = true, bool ignoreErrors = false )
         {
             var diSource = new DirectoryInfo(sourceDirectory);
             if (!diSource.Exists)
                 return;
 
             var diTarget = new DirectoryInfo(targetDirectory);
-            CopyDirectory(diSource, diTarget, deleteFirst, recursive);
+            CopyDirectory(diSource, diTarget, deleteFirst, recursive, ignoreErrors);
         }
 
         /// <summary>
@@ -903,7 +903,7 @@ namespace Westwind.Utilities
         /// <param name="target"></param>
         /// <param name="deleteFirst"></param>
         /// <param name="recursive"></param>
-        public static void CopyDirectory(DirectoryInfo source, DirectoryInfo target, bool deleteFirst = false, bool recursive = true )
+        public static void CopyDirectory(DirectoryInfo source, DirectoryInfo target, bool deleteFirst = false, bool recursive = true, bool ignoreErrors =false )
         {
             if (!source.Exists)
                 return;
@@ -917,7 +917,16 @@ namespace Westwind.Utilities
             foreach (FileInfo fi in source.GetFiles())
             {
                 Console.WriteLine(@"Copying {0}\{1}", target.FullName, fi.Name);
-                fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
+                if (ignoreErrors)
+                {
+                    try
+                    {
+                        fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
+                    }
+                    catch { }
+                }
+                else
+                    fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
             }
 
             if (recursive)
@@ -927,7 +936,7 @@ namespace Westwind.Utilities
                 {
                     DirectoryInfo nextTargetSubDir =
                         target.CreateSubdirectory(diSourceSubDir.Name);
-                    CopyDirectory(diSourceSubDir, nextTargetSubDir);
+                    CopyDirectory(diSourceSubDir, nextTargetSubDir, recursive: recursive, ignoreErrors: ignoreErrors);
                 }
             }
         }

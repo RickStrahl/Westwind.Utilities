@@ -61,10 +61,16 @@ namespace Westwind.Utilities
         /// <param name="textToTrim">Text to trim with</param>
         /// <param name="caseInsensitive">If true ignore case</param>
         /// <returns>Trimmed string if match is found</returns>        
-        public static string TrimStart(string text, string textToTrim, bool caseInsensitive = false)
+        public static string TrimStart(this string text, string textToTrim, bool caseInsensitive = false)
         {
+            if (string.IsNullOrEmpty(text) ||
+                string.IsNullOrEmpty(textToTrim) || 
+                text.Length < textToTrim.Length)
+                return text;
+            
             while (true)
             {
+                
                 string match = text.Substring(0, textToTrim.Length);
 
                 if (match == textToTrim ||
@@ -88,11 +94,12 @@ namespace Westwind.Utilities
         /// <param name="textToTrim">Text to trim with</param>
         /// <param name="caseInsensitive">If true ignore case</param>
         /// <returns>Trimmed string if match is found</returns>   
-        public static string TrimEnd(string text, string textToTrim, bool caseInsensitive = false)
+        public static string TrimEnd(this string text, string textToTrim, bool caseInsensitive = false)
         {
-            if (string.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text) || 
+                string.IsNullOrEmpty(textToTrim) ||
+                text.Length < textToTrim.Length)
                 return text;
-
 
             while (true)
             {
