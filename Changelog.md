@@ -23,6 +23,9 @@ Replaces the user path with the `~` to make the path generic. Useful if you stor
 * **Basic PasswordScrubber Class for Json and Sql Connections**  
 Added a very basic Password scrubber that attempts to scrub passwords for keys you provide. By default `password` and `pwd` are parsed but you can scrub any values that you need specifically. Two methods: `ScrubJsonValues()` and `ScrubSqlConnectionValues()`.
 
+* **Option on FileUtils.CopyDirectory() to ignore errors**  
+Added option to ignore errors typically caused by locked files when copying directories. By default exceptions are thrown for file copy errors. With the switch set errors are ignored. This can be useful in scenarios where directories need to be copied where there might be some locked files in use (bound images for example) where it's OK to not copy those files.
+
 ### 5.0.9
 
 * **Add HttpClientUtils support for .NET Framework**  
