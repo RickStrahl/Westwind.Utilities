@@ -903,7 +903,7 @@ namespace Westwind.Utilities
             if (s == null)
                 return new string[] { };
 
-            s = s.Replace("\r\n", "\n");
+            s = s.Replace("\r\n", "\n").Replace("\r", "\n");
 
             if (maxLines < 1)
                 return s.Split(new char[] { '\n' });
