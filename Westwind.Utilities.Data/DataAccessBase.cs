@@ -1940,7 +1940,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <param name="entity">Entity data to insert into table</param>
         /// <param name="table">Name of the table to update</param>        
         /// <param name="propertiesToSkip">Comma delimited list of fields to skip in the entity update</param>
-        /// <param name="returnIdentityKey"
+        /// <param name="returnIdentityKey"></param>
         /// <returns>
         /// Null if the insert failed
         /// Scope Identity (when returnIdentityKey is true or null if that fails)
@@ -1978,7 +1978,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <param name="entity">Entity data to insert into table</param>
         /// <param name="table">Name of the table to update</param>        
         /// <param name="propertiesToSkip">Comma delimited list of fields to skip in the entity update</param>
-        /// <param name="returnIdentityKey"
+        /// <param name="returnIdentityKey"></param>
         /// <returns>
         /// Null if the insert failed
         /// Scope Identity (when returnIdentityKey is true or null if that fails)
