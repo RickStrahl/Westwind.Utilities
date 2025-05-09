@@ -392,6 +392,45 @@ namespace Westwind.Utilities
             return sb.ToString(); ;
         }
 
+
+        /// <summary>
+        /// Attempts to convert a string that is encoded in camel or snake case or
+        /// and convert it into a proper case string. This is useful for converting
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string BreakIntoWords(string text)
+        {
+            // if the text contains spaces it's already real text
+            if (string.IsNullOrEmpty(text) || text.Contains(" ") || text.Contains("\t"))
+                return text;
+
+            if (text.Contains("-"))
+                text = text.Replace("-", " ").Trim();
+
+            if (text.Contains("_"))
+                text = text.Replace("_", " ").Trim();
+
+            char c = text[0];
+
+            // assume file name was valid as a 'title'
+            if (char.IsUpper(c))
+            {
+                string[] words = Regex.Split(text, @"(?<!^)(?=[A-Z])");
+                return string.Join(" ", words);
+            }
+            // lower case and no spaces - assume camel case
+            if (char.IsLower(c) & !text.Contains(" "))
+            {
+                return StringUtils.FromCamelCase(text);
+            }
+            
+            // just return as proper case
+            return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(text);
+        }
+
+
+
         #endregion
 
         #region String Manipulation
@@ -1023,14 +1062,15 @@ namespace Westwind.Utilities
         /// Tokenizes a string based on a start and end string. Replaces the values with a token
         /// text (#@#1#@# for example).
         /// 
-        /// You can use Detokenize to get the original values back
+        /// You can use Detokenize to get the original values back using DetokenizeString
+        /// using the same token replacement text.
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <param name="replaceDelimiter"></param>
-        /// <returns></returns>
-        public static List<string> TokenizeString(ref string text, string start, string end, string replaceDelimiter = "#@#")
+        /// <param name="text">Text to search</param>
+        /// <param name="startMatch">starting match string</param>
+        /// <param name="endMatch">ending match string</param>
+        /// <param name="replaceDelimiter">token replacement text - make sure this string is a value that is unique and **doesn't occur in the document**</param>
+        /// <returns>A list of extracted string tokens that have been replaced in `ref text` with the replace delimiter</returns>
+        public static List<string> TokenizeString(ref string text, string startMatch, string endMatch, string replaceDelimiter = "#@#")
         {
             var strings = new List<string>();
             var matches = tokenizeRegex.Matches(text);
@@ -1052,11 +1092,11 @@ namespace Westwind.Utilities
         /// Detokenizes a string tokenized with TokenizeString. Requires the collection created
         /// by detokenization
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="tokens"></param>
-        /// <param name="replaceDelimiter"></param>
+        /// <param name="text">Text to work with</param>
+        /// <param name="tokens">list of previously extracted tokens</param>
+        /// <param name="replaceDelimiter">the token replacement string that replaced the captured tokens</param>
         /// <returns></returns>
-        public static string DetokenizeString(string text, List<string> tokens, string replaceDelimiter = "#@#")
+        public static string DetokenizeString(string text, IEnumerable<string> tokens, string replaceDelimiter = "#@#")
         {
             int i = 0;
             foreach (string token in tokens)

@@ -351,7 +351,23 @@ namespace Westwind.Utilities
             return Path.Combine(tempPath, filename + extension);
         }
 
-#endregion
+
+        /// <summary>
+        /// Attempts to break a file name into words that can be used for display
+        /// purposes. 
+        /// * Replaces - and _ with spaces
+        /// * Converts from CamelCase (simplified - not perfect)        
+        /// </summary>
+        /// <param name="filename">File name to break into words</param>
+        /// <returns></returns>
+        public static string BreakFilenameIntoWords(string filename)
+        {
+            if (string.IsNullOrEmpty(filename))
+                return filename;
+            return StringUtils.BreakIntoWords(Path.GetFileNameWithoutExtension(filename));
+        }
+
+        #endregion
 
         #region File and Path Normalization
 
