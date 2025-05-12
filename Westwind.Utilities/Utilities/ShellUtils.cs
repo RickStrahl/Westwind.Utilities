@@ -489,8 +489,21 @@ namespace Westwind.Utilities
                 int at = executable.IndexOf("\" ");
                 if (at > 0)
                 {
-                    args = executable.Substring(at + 1).Trim();
-                    executable = executable.Substring(0, at);
+                    // take the args as provided
+                    args = executable.Substring(at + 1);
+                    // plain executable
+                    executable = executable.Substring(0, at).Trim(' ', '\"');
+                }
+            }
+            else if (executable.StartsWith("\'"))
+            {
+                int at = executable.IndexOf("\' ");
+                if (at > 0)
+                {
+                    // take the args as provided
+                    args = executable.Substring(at + 1);
+                    // plain executable
+                    executable = executable.Substring(0, at).Trim(' ', '\'');
                 }
             }
             else
@@ -504,7 +517,6 @@ namespace Westwind.Utilities
                     executable = executable.Substring(0, at);
                 }
             }
-
             var pi = new ProcessStartInfo
             {
                 Verb = verb,
