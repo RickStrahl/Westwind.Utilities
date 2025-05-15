@@ -55,7 +55,9 @@ namespace Westwind.Utilities
         #region Basic String Tasks
 
         /// <summary>
-        /// Trims the beginning of a string by a matching string
+        /// Trims the beginning of a string by a matching string.
+        /// 
+        /// Overrides string behavior which only works with char.
         /// </summary>
         /// <param name="text">Text to trim</param>
         /// <param name="textToTrim">Text to trim with</param>
