@@ -256,7 +256,67 @@ namespace Westwind.Utilities
 #endif
 
             var client = new HttpClient(handler);
-            
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(settings.UserAgent);
+
+            //settings.Request = new HttpRequestMessage
+            //{
+            //    RequestUri = new Uri(settings.Url),
+            //    Method = new HttpMethod(settings.HttpVerb ?? "GET"),
+            //    Version = new Version(settings.HttpVersion)
+            //};
+
+           
+            //foreach (var header in settings.Headers)
+            //{
+            //    SetHttpHeader(settings.Request, header.Key, header.Value);
+            //}
+
+            //if (settings.RequestContent != null && 
+            //    (settings.HttpVerb.Equals("POST", StringComparison.OrdinalIgnoreCase) || 
+            //    settings.HttpVerb.Equals("PUT", StringComparison.OrdinalIgnoreCase) || 
+            //    settings.HttpVerb.Equals("PATCH", StringComparison.OrdinalIgnoreCase))
+            //   )
+            //{
+            //    HttpContent content = null;
+
+            //    if (settings.RequestContent is string) {
+            //        if (!settings.IsRawData && settings.RequestContentType == "application/json") {
+            //            var jsonString = JsonSerializationUtils.Serialize(settings.RequestContent);
+            //            content = new StringContent(jsonString, settings.Encoding, settings.RequestContentType);
+            //        }
+            //        else
+            //            content = new StringContent(settings.RequestContent as string, settings.Encoding, settings.RequestContentType);
+            //    }
+            //    else if (settings.RequestContent is byte[])
+            //    {
+            //        content = new ByteArrayContent(settings.RequestContent as byte[]);
+            //        content.Headers.ContentType = new MediaTypeHeaderValue(settings.RequestContentType);
+            //    }
+            //    else
+            //    {
+            //        if (!settings.IsRawData)
+            //        {
+            //            var jsonString = JsonSerializationUtils.Serialize(settings.RequestContent);
+            //            content = new StringContent(jsonString, settings.Encoding, settings.RequestContentType);
+            //        }
+            //    }
+
+
+            //    if (content != null)
+            //        settings.Request.Content = content;
+            //}
+            ApplySettingsToRequest(settings);
+
+            return client;
+        }
+
+        /// <summary>
+        /// Creates a new Request on the Settings object and assigns the settings values
+        /// to the request object.
+        /// </summary>
+        /// <param name="settings">Settings instance</param>        
+        public static void ApplySettingsToRequest(HttpClientRequestSettings settings)
+        {
 
             settings.Request = new HttpRequestMessage
             {
@@ -265,23 +325,24 @@ namespace Westwind.Utilities
                 Version = new Version(settings.HttpVersion)
             };
 
-            client.DefaultRequestHeaders.UserAgent.ParseAdd(settings.UserAgent);
 
             foreach (var header in settings.Headers)
             {
                 SetHttpHeader(settings.Request, header.Key, header.Value);
             }
 
-            if (settings.RequestContent != null && 
-                (settings.HttpVerb.Equals("POST", StringComparison.OrdinalIgnoreCase) || 
-                settings.HttpVerb.Equals("PUT", StringComparison.OrdinalIgnoreCase) || 
+            if (settings.RequestContent != null &&
+                (settings.HttpVerb.Equals("POST", StringComparison.OrdinalIgnoreCase) ||
+                settings.HttpVerb.Equals("PUT", StringComparison.OrdinalIgnoreCase) ||
                 settings.HttpVerb.Equals("PATCH", StringComparison.OrdinalIgnoreCase))
                )
             {
                 HttpContent content = null;
 
-                if (settings.RequestContent is string) {
-                    if (!settings.IsRawData && settings.RequestContentType == "application/json") {
+                if (settings.RequestContent is string)
+                {
+                    if (!settings.IsRawData && settings.RequestContentType == "application/json")
+                    {
                         var jsonString = JsonSerializationUtils.Serialize(settings.RequestContent);
                         content = new StringContent(jsonString, settings.Encoding, settings.RequestContentType);
                     }
@@ -306,8 +367,6 @@ namespace Westwind.Utilities
                 if (content != null)
                     settings.Request.Content = content;
             }
-
-            return client;
         }
 
 
