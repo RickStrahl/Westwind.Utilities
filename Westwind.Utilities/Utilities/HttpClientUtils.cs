@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.IO;
 
 namespace Westwind.Utilities
 {
@@ -105,6 +106,83 @@ namespace Westwind.Utilities
             }
         }
 
+#if NET6_0_OR_GREATER
+
+        public static string DownloadString(HttpClientRequestSettings settings)
+        {
+            string content = null;
+
+            using (var client = GetHttpClient(null, settings))
+            {
+                try
+                {
+                    settings.Response = client.Send(settings.Request);
+                }
+                catch (Exception ex)
+                {
+                    settings.HasErrors = true;
+                    settings.ErrorException = ex;
+                    settings.ErrorMessage = ex.GetBaseException().Message;
+                    return null;
+                }
+
+                // Capture the response content
+                try
+                {
+                    if (settings.Response.IsSuccessStatusCode)
+                    {
+                        // http 201 no content may return null and be success
+
+                        if (settings.HasResponseContent)
+                        {
+                            if (settings.MaxResponseSize > 0)
+                            {
+                                using (var stream = settings.Response.Content.ReadAsStream())
+                                {
+                                    var buffer = new byte[settings.MaxResponseSize];
+                                    _ = stream.ReadAsync(buffer, 0, settings.MaxResponseSize);
+                                    content = settings.Encoding.GetString(buffer);
+                                }
+                            }
+                            else
+                            {
+                                //content = await settings.Response.Content.ReadAsStringAsync();
+                                using (var stream = settings.Response.Content.ReadAsStream())
+                                {
+                                    var sr = new StreamReader(stream, true);
+                                    content = sr.ReadToEnd();
+                                }
+                            }
+                        }
+
+                        return content;
+                    }
+
+                    settings.HasErrors = true;
+                    settings.ErrorMessage = ((int)settings.Response.StatusCode).ToString() + " " + settings.Response.StatusCode.ToString();
+
+                    if (settings.ThrowExceptions)
+                        throw new HttpRequestException(settings.ErrorMessage);
+
+                    // return null but allow for explicit response reading
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    settings.ErrorException = ex;
+                    settings.ErrorMessage = ex.GetBaseException().Message;
+
+                    if (settings.ThrowExceptions)
+#pragma warning disable CA2200
+                        throw;
+#pragma warning restore CA2200
+
+                    return null;
+                }
+            }
+        }
+#endif
+
 
         /// <summary>
         /// Runs an Http request and returns success results as a string or null
@@ -184,6 +262,43 @@ namespace Westwind.Utilities
             }            
         }
 
+#if NET6_0_OR_GREATER 
+
+        /// <summary>
+        /// Calls a URL and returns the raw, unretrieved HttpResponse. Also set on settings.Response and you 
+        /// can read the response content from settings.Response.Content.ReadAsXXX() methods.
+        /// </summary>
+        /// <param name="settings">Pass HTTP request configuration parameters object to set the URL, Verb, Headers, content and more</param>
+        /// <returns>string of HTTP response</returns>
+        public static HttpResponseMessage DownloadResponseMessage(HttpClientRequestSettings settings)
+        {
+            using (var client = GetHttpClient(null, settings))
+            {
+                try
+                {
+                    settings.Response = client.Send(settings.Request);
+
+                    if (settings.ThrowExceptions && !settings.Response.IsSuccessStatusCode)
+                        throw new HttpRequestException(settings.ResponseStatusCode + " " + settings.Response.ReasonPhrase);
+
+                    return settings.Response;
+                }
+                catch (Exception ex)
+                {
+                    settings.HasErrors = true;
+                    settings.ErrorException = ex;
+                    settings.ErrorMessage = ex.GetBaseException().Message;
+
+                    if (settings.ThrowExceptions)
+#pragma warning disable CA2200
+                        throw;
+#pragma warning restore CA2200
+
+                    return null;
+                }
+            }
+        }
+#endif
 
         /// <summary>
         /// Makes a JSON request that returns a JSON result.
