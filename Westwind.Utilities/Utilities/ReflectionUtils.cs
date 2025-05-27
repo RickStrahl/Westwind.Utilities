@@ -471,7 +471,7 @@ namespace Westwind.Utilities
                 return instance.GetType().GetMethod(method, ReflectionUtils.MemberAccess | BindingFlags.InvokeMethod, null, parameterTypes, null).Invoke(instance, parms);
         }
 
-        /// <summary>
+        /// <summary>   
         /// Calls a method on an object dynamically. 
         /// 
         /// This version doesn't require specific parameter signatures to be passed. 
