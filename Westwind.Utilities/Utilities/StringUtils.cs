@@ -66,26 +66,21 @@ namespace Westwind.Utilities
         public static string TrimStart(this string text, string textToTrim, bool caseInsensitive = false)
         {
             if (string.IsNullOrEmpty(text) ||
-                string.IsNullOrEmpty(textToTrim) || 
+                string.IsNullOrEmpty(textToTrim) ||
                 text.Length < textToTrim.Length)
                 return text;
-            
-            while (true)
-            {
-                
-                string match = text.Substring(0, textToTrim.Length);
 
-                if (match == textToTrim ||
-                    (caseInsensitive && match.ToLower() == textToTrim.ToLower()))
-                {
-                    if (text.Length <= match.Length)
-                        text = "";
-                    else
-                        text = text.Substring(textToTrim.Length);
-                }
-                else
-                    break;
+            StringComparison comparison = caseInsensitive
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
+
+            // account for multiple instances of the text to trim
+            while (text.Length >= textToTrim.Length &&
+                   text.Substring(0, textToTrim.Length).Equals(textToTrim, comparison))
+            {
+                text = text.Substring(textToTrim.Length);
             }
+
             return text;
         }
 
