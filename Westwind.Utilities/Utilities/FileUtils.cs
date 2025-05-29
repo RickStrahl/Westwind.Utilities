@@ -890,6 +890,38 @@ namespace Westwind.Utilities
         #region Folder Copying and Deleting
 
         /// <summary>
+        /// Copies a file and creates the directory structure
+        /// if it doesn't exist.
+        /// </summary>
+        /// <param name="sourceFilePath">Source file</param>
+        /// <param name="destinationFilePath">Target file</param>
+        /// <param name="overwrite">if true overwrites the file if possible. If the file is locked the method returns false</param>
+        /// <returns></returns>
+        public static bool CopyFileEnsureDirectory(string sourceFilePath, string destinationFilePath, bool overwrite = true)
+        {
+            try
+            {
+                // Ensure destination directory exists
+                var destinationDir = Path.GetDirectoryName(destinationFilePath);
+                if (string.IsNullOrWhiteSpace(destinationDir))
+                    return false;
+
+                Directory.CreateDirectory(destinationDir);
+
+                // Copy the file
+                File.Copy(sourceFilePath, destinationFilePath, overwrite);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // Optional: log or handle specific exceptions if needed
+                return false;
+            }
+        }
+
+
+        /// <summary>
         /// Copies directories using either top level only or deep merge copy.
         /// 
         /// Copies a directory by copying files from source folder to target folder.
