@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net472;net9.0;net8.0</TargetFrameworks>
-		<Version>5.1.9</Version>
+		<Version>5.1.10</Version>
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
@@ -14,7 +14,7 @@
 		<Description>.NET utility library that includes Application Configuration, lightweight ADO.NET Data Access Layer, logging, utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>
 		<Description>Data access support library for Westwind.Utilities that provides a small lightweight data access providerand and a host of data utilities.</Description>
 		<Summary>Data access support library for Westwind.Utilities.</Summary>
-		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2024</PackageCopyright>
+		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2025</PackageCopyright>
 		<PackageTags>Westwind DataAccess DataUtils DAL Sql ADO.NET</PackageTags>
 		<PackageReleaseNotes></PackageReleaseNotes>
 

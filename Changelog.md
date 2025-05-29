@@ -1,15 +1,20 @@
 # Westwind.Utilities Changelog
 
-### 5.1.6
+### 5.1.10
+
+* **FileUtils.CopyFileEnsureDirectory()**  
+Added method that copies a file and creates the corresponding directory structure if it doesn't exist.
 
 * **StringUtils.StripAfter()**  
 Method that strips text after a matched delimiter at the end of the string or returns the original string.
 
 * **StringUtils.ReplaceLastNthInstance()**  
-Method that replaces the last nth instance of a sub string in an existing string.
+Method that replaces the last nth instance of a sub string in an existing string. 
+
+### 5.1.6
 
 * **FileUtils.GetRelativeFilePath()**  
-Compares two file paths and returns a relative path to the second file from the first. This version works with files, while `GetRelativePath()` works with a base folder (slightly different behavior).
+Compares two file paths and returns a relative path to the second file from the first. This version works with files, while the existing `GetRelativePath()` works with a base folder (slightly different behavior).
 
 * **FileUtils.ResolvePath()**   
 Returns an absolute file path for a relative path and a base file or folder.

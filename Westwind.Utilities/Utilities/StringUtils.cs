@@ -398,7 +398,7 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static string BreakIntoWords(string text)
         {
-            // if the text contains spaces it's already real text
+            // if the text contains spaces it's already real text     
             if (string.IsNullOrEmpty(text) || text.Contains(" ") || text.Contains("\t"))
                 return text;
 
@@ -410,19 +410,22 @@ namespace Westwind.Utilities
 
             char c = text[0];
 
-            // assume file name was valid as a 'title'
+            // assume file name was valid as a 'title'     
             if (char.IsUpper(c))
             {
-                string[] words = Regex.Split(text, @"(?<!^)(?=[A-Z])");
+                // Split before uppercase letters, but not if preceded by another uppercase letter
+                // and followed by a lowercase letter (to handle acronyms properly)
+                string[] words = Regex.Split(text, @"(?<!^)(?<![A-Z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
                 return string.Join(" ", words);
             }
-            // lower case and no spaces - assume camel case
+
+            // lower case and no spaces - assume camel case     
             if (char.IsLower(c) & !text.Contains(" "))
             {
                 return StringUtils.FromCamelCase(text);
             }
-            
-            // just return as proper case
+
+            // just return as proper case     
             return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(text);
         }
 
@@ -560,7 +563,7 @@ namespace Westwind.Utilities
         /// <param name="caseInsensitive">If true case insensitive search is performed</param>
         /// <returns>updated string or original string if no matches</returns>
 #if NET6_0_OR_GREATER
-        [Obsolete("You can use native `string.Replce()` with StringComparison in .NET Core")]
+        [Obsolete("You can use native `string.Replace()` with StringComparison in .NET Core")]
 #endif
         public static string ReplaceString(string origString, string findString, string replaceString, bool caseInsensitive)
         {
