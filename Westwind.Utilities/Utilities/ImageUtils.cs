@@ -618,12 +618,19 @@ namespace Westwind.Utilities
                 return "image/jpeg";
             if (ext == ".png")
                 return "image/png";
+            if (ext == ".apng")
+                return "image/apgn";
             if (ext == ".gif")
                 return "image/gif";
             if (ext == ".bmp")
                 return "image/bmp";
             if (ext == ".tif" || ext == ".tiff")
                 return "image/tiff";
+            if (ext == ".webp")
+                return "image/webp";
+            if (ext == ".ico")
+                return "image/x-icon";
+
 
             return "application/image";
         }
