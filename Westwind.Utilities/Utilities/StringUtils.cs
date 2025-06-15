@@ -529,8 +529,12 @@ namespace Westwind.Utilities
         public static string ReplaceStringInstance(string origString, string findString,
             string replaceWith, int instance, bool caseInsensitive)
         {
-            if (instance == -1)
+            if (string.IsNullOrEmpty(origString) || string.IsNullOrEmpty(findString))
+                return origString; // nothing to do
+
+            if (instance == -1) // all instances
 #if NET6_0_OR_GREATER
+                // use native if possible - can only replace all instances
                 return origString.Replace(findString, replaceWith, StringComparison.OrdinalIgnoreCase);
 #else
                 return ReplaceString(origString, findString, replaceWith, caseInsensitive);
@@ -567,6 +571,9 @@ namespace Westwind.Utilities
 #endif
         public static string ReplaceString(string origString, string findString, string replaceString, bool caseInsensitive)
         {
+            if (string.IsNullOrEmpty(origString) || string.IsNullOrEmpty(findString))
+                return origString; // nothing to do
+
             int at1 = 0;
             while (true)
             {
