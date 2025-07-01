@@ -60,7 +60,7 @@ namespace Westwind.Utilities
 
         private static object SyncLock = new Object();
   	
-
+        private static UTF8Encoding UTF8Encoding = new UTF8Encoding(false);  
 
         /// <summary>
         /// Serializes an object to an XML string. Unlike the other SerializeObject overloads
@@ -138,7 +138,7 @@ namespace Westwind.Utilities
                 
                 using (FileStream fs = new FileStream(fileName, FileMode.Create))
                 {
-                    using (StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
+                    using (StreamWriter sw = new StreamWriter(fs, UTF8Encoding))
                     {
 						using (var writer = new JsonTextWriter(sw))
 						{
