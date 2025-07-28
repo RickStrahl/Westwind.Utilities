@@ -1,5 +1,6 @@
 # Westwind.Utilities Changelog
 
+
 ### 5.1.10
 
 * **FileUtils.CopyFileEnsureDirectory()**  
@@ -10,6 +11,9 @@ Method that strips text after a matched delimiter at the end of the string or re
 
 * **StringUtils.ReplaceLastNthInstance()**  
 Method that replaces the last nth instance of a sub string in an existing string. 
+
+* **Add HttpClientRequestSetting.AddPostKey() and AddPostFile() Methods**  
+You can now easily create Http Form POST variables for using `settings.RequestPostMode` and using `setting.AddPostKey()` and `settings.AddPostFile()`. You can also retrieve the PostBuffer explicitly using `settings.GetPostBuffer()` and `settings.GetPostBufferBytes()` which allows easy creation of a POST buffer you can send to a raw Http request even outside of `HttpClientUtils`. Useful utility for quick form variable encoding.
 
 ### 5.1.6
 

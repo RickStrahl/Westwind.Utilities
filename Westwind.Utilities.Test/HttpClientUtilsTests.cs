@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -176,6 +177,48 @@ namespace Westwind.Utilities.Test
             Assert.IsNotNull(html);
             Assert.IsTrue(html.Length <= maxSize);
             Console.WriteLine(html);
+        }
+
+        [TestMethod]
+        public async Task HttpPostRequest()
+        {
+            var settings = new HttpClientRequestSettings
+            {
+                Url = "http://west-wind.com/wconnect/Testpage.wwd",
+                HttpVerb = "POST",
+                RequestPostMode = HttpPostMode.UrlEncoded,         
+            };
+            settings.AddPostKey("FirstName", "Rick");
+            settings.AddPostKey("LastName", "Strahl");
+            settings.AddPostKey("Company", "West Windx");
+             
+            string html = await HttpClientUtils.DownloadStringAsync(settings);
+
+            Assert.IsNotNull(html);
+            Assert.IsTrue(html.Contains("lcFirstname=Rick"));
+
+            ShellUtils.ShowHtml(html);
+        }
+
+        [TestMethod]
+        public async Task HttpUploadFileRequest()
+        {
+            var settings = new HttpClientRequestSettings
+            {
+                Url = "http://west-wind.com/wconnect/wcscripts/FileUpload.wwd",
+                HttpVerb = "POST",
+                RequestPostMode = HttpPostMode.MultiPart
+            };
+            settings.AddPostKey("reference", "Sail Big");
+            settings.AddPostFile("upload","SupportFiles/images/SailBig.jpg", "image/jpeg");
+            string html = await HttpClientUtils.DownloadStringAsync(settings);
+
+            Assert.IsNotNull(html);
+
+            ShellUtils.GoUrl("https://west-wind.com/wconnect/temp/SailBig.jpg");
+
+            Assert.IsTrue(html.Contains("SailBig.jpg"));
+
         }
     }
 

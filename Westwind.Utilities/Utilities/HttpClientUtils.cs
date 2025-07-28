@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
-
+using System.IO;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.IO;
 
 namespace Westwind.Utilities
 {
@@ -399,6 +398,14 @@ namespace Westwind.Utilities
                 SetHttpHeader(settings.Request, header.Key, header.Value);
             }
 
+            if (settings.HasPostData)
+            {
+                settings.RequestContentType = settings.RequestPostMode == HttpPostMode.MultiPart
+                    ? "multipart/form-data; boundary=" + HttpClientUtils.STR_MultipartBoundary
+                    : "application/x-www-form-urlencoded";                
+                settings.RequestContent = settings.GetPostBufferBytes();
+            }
+
             if (settings.RequestContent != null &&
                 (settings.HttpVerb.Equals("POST", StringComparison.OrdinalIgnoreCase) ||
                 settings.HttpVerb.Equals("PUT", StringComparison.OrdinalIgnoreCase) ||
@@ -406,6 +413,9 @@ namespace Westwind.Utilities
                )
             {
                 HttpContent content = null;
+
+
+               
 
                 if (settings.RequestContent is string)
                 {
@@ -420,7 +430,8 @@ namespace Westwind.Utilities
                 else if (settings.RequestContent is byte[])
                 {
                     content = new ByteArrayContent(settings.RequestContent as byte[]);
-                    content.Headers.ContentType = new MediaTypeHeaderValue(settings.RequestContentType);
+                    settings.Request.Content = content;
+                    settings.Request.Content?.Headers.Add("Content-Type", settings.RequestContentType);
                 }
                 else
                 {
@@ -431,9 +442,9 @@ namespace Westwind.Utilities
                     }
                 }
 
-
                 if (content != null)
                     settings.Request.Content = content;
+
             }
         }
 
@@ -646,6 +657,213 @@ namespace Westwind.Utilities
             UserAgent = "West Wind .NET Http Client";            
         }
 
+
+
+        #region POST data
+
+        /// <summary>
+        /// Determines how data is POSTed when when using AddPostKey() and other methods
+        /// of posting data to the server. Support UrlEncoded, Multi-Part, XML and Raw modes.
+        /// </summary>
+        public HttpPostMode RequestPostMode { get; set; } = HttpPostMode.UrlEncoded;
+
+        // member properties
+        //string cPostBuffer = string.Empty;
+        internal MemoryStream PostStream;
+        internal BinaryWriter PostData;
+        internal bool HasPostData;
+
+        /// <summary>
+        /// Resets the Post buffer by clearing out all existing content
+        /// </summary>
+        public void ResetPostData()
+        {
+            PostStream = new MemoryStream();
+            PostData = new BinaryWriter(PostStream);
+        }
+
+        public void SetPostStream(Stream postStream)
+        {
+            MemoryStream ms = new MemoryStream(1024);
+            FileUtils.CopyStream(postStream, ms, 1024);
+            ms.Flush();
+            ms.Position = 0;
+            PostStream = ms;
+            PostData = new BinaryWriter(ms);
+        }
+
+        /// <summary>
+        /// Adds POST form variables to the request buffer.
+        /// PostMode determines how parms are handled.
+        /// </summary>
+        /// <param name="key">Key value or raw buffer depending on post type</param>
+        /// <param name="value">Value to store. Used only in key/value pair modes</param>
+        public void AddPostKey(string key, byte[] value)
+        {
+            if (value == null)
+                return;
+
+            if (key == "RESET")
+            {
+                ResetPostData();
+                return;
+            }
+
+            HasPostData = true;
+            if (PostData == null)
+            {
+                PostStream = new MemoryStream();
+                PostData = new BinaryWriter(PostStream);
+            }
+
+            if (string.IsNullOrEmpty(key))
+                PostData.Write(value);
+            else if (RequestPostMode == HttpPostMode.UrlEncoded)
+                PostData.Write(
+                    Encoding.Default.GetBytes(key + "=" +
+                                              StringUtils.UrlEncode(Encoding.Default.GetString(value)) +
+                                              "&"));
+            else if (RequestPostMode == HttpPostMode.MultiPart)
+            {
+                Encoding iso = Encoding.GetEncoding("ISO-8859-1");
+                PostData.Write(iso.GetBytes(
+                    "--" + HttpClientUtils.STR_MultipartBoundary + "\r\n" +
+                    "Content-Disposition: form-data; name=\"" + key + "\"\r\n\r\n"));
+
+                PostData.Write(value);
+                PostData.Write(iso.GetBytes("\r\n"));
+            }
+            else  // Raw or Xml, JSON modes
+                PostData.Write(value);
+        }
+
+        /// <summary>
+        /// Adds POST form variables to the request buffer.
+        /// PostMode determines how parms are handled.
+        /// </summary>
+        /// <param name="key">Key value or raw buffer depending on post type</param>
+        /// <param name="value">Value to store. Used only in key/value pair modes</param>
+        public void AddPostKey(string key, string value)
+        {
+            if (value == null)
+                return;
+            AddPostKey(key, Encoding.Default.GetBytes(value));
+        }
+
+        /// <summary>
+        /// Adds a fully self contained POST buffer to the request.
+        /// Works for XML or previously encoded content.
+        /// </summary>
+        /// <param name="fullPostBuffer">String based full POST buffer</param>
+        public void AddPostKey(string fullPostBuffer)
+        {
+            AddPostKey(null, fullPostBuffer);
+        }
+
+        /// <summary>
+        /// Adds a fully self contained POST buffer to the request.
+        /// Works for XML or previously encoded content.
+        /// </summary>	    
+        /// <param name="fullPostBuffer">Byte array of a full POST buffer</param>
+        public void AddPostKey(byte[] fullPostBuffer)
+        {
+            AddPostKey(null, fullPostBuffer);
+        }
+
+        /// <summary>
+        /// Allows posting a file to the Web Server. Make sure that you 
+        /// set PostMode
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="filename"></param>
+        /// <param name="contentType">Content type of the file to upload. Default is application/octet-stream</param>
+        /// <param name="contentFilename">Optional filename to use in the Content-Disposition header. If not specified uses the file name of the file being uploaded.</param>
+        /// <returns>true or false. Fails if the file is not found or couldn't be encoded</returns>
+        public bool AddPostFile(string key, string filename, string contentType = "application/octet-stream", string contentFilename=null)
+        {
+            byte[] lcFile;
+
+            if (RequestPostMode != HttpPostMode.MultiPart)
+            {
+                ErrorMessage = "File upload allowed only with Multi-part forms";
+                HasErrors = true;
+                return false;
+            }
+
+            HasPostData = true;
+            try
+            {
+                FileStream loFile = new FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+
+                lcFile = new byte[loFile.Length];
+                _ = loFile.Read(lcFile, 0, (int)loFile.Length);
+                loFile.Close();
+            }
+            catch (Exception e)
+            {
+                ErrorMessage = e.Message;                
+                HasErrors = true;
+                return false;
+            }
+
+            if (PostData == null)
+            {
+                PostStream = new MemoryStream();
+                PostData = new BinaryWriter(PostStream);
+            }
+
+            if (string.IsNullOrEmpty(contentFilename))
+                contentFilename = new FileInfo(filename).Name;
+
+            PostData.Write(Encoding.Default.GetBytes(
+                "--" + HttpClientUtils.STR_MultipartBoundary + "\r\n" +
+                "Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" +
+                contentFilename + "\"\r\n" +
+                "Content-Type: " + contentType +
+                "\r\n\r\n"));
+
+            PostData.Write(lcFile);
+            PostData.Write(Encoding.Default.GetBytes("\r\n"));
+
+            return true;
+        }
+
+        /// <summary>
+        /// Returns the contents of the post buffer. Useful for debugging
+        /// </summary>
+        /// <returns></returns>
+        public string GetPostBuffer()
+        {                        
+
+            var bytes = PostStream?.ToArray();
+            if (bytes == null)
+                return null;
+            var data = Encoding.Default.GetString(bytes);
+            if (RequestPostMode == HttpPostMode.MultiPart)
+            {
+                if (PostStream == null)
+                    return null;
+                // add final boundary
+                data += "\r\n--" + HttpClientUtils.STR_MultipartBoundary + "--\r\n";
+            }
+            return data;
+        }
+
+        public byte[] GetPostBufferBytes()
+        {
+            if (RequestPostMode == HttpPostMode.MultiPart)
+            {
+                if (PostStream == null)
+                    return null;
+                // add final boundary
+                PostData.Write(Encoding.Default.GetBytes("\r\n--" + HttpClientUtils.STR_MultipartBoundary + "--\r\n"));
+            }
+            PostStream?.Flush();           
+            return PostStream?.ToArray();            
+        }
+        #endregion
+
+
         /// <summary>
         /// Retrieves the response as a 
         /// </summary>
@@ -729,4 +947,10 @@ namespace Westwind.Utilities
             return $"{HttpVerb} {Url}   {ErrorMessage}";
         }
     }
+
+    public enum HttpPostMode
+    {
+        UrlEncoded,
+        MultiPart
+    };
 }
