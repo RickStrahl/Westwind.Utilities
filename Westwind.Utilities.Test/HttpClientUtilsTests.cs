@@ -192,7 +192,7 @@ namespace Westwind.Utilities.Test
             settings.AddPostKey("LastName", "Strahl");
             settings.AddPostKey("Company", "West Windx");
              
-            string html = await HttpClientUtils.DownloadStringAsync(settings);
+            string html = await HttpClientUtils.DownloadStringAsync(settings);         
 
             Assert.IsNotNull(html);
             Assert.IsTrue(html.Contains("lcFirstname=Rick"));

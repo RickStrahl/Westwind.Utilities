@@ -829,12 +829,13 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Returns the contents of the post buffer. Useful for debugging
+        /// Retrieves the accumulated postbuffer as a byte array
+        /// when AddPostKey() or AddPostFile() have been called.        
         /// </summary>
-        /// <returns></returns>
+        /// <returns>the Post buffer or null if empty or not using
+        /// form post mode</returns>
         public string GetPostBuffer()
         {                        
-
             var bytes = PostStream?.ToArray();
             if (bytes == null)
                 return null;
@@ -849,6 +850,15 @@ namespace Westwind.Utilities
             return data;
         }
 
+        /// <summary>
+        /// Retrieves the accumulated postbuffer as a byte array
+        /// when AddPostKey() or AddPostFile() have been called.
+        /// 
+        /// For multi-part forms this buffer can only be returned
+        /// once as a footer needs to be appended and we don't want
+        /// copy the buffer and double memory usage.
+        /// </summary>
+        /// <returns>encoded POST buffer</returns>
         public byte[] GetPostBufferBytes()
         {
             if (RequestPostMode == HttpPostMode.MultiPart)
@@ -857,8 +867,9 @@ namespace Westwind.Utilities
                     return null;
                 // add final boundary
                 PostData.Write(Encoding.Default.GetBytes("\r\n--" + HttpClientUtils.STR_MultipartBoundary + "--\r\n"));
-            }
-            PostStream?.Flush();           
+                PostStream?.Flush();
+            }   
+            
             return PostStream?.ToArray();            
         }
         #endregion
