@@ -400,7 +400,7 @@ namespace Westwind.Utilities
 
             if (settings.HasPostData)
             {
-                settings.RequestContentType = settings.RequestPostMode == HttpPostMode.MultiPart
+                settings.RequestContentType = settings.RequestFormPostMode == HttpFormPostMode.MultiPart
                     ? "multipart/form-data; boundary=" + HttpClientUtils.STR_MultipartBoundary
                     : "application/x-www-form-urlencoded";                
                 settings.RequestContent = settings.GetPostBufferBytes();
@@ -665,7 +665,7 @@ namespace Westwind.Utilities
         /// Determines how data is POSTed when when using AddPostKey() and other methods
         /// of posting data to the server. Support UrlEncoded, Multi-Part, XML and Raw modes.
         /// </summary>
-        public HttpPostMode RequestPostMode { get; set; } = HttpPostMode.UrlEncoded;
+        public HttpFormPostMode RequestFormPostMode { get; set; } = HttpFormPostMode.UrlEncoded;
 
         // member properties
         //string cPostBuffer = string.Empty;
@@ -718,12 +718,12 @@ namespace Westwind.Utilities
 
             if (string.IsNullOrEmpty(key))
                 PostData.Write(value);
-            else if (RequestPostMode == HttpPostMode.UrlEncoded)
+            else if (RequestFormPostMode == HttpFormPostMode.UrlEncoded)
                 PostData.Write(
                     Encoding.Default.GetBytes(key + "=" +
                                               StringUtils.UrlEncode(Encoding.Default.GetString(value)) +
                                               "&"));
-            else if (RequestPostMode == HttpPostMode.MultiPart)
+            else if (RequestFormPostMode == HttpFormPostMode.MultiPart)
             {
                 Encoding iso = Encoding.GetEncoding("ISO-8859-1");
                 PostData.Write(iso.GetBytes(
@@ -783,7 +783,7 @@ namespace Westwind.Utilities
         {
             byte[] lcFile;
 
-            if (RequestPostMode != HttpPostMode.MultiPart)
+            if (RequestFormPostMode != HttpFormPostMode.MultiPart)
             {
                 ErrorMessage = "File upload allowed only with Multi-part forms";
                 HasErrors = true;
@@ -840,7 +840,7 @@ namespace Westwind.Utilities
             if (bytes == null)
                 return null;
             var data = Encoding.Default.GetString(bytes);
-            if (RequestPostMode == HttpPostMode.MultiPart)
+            if (RequestFormPostMode == HttpFormPostMode.MultiPart)
             {
                 if (PostStream == null)
                     return null;
@@ -861,7 +861,7 @@ namespace Westwind.Utilities
         /// <returns>encoded POST buffer</returns>
         public byte[] GetPostBufferBytes()
         {
-            if (RequestPostMode == HttpPostMode.MultiPart)
+            if (RequestFormPostMode == HttpFormPostMode.MultiPart)
             {
                 if (PostStream == null)
                     return null;
@@ -959,7 +959,7 @@ namespace Westwind.Utilities
         }
     }
 
-    public enum HttpPostMode
+    public enum HttpFormPostMode
     {
         UrlEncoded,
         MultiPart
