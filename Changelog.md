@@ -160,7 +160,7 @@ Helper extension method that lets you convert a memory stream to a string with o
 Checks to see if an IP Address is a local address by checking for localhost/loopback and checking host IP (if valid) against local IP Addresses.
 
 * **Fix: Replace Timeout with TimeoutMs**  
-Replace Timeout property with TimeoutMs to fix problems with sub-1000ms request timeouts. Conversions from calling apps often resulted in invalid values being assigned due to the conversion from milliseconds to seconds. Existing Timeout property (in seconds) is marked `[Obsolete]` but still present to use.
+Replace Timeout property with TimeoutMs to fix issues with sub-1000ms request timeouts. Conversions from calling applications often resulted in invalid values being assigned due to the conversion from milliseconds to seconds. The existing Timeout property (in seconds) is marked `[Obsolete]` but remains available for use.
 
 * **ValidationErrors.HasErrors Property**   
 Added a `HasErrors` property to make the check for errors more explicit than `ValidationErrors.Count > 0`.

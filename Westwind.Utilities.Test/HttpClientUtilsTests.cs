@@ -186,7 +186,7 @@ namespace Westwind.Utilities.Test
             {
                 Url = "http://west-wind.com/wconnect/Testpage.wwd",
                 HttpVerb = "POST",
-                RequestPostMode = HttpPostMode.UrlEncoded,         
+                RequestFormPostMode = HttpFormPostMode.UrlEncoded,         
             };
             settings.AddPostKey("FirstName", "Rick");
             settings.AddPostKey("LastName", "Strahl");
@@ -207,7 +207,7 @@ namespace Westwind.Utilities.Test
             {
                 Url = "http://west-wind.com/wconnect/wcscripts/FileUpload.wwd",
                 HttpVerb = "POST",
-                RequestPostMode = HttpPostMode.MultiPart
+                RequestFormPostMode = HttpFormPostMode.MultiPart
             };
             settings.AddPostKey("reference", "Sail Big");
             settings.AddPostFile("upload","SupportFiles/images/SailBig.jpg", "image/jpeg");
