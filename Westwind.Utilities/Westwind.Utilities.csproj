@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net9.0;net8.0;net472;netstandard2.0</TargetFrameworks>
-		<Version>5.1.15</Version>
+		<Version>5.1.15.2</Version>
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
@@ -15,7 +15,6 @@
 		<Summary>Small library of general purpose utilities for .NET development that almost every application can use. Used as a core reference library for other West Wind libraries.</Summary>
 		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2025</PackageCopyright>
 		<PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
-		<PackageReleaseNotes></PackageReleaseNotes>
 		<PackageProjectUrl>http://github.com/rickstrahl/westwind.utilities</PackageProjectUrl>
 
 		<PackageIcon>icon.png</PackageIcon>

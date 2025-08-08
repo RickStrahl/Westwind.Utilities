@@ -252,7 +252,14 @@ namespace Westwind.Utilities
             string script =
             @"    <script>
         function _errorLinkClick(id) {
-            var $t = $('#' + id).addClass('errorhighlight').focus();            
+            var $t = $('#' + id);
+            if ($t.length == 0) {
+                $t = $('#txt' + id);
+            }
+            if ($t.length == 0) {
+                $t = $('#cmb' + id);
+            }
+            $t.addClass('errorhighlight').focus();            
             setTimeout(function() {
                 $t.removeClass('errorhighlight');
             }, 5000);
