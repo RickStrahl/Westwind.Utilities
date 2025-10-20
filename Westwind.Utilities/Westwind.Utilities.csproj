@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net9.0;net8.0;net472;netstandard2.0</TargetFrameworks>
-		<Version>5.1.15.2</Version>
+		<Version>5.1.17</Version>
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
@@ -53,7 +53,7 @@
 	
 
 	<ItemGroup>		
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 	</ItemGroup>
 	
 	<ItemGroup Condition=" '$(TargetFramework)' != 'net472'">	

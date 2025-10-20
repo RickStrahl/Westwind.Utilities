@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Specialized;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Westwind.Utilities;
-using System.Data.Entity;
+#if NETFRAMEWORK
+using System.Web;
+#endif
 
 namespace Westwind.Utilities.Tests
 {

@@ -1503,7 +1503,7 @@ namespace Westwind.Utilities
             if (type == LineFeedTypes.Lf)
                 return text.Replace("\r\n", "\n");
 
-            return text.Replace("\r\n", "*@\r@*").Replace("\n", "\r\n").Replace("*@\r@*", "\r\n");
+            return text.Replace("\r\n", "\n").Replace("\n", "\r\n");
         }
 
         /// <summary>
