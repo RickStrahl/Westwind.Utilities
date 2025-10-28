@@ -706,11 +706,14 @@ namespace Westwind.Utilities
         /// <summary>
         /// Checks many a string for multiple string values to start with
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="matchValues"></param>
+        /// <param name="str">String to check</param>
+        /// <param name="matchValues">Values to check in string</param>
         /// <returns></returns>
         public static bool StartsWithAny(this string str, params string[] matchValues)
         {
+            if (string.IsNullOrEmpty(str) || matchValues == null || matchValues.Length < 1)
+                return false;
+
             foreach (var value in matchValues)
             {
                 if (str.StartsWith(value))
@@ -723,17 +726,20 @@ namespace Westwind.Utilities
         /// <summary>
         /// Checks many a string for multiple string values to start with
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="matchValues"></param>
+        /// <param name="str">String to check</param>
+        /// <param name="compare">Comparision mode</param>
+        /// <param name="matchValues">Values to check in string</param>
         /// <returns></returns>
         public static bool StartsWithAny(this string str, StringComparison compare, params string[] matchValues)
         {
+            if (string.IsNullOrEmpty(str) || matchValues == null || matchValues.Length < 1)            
+                return false;
+
             foreach (var value in matchValues)
             {
                 if (str.StartsWith(value, compare))
                     return true;
             }
-
             return false;
         }
 
@@ -746,6 +752,9 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static bool ContainsAny(this string str, params string[] matchValues)
         {
+            if (string.IsNullOrEmpty(str) || matchValues == null || matchValues.Length < 1)
+                return false;
+
             foreach (var value in matchValues)
             {
                 if (str.Contains(value))
@@ -764,6 +773,10 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static bool ContainsAny(this string str, StringComparison compare, params string[] matchValues)
         {
+
+            if (string.IsNullOrEmpty(str) || matchValues == null || matchValues.Length < 1)
+                return false;
+
             foreach (var value in matchValues)
             {
                 if (str.Contains(value, compare))
@@ -782,6 +795,9 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static bool ContainsAny(this string str, params char[] matchValues)
         {
+            if (string.IsNullOrEmpty(str) || matchValues == null || matchValues.Length < 1)
+                return false;
+
             foreach (var value in matchValues)
             {
                 if (str.Contains(value))
@@ -801,6 +817,9 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static bool ContainsAny(this string str, StringComparison compare, params char[] matchValues)
         {
+            if (string.IsNullOrEmpty(str) || matchValues == null || matchValues.Length < 1)
+                return false;
+
             foreach (var value in matchValues)
             {
                 if (str.Contains(value, compare))
@@ -811,23 +830,6 @@ namespace Westwind.Utilities
         }
 #endif
 
-        /// <summary>
-        /// Checks to see if a string contains any of a set of values
-        /// </summary>
-        /// <param name="str">String to check</param>
-        /// <param name="compare">Comparison mode</param>
-        /// <param name="matchValues">Strings to check for</param>
-        /// <returns></returns>
-        public static bool EqualsAny(this string str, StringComparison compare, params string[] matchValues)
-        {
-            foreach (var value in matchValues)
-            {
-                if (str.Equals(value, compare))
-                    return true;
-            }
-
-            return false;
-        }
 
         /// <summary>
         /// Checks to see if a string contains any of a set of values.
@@ -837,6 +839,9 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static bool EqualsAny(this string str, params string[] matchValues)
         {
+            if (string.IsNullOrEmpty(str) || matchValues == null || matchValues.Length < 1)
+                return false;
+
             foreach (var value in matchValues)
             {
                 if (str.Equals(value))
@@ -845,6 +850,29 @@ namespace Westwind.Utilities
 
             return false;
         }
+
+
+        /// <summary>
+        /// Checks to see if a string contains any of a set of values
+        /// </summary>
+        /// <param name="str">String to check</param>
+        /// <param name="compare">Comparison mode</param>
+        /// <param name="matchValues">Strings to check for</param>
+        /// <returns></returns>
+        public static bool EqualsAny(this string str, StringComparison compare, params string[] matchValues)
+        {
+            if (string.IsNullOrEmpty(str) || matchValues == null || matchValues.Length < 1)
+                return false;
+
+            foreach (var value in matchValues)
+            {
+                if (str.Equals(value, compare))
+                    return true;
+            }
+
+            return false;
+        }
+
 
         /// <summary>
         /// Replaces multiple matches with a single new value
@@ -857,6 +885,9 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static string ReplaceMany(this string str, string[] matchValues, string replaceWith)
         {
+            if (string.IsNullOrEmpty(str) || matchValues == null || matchValues.Length < 1)
+                return str;
+
             foreach (var value in matchValues)
             {
                 str = str.Replace(value, replaceWith);
@@ -864,6 +895,7 @@ namespace Westwind.Utilities
 
             return str;
         }
+
 
         /// <summary>
         /// Replaces multiple matches with a single new value. 
@@ -878,28 +910,107 @@ namespace Westwind.Utilities
         {
             if (string.IsNullOrEmpty(valuesToMatch))
                 return str;
-
+#if NET6_0_OR_GREATER
+            var matchValues = valuesToMatch.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+#else
             var matchValues = valuesToMatch.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(v => v.Trim())
-                .ToArray();
+                .ToArray();            
+#endif
 
             return ReplaceMany(str, matchValues, replaceWith);
         }
-        #endregion
+
+#if NET6_0_OR_GREATER
+        /// <summary>
+        /// Replaces multiple matches with a single new value
+        ///         
+        /// This version takes an array of strings as input
+        /// </summary>
+        /// <param name="str">String to work on</param>
+        /// <param name="matchValues">String values to match</param>
+        /// <param name="replaceWith">String to replace with</param>
+        /// <param name="compare">String comparison mode</param>
+        /// <returns></returns>
+        public static string ReplaceMany(this string str, string[] matchValues, string replaceWith, StringComparison compare)
+        {
+            if (string.IsNullOrEmpty(str) || matchValues == null || matchValues.Length < 1)
+                return str;
+
+            foreach (var value in matchValues)
+            {
+                str = str.Replace(value, replaceWith, compare);
+            }
+
+            return str;
+        }
+
+        /// <summary>
+        /// Replaces multiple matches with a single new value. 
+        /// 
+        /// This version takes a comma delimited list of strings
+        /// </summary>
+        /// <param name="str">String to work on</param>
+        /// <param name="valuesToMatch">Comma delimited list of values. Values are start and end trimmed</param>
+        /// <param name="replaceWith">String to replace with</param>
+        /// <param name="compare">String comparison mode</param>
+        /// <returns></returns>
+        public static string ReplaceMany(this string str, string valuesToMatch, string replaceWith, StringComparison compare)
+        {
+            if (string.IsNullOrEmpty(valuesToMatch))
+                return str;
+
+#if NET6_0_OR_GREATER
+            var matchValues = valuesToMatch.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+#else
+            var matchValues = valuesToMatch.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(v => v.Trim())
+                .ToArray();            
+#endif
+
+            return ReplaceMany(str, matchValues, replaceWith, compare);
+        }
+#endif
+
+#endregion
 
 
         #region String Parsing
+
         /// <summary>
         /// Determines if a string is contained in a list of other strings
         /// </summary>
         /// <param name="s"></param>
         /// <param name="list"></param>
         /// <returns></returns>
-        public static bool Inlist(string s, params string[] list)
+        public static bool Inlist(this string s, params string[] list)
         {
+            if (string.IsNullOrEmpty(s) || list == null || list.Length < 1)
+                return false;
+
             return list.Contains(s);
         }
 
+#if NET6_0_OR_GREATER
+        /// <summary>
+        /// Determines if a string is contained in a list of other strings
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static bool Inlist(string s, StringComparison compare, params string[] list)
+        {
+            if (string.IsNullOrEmpty(s) || list == null || list.Length < 1)
+                return false;
+
+            foreach (var item in list)
+            {
+                if (item.Equals(s, compare))
+                    return true;
+            }
+            return false;
+        }
+#endif
 
         /// <summary>
         /// Checks to see if value is part of a delimited list of values.
