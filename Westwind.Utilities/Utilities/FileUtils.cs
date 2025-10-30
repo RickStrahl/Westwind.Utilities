@@ -280,7 +280,8 @@ namespace Westwind.Utilities
 
 
         /// <summary>
-        /// Expands Path Environment Variables like %appdata% in paths.
+        /// Expands Path Environment Variables like %appdata% in paths. Also 
+        /// expands ~ to the User Profile folder.
         /// </summary>
         /// <param name="path">Path with potential environment variables.</param>
         /// <returns></returns>

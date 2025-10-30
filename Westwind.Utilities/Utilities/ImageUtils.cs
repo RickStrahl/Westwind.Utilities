@@ -665,6 +665,30 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
+        /// Determines whether a filename has a typical image extension
+        /// </summary>
+        /// <param name="filename">File name to check for image</param>
+        /// <returns>true or false</returns>
+        public static bool IsImage(string filename)
+        {
+            if (string.IsNullOrEmpty(filename))
+                return false;
+
+            string ext = Path.GetExtension(filename).ToLower();
+            if (ext == ".jpg" || ext == ".jpeg" ||
+                ext == ".png" ||
+                ext == ".apng" ||
+                ext == ".gif" ||
+                ext == ".bmp" ||
+                ext == ".tif" || ext == ".tiff" ||
+                ext == ".webp" ||
+                ext == ".ico")
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
         /// Does a byte array check to if the data is an image type
         /// Supports PNG, JPEG, GIF, BMP, WebP and AVIF formats.
         /// </summary>
