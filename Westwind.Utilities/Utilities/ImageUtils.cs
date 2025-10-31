@@ -651,6 +651,8 @@ namespace Westwind.Utilities
                 return "apng";
             if (mediaType == "image/bmp")
                 return "bmp";
+            if (mediaType == "image/gif")
+                return "gif";
             if (mediaType == "image/tiff")
                 return "tif";
             if (mediaType == "image/svg+xml")
@@ -675,24 +677,25 @@ namespace Westwind.Utilities
                 return false;
 
             string ext = Path.GetExtension(filename).ToLower();
-            if (ext == ".jpg" || ext == ".jpeg" ||
-                ext == ".png" ||
-                ext == ".apng" ||
-                ext == ".gif" ||
-                ext == ".bmp" ||
-                ext == ".tif" || ext == ".tiff" ||
-                ext == ".webp" ||
-                ext == ".ico")
-                return true;
-
-            return false;
+            return ext == ".jpg" || ext == ".jpeg" ||
+                   ext == ".png" ||
+                   ext == ".apng" ||
+                   ext == ".gif" ||
+                   ext == ".bmp" ||
+                   ext == ".tif" || ext == ".tiff" ||
+                   ext == ".webp" ||
+                   ext == ".ico";
         }
 
         /// <summary>
-        /// Does a byte array check to if the data is an image type
+        /// Determines whether a byte array  is an image based 
+        /// on binary signature bytes.
         /// Supports PNG, JPEG, GIF, BMP, WebP and AVIF formats.
         /// </summary>
-        /// <param name="data">Buffer only needs the first 15 bytes</param>
+        /// <param name="data">binary file.</param>
+        /// <remarks>
+        /// The buffer only needs the first 15 bytes max for signature detection
+        /// </remarks>
         /// <returns>true or false</returns>
         public static bool IsImage(byte[] data)
         {
