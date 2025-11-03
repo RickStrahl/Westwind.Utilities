@@ -149,7 +149,9 @@ namespace Westwind.Utilities
         /// <param name="mimeType"></param>
         /// <returns></returns>
         public static string BinaryToEmbeddedBase64(byte[] imageBytes, string mimeType = "image/png")
-        {            
+        {
+            if (imageBytes == null) return null;
+
             var data = $"data:{mimeType};base64," + Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
             return data;
         }
