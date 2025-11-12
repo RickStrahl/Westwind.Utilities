@@ -1,10 +1,16 @@
 # Westwind.Utilities Changelog
 
 
-### 5.1.14
+### 5.2
+
+* **Add .NET 10 Target**  
+Change Targets to .NET 10 and .NET 8.0 (and .NET Standard and net472). Dropped .NET 9 target (handled by .NET 8.0).
 
 * **Add HttpClientRequestSettings.AddPostKey() and AddPostFile() Methods**  
 You can now easily create Http Form POST variables for using `settings.RequestPostMode` and using `setting.AddPostKey()` and `settings.AddPostFile()`. You can also retrieve the PostBuffer explicitly using `settings.GetPostBuffer()` and `settings.GetPostBufferBytes()` which allows easy creation of a POST buffer you can send to a raw Http request even outside of `HttpClientUtils`. Useful utility for quick form variable encoding.
+
+* **ImageUtils.IsImage()**  
+Two versions one for filename extension check, and one for binary data image signature check.
 
 ### 5.1.10
 
