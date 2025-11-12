@@ -1357,6 +1357,8 @@ namespace Westwind.Utilities
         /// <returns>decoded string</returns>
         public static string UrlDecode(string text)
         {
+            if (string.IsNullOrEmpty(text)) return text;
+
             // pre-process for + sign space formatting since System.Uri doesn't handle it
             // plus literals are encoded as %2b normally so this should be safe
             text = text.Replace("+", " ");
@@ -1372,7 +1374,9 @@ namespace Westwind.Utilities
         /// <returns>returns the text or "" if the key is not found or the text is blank</returns>
         public static string GetUrlEncodedKey(string urlEncoded, string key)
         {
-            urlEncoded = "&" + urlEncoded + "&";
+            if (string.IsNullOrEmpty(urlEncoded) || string.IsNullOrEmpty(key) ) return string.Empty;
+
+            urlEncoded = "&" + urlEncoded + "&"; 
 
             int Index = urlEncoded.IndexOf("&" + key + "=", StringComparison.OrdinalIgnoreCase);
             if (Index < 0)
