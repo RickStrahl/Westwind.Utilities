@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net9.0;net8.0;net472</TargetFrameworks>
-		<Version>5.1.16</Version>
+		<TargetFrameworks>net10.0;net8.0;net472</TargetFrameworks>
+		<Version>5.2</Version>
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>

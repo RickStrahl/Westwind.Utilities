@@ -14,7 +14,6 @@ Two versions one for filename extension check, and one for binary data image sig
 
 ### 5.1.10
 
-
 * **FileUtils.CopyFileEnsureDirectory()**  
 Added method that copies a file and creates the corresponding directory structure if it doesn't exist.
 
