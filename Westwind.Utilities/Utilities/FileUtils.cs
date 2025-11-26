@@ -749,7 +749,7 @@ namespace Westwind.Utilities
                 .Aggregate(fileName.Trim(),
                     (current, c) => current.Replace(c.ToString(), replacementString));
 
-            file = file.Replace("#", "")
+            file = file.Replace("#", "")                        
                        .Replace("+", "");
 
             if (!string.IsNullOrEmpty(spaceReplacement))
