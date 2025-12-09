@@ -1012,7 +1012,7 @@ namespace Westwind.Utilities
 #endregion
     }
 
-    internal static class SecureStringExtensions
+    public static class SecureStringExtensions
     {
         public static string GetString(this SecureString source)
         {
@@ -1025,7 +1025,6 @@ namespace Westwind.Utilities
             {
                 pointer = Marshal.SecureStringToBSTR(source);
                 Marshal.Copy(pointer, chars, 0, length);
-
                 result = string.Join("", chars);
             }
             finally

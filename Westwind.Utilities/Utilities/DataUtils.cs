@@ -72,7 +72,7 @@ namespace Westwind.Utilities
         ///        8 gives less than 1 in a million doubles.
         ///        16 will give near full GUID strength uniqueness
         /// </summary>
-        /// <param name="stringSize">Number of characters to generate between 8 and 16</param>
+        /// <param name="stringSize">Number of characters to generate between 5 and 16</param>
         /// <param name="additionalCharacters">Any additional characters you allow in the string. 
         /// You can add upper case letters and symbols which are not included in the default
         /// which includes only digits and lower case letters.
@@ -80,13 +80,16 @@ namespace Westwind.Utilities
         /// <returns></returns>        
         public static string GenerateUniqueId(int stringSize = 8, string additionalCharacters = null)
         {
-            string chars = "abcdefghijkmnopqrstuvwxyz1234567890" + (additionalCharacters ?? string.Empty);
+            string chars = "abcdefghijkmnopqrstuvwxyz1234567890" + additionalCharacters;
             StringBuilder result = new StringBuilder(stringSize);
             int count = 0;
 
+            if (stringSize < 5) stringSize = 5;
 
-            foreach (byte b in Guid.NewGuid().ToByteArray())
+            byte[] array = Guid.NewGuid().ToByteArray();
+            for (int i = array.Length - 1; i >= 0; i--)
             {
+                byte b = array[i];
                 result.Append(chars[b % (chars.Length)]);
                 count++;
                 if (count >= stringSize)
