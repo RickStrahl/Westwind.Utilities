@@ -17,6 +17,11 @@ namespace Westwind.Utilities
     public class PasswordScrubber
     {
         /// <summary>
+        /// A static instance that can be used without instantiating first
+        /// </summary>
+        public static PasswordScrubber Instance = new PasswordScrubber();
+
+        /// <summary>
         /// If set to a non-zero value displays the frist n characters
         /// of the value that is being obscured.
         /// </summary>
@@ -49,7 +54,7 @@ namespace Westwind.Utilities
 
         public string ScrubSqlConnectionStringValues(string configString, params string[] connKeys)
         {
-            if (connKeys == null || connKeys.Length < 1) connKeys = new string[1] { "pwd" };
+            if (connKeys == null || connKeys.Length < 1) connKeys = new string[] { "pwd", "password" };
 
             foreach (var key in connKeys)
             {
@@ -58,7 +63,7 @@ namespace Westwind.Utilities
                 if (!string.IsNullOrEmpty(extract))
                 {
                     var only = StringUtils.ExtractString(extract, $"{key}=", ";", allowMissingEndDelimiter: true, returnDelimiters: false);
-                    configString = configString.Replace(only, $"{key}=" + ObscureValue(only));
+                    configString = configString.Replace(extract, $"{key}=" + ObscureValue(only) + ";");
                 }
             }
 
@@ -72,6 +77,7 @@ namespace Westwind.Utilities
             if (showUnobscuredCharacterCount < 0)
                 showUnobscuredCharacterCount = ShowUnobscuredCharacterCount;
 
+            // very short –just display the obscured value without any revealed characters
             if (showUnobscuredCharacterCount > value.Length + 2)
                 return ObscuredValueBaseDisplay;
 

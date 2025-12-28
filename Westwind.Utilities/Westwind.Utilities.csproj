@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net10.0;net8.0;net472;netstandard2.0</TargetFrameworks>
-		<Version>5.2</Version>
+		<Version>5.2.1</Version>
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
@@ -13,7 +13,7 @@
 		<Title>West Wind Utilities</Title>
 		<Description>.NET utility library that includes Application Configuration, lightweight ADO.NET Data Access Layer, logging, utility classes include: StringUtils, ReflectionUtils, FileUtils, DataUtils, SerializationUtils, TimeUtils, SecurityUtils and XmlUtils. These classes are useful in any kind of .NET project.</Description>
 		<Summary>Small library of general purpose utilities for .NET development that almost every application can use. Used as a core reference library for other West Wind libraries.</Summary>
-		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2025</PackageCopyright>
+		<PackageCopyright>Rick Strahl, West Wind Technologies 2007-2026</PackageCopyright>
 		<PackageTags>Westwind ApplicationConfiguration StringUtils ReflectionUtils DataUtils FileUtils TimeUtils SerializationUtils ImageUtils Logging DAL Sql ADO.NET</PackageTags>
 		<PackageProjectUrl>http://github.com/rickstrahl/westwind.utilities</PackageProjectUrl>
 
@@ -21,7 +21,7 @@
 		<PackageLicenseFile>LICENSE.MD</PackageLicenseFile>
 
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Copyright>Rick Strahl, West Wind Technologies, 2010-2025</Copyright>
+		<Copyright>Rick Strahl, West Wind Technologies, 2010-2026</Copyright>
 		<Company>West Wind Technologies</Company>
 	</PropertyGroup>
 
