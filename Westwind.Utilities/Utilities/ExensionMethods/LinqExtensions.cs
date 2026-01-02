@@ -8,12 +8,16 @@ namespace Westwind.Utilities.Linq
     public static class LinqExtensions
     {
         /// <summary>
-        /// Flattens a tree to a plain enumerable for querying.
+        /// Recursively flattens a tree structure of nested same type enumerables
+        /// into a flat structure. 
+        /// 
+        /// Example:
+        /// Flattening a tree of documentation topics into a flat list of topics.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type to flatten</typeparam>
         /// <param name="e">Enumeration to work on</param>
         /// <param name="f">Expression that points at the element list to select from</param>
-        /// <returns></returns>
+        /// <returns>Flattened list or empty enumerable</returns>
         /// <example>
         /// var topics = topicTree.FlattenTree(t=> t.Topics);
         /// </example>
@@ -21,7 +25,14 @@ namespace Westwind.Utilities.Linq
             this IEnumerable<T> e,
             Func<T, IEnumerable<T>> f)
         {
-            return e.SelectMany(c => f(c).FlattenTree(f)).Concat(e);
+            if (f == null)
+                throw new ArgumentNullException(nameof(f));
+
+            var items = (e ?? Enumerable.Empty<T>()).ToList();
+
+            return items
+                .SelectMany(c => (f(c) ?? Enumerable.Empty<T>()).FlattenTree(f))
+                .Concat(items);
         }
     }
 }

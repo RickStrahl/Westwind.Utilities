@@ -43,16 +43,12 @@ using Newtonsoft.Json.Serialization;
 namespace Westwind.Utilities
 {
     /// <summary>
-    /// JSON Serialization helper class that uses JSON.NET.
-    /// This class serializes JSON to and from string and 
-    /// files on disk.
-    /// </summary>
-    /// <remarks>
-    /// JSON.NET is loaded dynamically at runtime to avoid hard 
-    /// linking the Newtonsoft.Json.dll to Westwind.Utilities.
-    /// Just make sure that your project includes a reference 
-    /// to JSON.NET when using this class.
-    /// </remarks>
+    /// JSON Serialization helper class using Json.NET.
+    /// This class has simplified single line serialization
+    /// methods to serialize JSON to and from string and 
+    /// files on disk with error handling and some common
+    /// optional configuration options.
+    /// </summary>   
     public static class JsonSerializationUtils
     {
         //capture reused type instances

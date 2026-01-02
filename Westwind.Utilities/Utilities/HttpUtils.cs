@@ -11,6 +11,7 @@ namespace Westwind.Utilities
     /// Simple HTTP request helper to let you retrieve data from a Web
     /// server and convert it to something useful.
     /// </summary>
+    [Obsolete("Use HttpClientUtils if possible.")]
     public static class HttpUtils
     {
 
@@ -19,6 +20,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="url">A url to call for a GET request without custom headers</param>
         /// <returns>string of HTTP response</returns>
+        
         public static string HttpRequestString(string url)
         {            
             return HttpRequestString(new HttpRequestSettings() { Url = url });

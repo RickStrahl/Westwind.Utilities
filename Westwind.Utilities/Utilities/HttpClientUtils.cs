@@ -11,6 +11,15 @@ using System.Threading.Tasks;
 
 namespace Westwind.Utilities
 {
+
+    /// <summary>
+    /// Http Client wrapper that provides single line access for common Http requests
+    /// that return string, Json or binary content. 
+    /// 
+    /// Most methods have dual versions using simple parameters, or an
+    /// `HttpClientRequestSettings` configuration and results object that is
+    /// passed through on requests.    
+    /// </summary>
     public class HttpClientUtils
     {
         public const string STR_MultipartBoundary = "----FormBoundary3vDSIXiW0WSTB551";
@@ -107,6 +116,11 @@ namespace Westwind.Utilities
 
 #if NET6_0_OR_GREATER
 
+        /// <summary>
+        /// Synchronous version of `DownloadStringAsync`.
+        /// </summary>
+        /// <param name="settings">Request/Response settings instance</param>
+        /// <returns>string or null on failure</returns>
         public static string DownloadString(HttpClientRequestSettings settings)
         {
             string content = null;
@@ -490,7 +504,7 @@ namespace Westwind.Utilities
     }
 
     /// <summary>
-    /// Configuration object for Http Requests used by the HttpUtils
+    /// Configuration object for Http Requests used by the HttpClientUtils
     /// methods. Allows you to set the URL, verb, headers proxy and
     /// credentials that are then passed to the HTTP client.
     /// </summary>
