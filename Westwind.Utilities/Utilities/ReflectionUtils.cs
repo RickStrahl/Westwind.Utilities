@@ -1141,6 +1141,9 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static bool IsAnonoymousType(object objectOrType)
         {
+            if (objectOrType == null)
+                return false;
+
             if (objectOrType is Type type)
             {
                 type = objectOrType as Type;
