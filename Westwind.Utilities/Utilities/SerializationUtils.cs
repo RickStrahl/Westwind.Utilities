@@ -210,30 +210,27 @@ namespace Westwind.Utilities
         {
             bool retVal = true;
 
-            MemoryStream ms = null;
-            try
+            using (var ms = new MemoryStream())
             {
-                BinaryFormatter serializer = new BinaryFormatter();
-                ms = new MemoryStream();
-                serializer.Serialize(ms, instance);
-            }
-            catch(Exception ex)
-            {                
-                Debug.Write("SerializeObject failed with : " + ex.GetBaseException().Message, "West Wind");
-                retVal = false;
+                try
+                {
+                    BinaryFormatter serializer = new BinaryFormatter();
+                    serializer.Serialize(ms, instance);
+                }
+                catch (Exception ex)
+                {
+                    Debug.Write("SerializeObject failed with : " + ex.GetBaseException().Message, "West Wind");
+                    retVal = false;
 
-                if (throwExceptions)
-                    throw;
-            }
-            finally
-            {
-                if (ms != null)
-                    ms.Close();
-            }
+                    if (throwExceptions)
+                        throw;
+                }
+             
+                ms.Position = 0;
+                resultBuffer = ms.ToArray();
 
-            resultBuffer = ms.ToArray();
-
-            return retVal;
+                return retVal;
+            }
         }
 #endif
 
