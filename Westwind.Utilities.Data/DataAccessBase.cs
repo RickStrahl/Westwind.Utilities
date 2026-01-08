@@ -301,25 +301,21 @@ namespace Westwind.Utilities.Data
                     _Connection.Open();
             }
             catch (SqlException ex)
-            {
+            {              
                 SetError(string.Format(Resources.ConnectionOpeningFailure, ex.Message));
+                ErrorException = ex;
                 return false;
             }
-//#if !NETCORE
-//            catch (OleDbException ex)
-//            {
-//                SetError(ex);
-//                return false;
-//            }
-//#endif
             catch (DbException ex)
             {
                 SetError(string.Format(Resources.ConnectionOpeningFailure, ex.Message));
+                ErrorException = ex;
                 return false;
             }
             catch (Exception ex)
             {
                 SetError(string.Format(Resources.ConnectionOpeningFailure, ex.GetBaseException().Message));
+                ErrorException = ex;
                 return false;
             }
 
@@ -429,11 +425,10 @@ namespace Westwind.Utilities.Data
         /// </param>
         protected void AddParameters(DbCommand command, object[] parameters)
         {
-            if (parameters != null)
-            {
-          
+            if (parameters != null && parameters.Length > 0)
+            {          
                 // check for anonymous type
-                if (parameters.Length == 1 && ReflectionUtils.IsAnonoymousType(parameters[0]))
+                if (parameters.Length == 1 &&  ReflectionUtils.IsAnonoymousType(parameters[0]))
                 {
                     ParseObjectParameters(command, parameters[0]);
                     return;
@@ -1388,13 +1383,13 @@ namespace Westwind.Utilities.Data
 
             AddParameters(command, parameters);
 
-            DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
-	        if (Adapter == null)
+            DbDataAdapter adapter = dbProvider.CreateDataAdapter();
+	        if (adapter == null)
 	        {
 		        SetError("Failed to create data adapter.");
 				return null;
 	        }
-	        Adapter.SelectCommand = command;
+	        adapter.SelectCommand = command;
 			
 			LastSql = command.CommandText;
 
@@ -1402,7 +1397,7 @@ namespace Westwind.Utilities.Data
 
             try
             {
-                Adapter.Fill(dt);
+                adapter.Fill(dt);
             }
             catch (Exception ex)
             {
@@ -1432,11 +1427,11 @@ namespace Westwind.Utilities.Data
         {
             SetError();
 
-            DbCommand Command = CreateCommand(Sql, Parameters);
-            if (Command == null)
+            DbCommand command = CreateCommand(Sql, Parameters);
+            if (command == null)
                 return null;
 
-            return ExecuteTable(Tablename, Command);
+            return ExecuteTable(Tablename, command);
         }
 
 
@@ -1484,13 +1479,13 @@ namespace Westwind.Utilities.Data
             if (dataSet == null)
                 dataSet = new DataSet();
 
-            DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
-            Adapter.SelectCommand = command;
+            DbDataAdapter adapter = dbProvider.CreateDataAdapter();
+            adapter.SelectCommand = command;
             LastSql = command.CommandText;
 
 
             if (ExecuteWithSchema)
-                Adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+                adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
 
             AddParameters(command, parameters);
 
@@ -1501,7 +1496,7 @@ namespace Westwind.Utilities.Data
 
             try
             {
-                Adapter.Fill(dataSet, tableName);
+                adapter.Fill(dataSet, tableName);
             }
             catch (Exception ex)
             {
@@ -1552,14 +1547,14 @@ namespace Westwind.Utilities.Data
             }
             sql = StringUtils.ReplaceStringInstance(sql, "select", string.Empty, 1, true);
 
-            string NewSql = string.Format(
+            string newSql = string.Format(
             @"
 select * FROM 
    (SELECT ROW_NUMBER() OVER (ORDER BY @OrderByFields) as __No,{0}) __TQuery
 where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 ", sql);
 
-            return CreateCommand(NewSql,
+            return CreateCommand(newSql,
                             CreateParameter("@PageSize", pageSize),
                             CreateParameter("@Page", page),
                             CreateParameter("@OrderByFields", sortOrderFields));
@@ -1737,15 +1732,15 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         {
             SetError();
 
-            var Command = GetUpdateEntityCommand(entity, table, keyField, propertiesToSkip);
-            if (Command == null)
+            var command = GetUpdateEntityCommand(entity, table, keyField, propertiesToSkip);
+            if (command == null)
                 return false;
 
             bool result;
-            using (Command)
+            using (command)
             {
-                result = ExecuteNonQuery(Command) > -1;
-                CloseConnection(Command);
+                result = ExecuteNonQuery(command) > -1;
+                CloseConnection(command);
             }
 
             return result;
@@ -1773,52 +1768,52 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             else
                 propertiesToSkip = "," + propertiesToSkip.ToLower() + ",";
 
-            DbCommand Command = CreateCommand(string.Empty);
+            var command = CreateCommand(string.Empty);
 
-            Type ObjType = entity.GetType();
+            var objType = entity.GetType();
 
             StringBuilder sb = new StringBuilder();
             sb.Append("update " + table + " set ");
 
-            PropertyInfo[] Properties = ObjType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            foreach (PropertyInfo Property in Properties)
+            PropertyInfo[] Properties = objType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            foreach (PropertyInfo property in Properties)
             {
-                if (!Property.CanRead)
+                if (!property.CanRead || !property.CanWrite)
                     continue;
        
-                if (!Property.PropertyType.IsValueType && 
-                    Property.PropertyType.Name != "String" &&
-                    Property.PropertyType.Name != "Byte[]")
+                if (!property.PropertyType.IsValueType && 
+                    property.PropertyType.Name != "String" &&
+                    property.PropertyType.Name != "Byte[]")
                     continue;
 
-                string Name = Property.Name;
+                string name = property.Name;
 
-                if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
+                if (propertiesToSkip.IndexOf("," + name.ToLower() + ",") > -1)
                     continue;
                 
-                object Value = Property.GetValue(entity, null);
+                object value = property.GetValue(entity, null);
 
-                string parmString = UsePositionalParameters ? ParameterPrefix : ParameterPrefix + Name;
-                sb.Append(" " + LeftFieldBracket + Name + RightFieldBracket + "=" + parmString + ",");
+                string parmString = UsePositionalParameters ? ParameterPrefix : ParameterPrefix + name;
+                sb.Append(" " + LeftFieldBracket + name + RightFieldBracket + "=" + parmString + ",");
 
-                if (Value == null && Property.PropertyType == typeof(byte[]))
+                if (value == null && property.PropertyType == typeof(byte[]))
                 {
-                    Command.Parameters.Add(
-                        CreateParameter(ParameterPrefix + Name, DBNull.Value, DataUtils.DotNetTypeToDbType(Property.PropertyType))
+                    command.Parameters.Add(
+                        CreateParameter(ParameterPrefix + name, DBNull.Value, DataUtils.DotNetTypeToDbType(property.PropertyType))
                     );
                 }
                 else
-                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value ?? DBNull.Value));
+                    command.Parameters.Add(CreateParameter(ParameterPrefix + name, value ?? DBNull.Value));
             }
 
             object pkValue = ReflectionUtils.GetProperty(entity, keyField);
 
-            String CommandText = sb.ToString().TrimEnd(',') + " where " + keyField + "=" + ParameterPrefix + "__PK";
+            String commandText = sb.ToString().TrimEnd(',') + " where " + keyField + "=" + ParameterPrefix + "__PK";
 
-            Command.Parameters.Add(CreateParameter(ParameterPrefix + "__PK", pkValue));
-            Command.CommandText = CommandText;
+            command.Parameters.Add(CreateParameter(ParameterPrefix + "__PK", pkValue));
+            command.CommandText = commandText;
 
-            return Command;
+            return command;
         }
 
 
@@ -1847,44 +1842,47 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 propertiesToSkip = "," + propertiesToSkip.ToLower() + ",";
 
 
-            DbCommand Command = CreateCommand(string.Empty);
-            if (Command == null)
+            DbCommand command = CreateCommand(string.Empty);
+            if (command == null)
             {
                 SetError("Unable to create command.");
                 return null;
             }
 
-            Type ObjType = entity.GetType();
+            Type objType = entity.GetType();
 
             StringBuilder sb = new StringBuilder();
             sb.Append("update " + table + " set ");
 
-            string[] Fields = fieldsToUpdate.Split(',');
-            foreach (string Name in Fields)
+            string[] fields = fieldsToUpdate.Split(',');
+            foreach (string Name in fields)
             {
            
                 if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
                     continue;
 
-                PropertyInfo Property = ObjType.GetProperty(Name);
-                if (Property == null)
+                PropertyInfo property = objType.GetProperty(Name);
+                if (property == null)
                     continue;
 
-                if (!Property.PropertyType.IsValueType &&
-                    Property.PropertyType.Name != "String" &&
-                    Property.PropertyType.Name != "Byte[]")
+                if (!property.CanWrite)
                     continue;
 
-                object Value = Property.GetValue(entity, null);
+                if (!property.PropertyType.IsValueType &&
+                    property.PropertyType.Name != "String" &&
+                    property.PropertyType.Name != "Byte[]")
+                    continue;
+
+                object Value = property.GetValue(entity, null);
 
                 string parmString = UsePositionalParameters ? ParameterPrefix : ParameterPrefix + Name;
                 sb.Append(" " + LeftFieldBracket + Name + RightFieldBracket + "=" + parmString + ",");
 
-                if (Value == null && Property.PropertyType == typeof(byte[]))
-                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, DBNull.Value,
-                        DataUtils.DotNetTypeToDbType(Property.PropertyType)));
+                if (Value == null && property.PropertyType == typeof(byte[]))
+                    command.Parameters.Add(CreateParameter(ParameterPrefix + Name, DBNull.Value,
+                        DataUtils.DotNetTypeToDbType(property.PropertyType)));
                 else
-                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value ?? DBNull.Value));
+                    command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value ?? DBNull.Value));
             }
 
             object pkValue = ReflectionUtils.GetProperty(entity, keyField);
@@ -1893,10 +1891,10 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             string commandText = sb.ToString().TrimEnd(',') +
                                  " where " + LeftFieldBracket + keyField + RightFieldBracket + "=" + ParameterPrefix +
                                  (UsePositionalParameters ? "" : "__PK");
-            Command.Parameters.Add(CreateParameter(ParameterPrefix + "__PK", pkValue));
-            Command.CommandText = commandText;
+            command.Parameters.Add(CreateParameter(ParameterPrefix + "__PK", pkValue));
+            command.CommandText = commandText;
 
-            return Command;
+            return command;
         }
 
         /// <summary>
@@ -1916,14 +1914,14 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         {
             SetError();
 
-            var Command = GetUpdateEntityCommand(entity, table, keyField, propertiesToSkip, fieldsToUpdate);
-            if (Command == null)
+            var command = GetUpdateEntityCommand(entity, table, keyField, propertiesToSkip, fieldsToUpdate);
+            if (command == null)
                 return false;
 
             bool result;
-            using (Command) {
-                result = ExecuteNonQuery(Command) > -1;
-                CloseConnection(Command);
+            using (command) {
+                result = ExecuteNonQuery(command) > -1;
+                CloseConnection(command);
             }
 
             return result;
@@ -1949,21 +1947,22 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         public object InsertEntity(object entity, string table, string propertiesToSkip = null, bool returnIdentityKey = true)
         {
             SetError();
-            DbCommand Command = GetInsertEntityCommand(entity, table, propertiesToSkip);
-
-            using (Command)
+            using (DbCommand command = GetInsertEntityCommand(entity, table, propertiesToSkip))
             {
+                if (command == null)
+                    return null;
+
                 if (returnIdentityKey)
                 {
-                    Command.CommandText += ";\r\n" + GetIdentityKeySqlCommand;
-                    LastIdentityResult = ExecuteScalar(Command);
-                    return LastIdentityResult;                
+                    command.CommandText += ";\r\n" + GetIdentityKeySqlCommand;
+                    LastIdentityResult = ExecuteScalar(command);
+                    return LastIdentityResult;
                 }
 
-                int res = ExecuteNonQuery(Command);
+                int res = ExecuteNonQuery(command);
                 if (res < 0)
                     return null;
-                
+
                 return res;
             }
         }
@@ -1987,18 +1986,18 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         public async Task<object> InsertEntityAsync(object entity, string table, string propertiesToSkip = null, bool returnIdentityKey = true)
         {
             SetError();
-            DbCommand Command = GetInsertEntityCommand(entity, table, propertiesToSkip);
+            DbCommand command = GetInsertEntityCommand(entity, table, propertiesToSkip);
 
-            using (Command)
+            using (command)
             {
                 if (returnIdentityKey)
                 {
-                    Command.CommandText += ";\r\n" + GetIdentityKeySqlCommand;
-                    LastIdentityResult = await ExecuteScalarAsync(Command);
+                    command.CommandText += ";\r\n" + GetIdentityKeySqlCommand;
+                    LastIdentityResult = await ExecuteScalarAsync(command);
                     return LastIdentityResult;
                 }
 
-                int res = await ExecuteNonQueryAsync(Command);
+                int res = await ExecuteNonQueryAsync(command);
                 if (res < 0)
                     return null;
 
@@ -2007,16 +2006,15 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         }
 
 
-
         /// <summary>
         /// Gets the DbCommand used to insert an object into the database based on its type information.
         /// The properties must match the database structure and you can skip
         /// over fields in the propertiesToSkip list.        
         /// </summary>        
         /// <seealso cref="SaveEntity" />        
-        /// <param name="entity"></param>
-        /// <param name="table"></param>
-        /// <param name="KeyField"></param>
+        /// <param name="entity">Entity object to use for Insert</param>
+        /// <param name="table">Table name to insert to</param>
+        /// <param name="propertiesToSkip">Comma delimited list of fields not to include in insert statement</param>
         /// <returns>
         /// Scope Identity or Null (when returnIdentityKey is true
         /// Otherwise affected records
@@ -2031,56 +2029,55 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 propertiesToSkip = "," + propertiesToSkip.ToLower() + ",";
 
 
-            DbCommand Command = CreateCommand(string.Empty);
-            if (Command == null)
+            DbCommand command = CreateCommand(string.Empty);
+            if (command == null)
             {
-                SetError("Unable to create DbCommand instance");
                 return null;
             }
 
-            Type ObjType = entity.GetType();
+            Type objType = entity.GetType();
 
-            StringBuilder FieldList = new StringBuilder();
-            StringBuilder DataList = new StringBuilder();
-            FieldList.Append("insert into " + table + " (");
-            DataList.Append(" values (");
+            StringBuilder fieldList = new StringBuilder();
+            StringBuilder dataList = new StringBuilder();
+            fieldList.Append("insert into " + table + " (");
+            dataList.Append(" values (");
 
-            PropertyInfo[] Properties = ObjType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            foreach (PropertyInfo Property in Properties)
+            PropertyInfo[] properties = objType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            foreach (PropertyInfo property in properties)
             {
-                if (!Property.CanRead)
+                if (!property.CanRead || !property.CanWrite)
                     continue;
-                if (!Property.PropertyType.IsValueType &&
-                    Property.PropertyType.Name != "String" && 
-                    Property.PropertyType.Name != "Byte[]")
+                if (!property.PropertyType.IsValueType &&
+                    property.PropertyType.Name != "String" && 
+                    property.PropertyType.Name != "Byte[]")
                     continue;
 
-                string Name = Property.Name; 
+                string name = property.Name; 
                 
-                if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1 )
+                if (propertiesToSkip.IndexOf("," + name.ToLower() + ",") > -1 )
                     continue;
                 
-                object Value = Property.GetValue(entity, null);
+                object value = property.GetValue(entity, null);
 
-                FieldList.Append(" " + LeftFieldBracket + Name + RightFieldBracket + ",");
+                fieldList.Append(" " + LeftFieldBracket + name + RightFieldBracket + ",");
 
                 string parmString = ParameterPrefix;
                 if (!UsePositionalParameters)
-                    parmString += Name;
+                    parmString += name;
 
-                DataList.Append(parmString + ",");
+                dataList.Append(parmString + ",");
 
-                if (Value == null && Property.PropertyType == typeof(byte[]))
-                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, DBNull.Value,
-                        DataUtils.DotNetTypeToDbType(Property.PropertyType)));
+                if (value == null && property.PropertyType == typeof(byte[]))
+                    command.Parameters.Add(CreateParameter(ParameterPrefix + name, DBNull.Value,
+                        DataUtils.DotNetTypeToDbType(property.PropertyType)));
                 else
-                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value ?? DBNull.Value));
+                    command.Parameters.Add(CreateParameter(ParameterPrefix + name, value ?? DBNull.Value));
             }
 
-            Command.CommandText = FieldList.ToString().TrimEnd(',') + ") " +
-                                 DataList.ToString().TrimEnd(',') + ")";
+            command.CommandText = fieldList.ToString().TrimEnd(',') + ") " +
+                                 dataList.ToString().TrimEnd(',') + ")";
 
-            return Command;
+            return command;
         }
 
 
@@ -2126,10 +2123,10 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <summary>
         /// Sets the error message for the failure operations
         /// </summary>
-        /// <param name="Message"></param>
-        protected virtual void SetError(string Message, int errorNumber)
+        /// <param name="message"></param>
+        protected virtual void SetError(string message, int errorNumber)
         {
-            if (string.IsNullOrEmpty(Message))
+            if (string.IsNullOrEmpty(message))
             {
                 ErrorMessage = string.Empty;
                 ErrorNumber = 0;
@@ -2137,17 +2134,20 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 return;
             }
 
-            ErrorMessage = Message;
+            ErrorMessage = message;
             ErrorNumber = errorNumber;            
-        }        
+        }
 
         /// <summary>
         /// Sets the error message and error number.
         /// </summary>
-        /// <param name="message"></param>
-        protected virtual void SetError(string message)
+        /// <param name="message">Message for the ErrorMessage</param>
+        /// <param name="ex">Optional exception that sets LastError</param>
+        protected virtual void SetError(string message, Exception ex = null)
         {
             SetError(message,0);
+            if (ex != null)
+                ErrorException = ex;            
         }
 
         protected virtual void SetError(DbException ex)
@@ -2169,14 +2169,19 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
         protected virtual void SetError(Exception ex)
         {
-            if (ex is SqlException)
-                SetError(ex as SqlException);
-            else if (ex is DbException)
+            if (ex is SqlException sqlEx)
+            {
+                SetError(sqlEx);
+                return;
+            }
+            if (ex is DbException)
+            {
                 SetError(ex as DbException);
-            else
-                SetError(ex.Message, 0);
-
+                return;
+            }
+            ErrorMessage = ex.Message;
             ErrorException = ex;
+            ErrorNumber = 0;
 
             if (ThrowExceptions)
                 throw ex;
