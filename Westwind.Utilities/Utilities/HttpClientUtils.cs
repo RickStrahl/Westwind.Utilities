@@ -116,6 +116,53 @@ namespace Westwind.Utilities
 
 #if NET6_0_OR_GREATER
 
+#endif
+
+
+        /// <summary>
+        /// Runs an Http request and returns success results as a string or null
+        /// on failure or non-200/300 requests.
+        /// 
+        /// Failed requests return null and set the settings.ErrorMessage property
+        /// but you can can access the `settings.Response` or use the 
+        /// `settings.GetResponseStringAsync()` method or friends to retrieve 
+        /// content despite the error.
+        /// </summary>
+        /// <remarks>
+        /// By default this method does not throw on errors or error status codes,
+        /// but returns null and an error message. For error requests you can check
+        /// settings.HasResponseContent and then either directly access settings.Response,
+        /// or use settings.GetResponseStringAsync() or friends to retrieve error content.
+        /// 
+        /// If you want the method to throw exceptions on errors an > 400 status codes,
+        /// use `settings.ThrowExceptions = true`.
+        /// </remarks>        
+        /// <param name="url">The url to access</param>      
+        /// <param name="data">The data to send. String data is sent as is all other data is JSON encoded.</param>
+        /// <param name="contentType">Optional Content type for the request</param>
+        /// <param name="verb">The HTTP Verb to use (GET,POST,PUT,DELETE etc.)</param>
+        /// <returns>string of HTTP response</returns>
+        public static async Task<string> DownloadStringAsync(string url, object data = null, string contentType = null, string verb = null)
+        {
+            if (string.IsNullOrEmpty(verb))
+            {
+                if (data != null)
+                    verb = "POST";
+                else
+                    verb = "GET";
+            }
+
+            return await DownloadStringAsync(new HttpClientRequestSettings
+            {
+                Url = url,
+                HttpVerb = verb,
+                RequestContent = data,
+                RequestContentType = contentType
+            });
+        }
+
+#if NET6_0_OR_GREATER
+
         /// <summary>
         /// Synchronous version of `DownloadStringAsync`.
         /// </summary>
@@ -194,8 +241,6 @@ namespace Westwind.Utilities
                 }
             }
         }
-#endif
-
 
         /// <summary>
         /// Runs an Http request and returns success results as a string or null
@@ -220,7 +265,7 @@ namespace Westwind.Utilities
         /// <param name="contentType">Optional Content type for the request</param>
         /// <param name="verb">The HTTP Verb to use (GET,POST,PUT,DELETE etc.)</param>
         /// <returns>string of HTTP response</returns>
-        public static async Task<string> DownloadStringAsync(string url, object data = null, string contentType = null, string verb = null)
+        public static string DownloadString(string url, object data = null, string contentType = null, string verb = null)
         {
             if (string.IsNullOrEmpty(verb))
             {
@@ -230,7 +275,103 @@ namespace Westwind.Utilities
                     verb = "GET";
             }
 
-            return await DownloadStringAsync(new HttpClientRequestSettings
+            return DownloadString(new HttpClientRequestSettings
+            {
+                Url = url,
+                HttpVerb = verb,
+                RequestContent = data,
+                RequestContentType = contentType
+            });
+        }
+#endif
+
+
+        /// <summary>
+        /// Runs an Http Request and returns a byte array from the response or null on failure
+        /// </summary>
+        /// <param name="settings">Pass in a settings object</param>
+        /// <returns>byte[] or null - if null check settings for errors</returns>
+        public static async Task<byte[]> DownloadBytesAsync(HttpClientRequestSettings settings)
+        {
+            byte[] content = null;
+
+            using (var client = GetHttpClient(null, settings))
+            {
+                try
+                {
+                    settings.Response = await client.SendAsync(settings.Request);
+                }
+                catch (Exception ex)
+                {
+                    settings.HasErrors = true;
+                    settings.ErrorException = ex;
+                    settings.ErrorMessage = ex.GetBaseException().Message;
+                    return null;
+                }
+
+
+                // Capture the response content
+                try
+                {
+                    if (settings.Response.IsSuccessStatusCode)
+                    {
+                        // http 201 no content may return null and be success
+
+                        if (settings.HasResponseContent)
+                        {
+                            if (settings.MaxResponseSize > 0)
+                            {
+                                using (var stream = await settings.Response.Content.ReadAsStreamAsync())
+                                {
+                                    var buffer = new byte[settings.MaxResponseSize];
+                                    _ = await stream.ReadAsync(buffer, 0, settings.MaxResponseSize);
+                                    content = buffer;
+                                }
+                            }
+                            else
+                            {
+                                content = await settings.Response.Content.ReadAsByteArrayAsync();
+                            }
+                        }
+
+                        return content;
+                    }
+
+                    settings.HasErrors = true;
+                    settings.ErrorMessage = ((int)settings.Response.StatusCode).ToString() + " " + settings.Response.StatusCode.ToString();
+
+                    if (settings.ThrowExceptions)
+                        throw new HttpRequestException(settings.ErrorMessage);
+
+                    // return null but allow for explicit response reading
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    settings.ErrorException = ex;
+                    settings.ErrorMessage = ex.GetBaseException().Message;
+
+                    if (settings.ThrowExceptions)
+#pragma warning disable CA2200
+                        throw;
+#pragma warning restore CA2200
+
+                    return null;
+                }
+            }
+        }
+
+        public static async Task<byte[]> DownloadBytesAsync(string url, object data = null, string contentType = null, string verb = null)
+        {
+            if (string.IsNullOrEmpty(verb))
+            {
+                if (data != null)
+                    verb = "POST";
+                else
+                    verb = "GET";
+            }
+
+            return await DownloadBytesAsync(new HttpClientRequestSettings
             {
                 Url = url,
                 HttpVerb = verb,
@@ -239,6 +380,118 @@ namespace Westwind.Utilities
             });
         }
 
+
+#if NET6_0_OR_GREATER
+
+        /// <summary>
+        /// Synchronous version of `DownloadBytesAsync`.
+        /// </summary>
+        /// <param name="settings">Request/Response settings instance</param>
+        /// <returns>string or null on failure</returns>
+        public static byte[] DownloadBytes(HttpClientRequestSettings settings)
+        {
+            byte[] content = null;
+
+            using (var client = GetHttpClient(null, settings))
+            {
+                try
+                {
+                    settings.Response = client.Send(settings.Request);
+                }
+                catch (Exception ex)
+                {
+                    settings.HasErrors = true;
+                    settings.ErrorException = ex;
+                    settings.ErrorMessage = ex.GetBaseException().Message;
+                    return null;
+                }
+
+                // Capture the response content
+                try
+                {
+                    if (settings.Response.IsSuccessStatusCode)
+                    {
+                        // http 201 no content may return null and be success
+
+                        if (settings.HasResponseContent)
+                        {
+                            if (settings.MaxResponseSize > 0)
+                            {
+                                using (var stream = settings.Response.Content.ReadAsStream())
+                                {
+                                    var buffer = new byte[settings.MaxResponseSize];
+                                    _ = stream.ReadAsync(buffer, 0, settings.MaxResponseSize);
+                                    content = buffer;
+                                }
+                            }
+                            else
+                            {
+                                using (var stream = settings.Response.Content.ReadAsStream())
+                                {
+                                    using(var ms = new MemoryStream())
+                                    {
+                                        stream.CopyTo(ms);
+                                        content = ms.ToArray();
+                                    }                                    
+                                }
+                            }
+                        }
+
+                        return content;
+                    }
+
+                    settings.HasErrors = true;
+                    settings.ErrorMessage = ((int)settings.Response.StatusCode).ToString() + " " + settings.Response.StatusCode.ToString();
+
+                    if (settings.ThrowExceptions)
+                        throw new HttpRequestException(settings.ErrorMessage);
+
+                    // return null but allow for explicit response reading
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    settings.ErrorException = ex;
+                    settings.ErrorMessage = ex.GetBaseException().Message;
+
+                    if (settings.ThrowExceptions)
+#pragma warning disable CA2200
+                        throw;
+#pragma warning restore CA2200
+
+                    return null;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Synchronous version of `DownloadBytesAsync`.
+        /// </summary>       
+        /// <param name="url">Request URL</param>
+        /// <param name="data">Request data</param>        
+        /// <param name="contentType">Request content type</param>
+        /// <param name="verb">HTTP verb (GET, POST, etc.)</param>
+        /// <returns>string or null on failure</returns>
+
+        public static byte[] DownloadBytes(string url, object data = null, string contentType = null, string verb = null)
+        {
+            if (string.IsNullOrEmpty(verb))
+            {
+                if (data != null)
+                    verb = "POST";
+                else
+                    verb = "GET";
+            }
+
+            return DownloadBytes(new HttpClientRequestSettings
+            {
+                Url = url,
+                HttpVerb = verb,
+                RequestContent = data,
+                RequestContentType = contentType
+            });
+        }
 
         /// <summary>
         /// Calls a URL and returns the raw, unretrieved HttpResponse. Also set on settings.Response and you 
@@ -275,14 +528,17 @@ namespace Westwind.Utilities
             }            
         }
 
-#if NET6_0_OR_GREATER 
+#endif
 
-        /// <summary>
-        /// Calls a URL and returns the raw, unretrieved HttpResponse. Also set on settings.Response and you 
-        /// can read the response content from settings.Response.Content.ReadAsXXX() methods.
-        /// </summary>
-        /// <param name="settings">Pass HTTP request configuration parameters object to set the URL, Verb, Headers, content and more</param>
-        /// <returns>string of HTTP response</returns>
+
+#if NET6_0_OR_GREATER
+
+            /// <summary>
+            /// Calls a URL and returns the raw, unretrieved HttpResponse. Also set on settings.Response and you 
+            /// can read the response content from settings.Response.Content.ReadAsXXX() methods.
+            /// </summary>
+            /// <param name="settings">Pass HTTP request configuration parameters object to set the URL, Verb, Headers, content and more</param>
+            /// <returns>string of HTTP response</returns>
         public static HttpResponseMessage DownloadResponseMessage(HttpClientRequestSettings settings)
         {
             using (var client = GetHttpClient(null, settings))

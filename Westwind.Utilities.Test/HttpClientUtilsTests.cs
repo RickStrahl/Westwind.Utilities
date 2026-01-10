@@ -26,7 +26,7 @@ namespace Westwind.Utilities.Test
         {
             string html = await HttpClientUtils.DownloadStringAsync(new HttpClientRequestSettings
             {
-                Url = "http://west-wind.com"
+                Url = "https://west-wind.com"
             });
             Assert.IsNotNull(html);
             Console.WriteLine(html);
@@ -38,7 +38,7 @@ namespace Westwind.Utilities.Test
         {
             var settings = new HttpClientRequestSettings
             {
-                Url = "http://west-wind.com/bogus.html"
+                Url = "https://west-wind.com/bogus.html"
             };
             string html = await HttpClientUtils.DownloadStringAsync(settings);
 
@@ -54,6 +54,35 @@ namespace Westwind.Utilities.Test
             Assert.IsNotNull(content);
             Console.WriteLine(content);
         }
+
+#if NET6_0_OR_GREATER
+        [TestMethod]
+        public void SynchronousStringDownload()
+        {
+            string html = HttpClientUtils.DownloadString("https://west-wind.com");
+            Assert.IsNotNull(html);
+            Console.WriteLine(html.GetMaxCharacters(1000));
+        }
+
+        [TestMethod]
+        public void SynchronousStringSettingsDownload()
+        {
+            string html = HttpClientUtils.DownloadString(new HttpClientRequestSettings
+            {
+                Url = "https://west-wind.com"
+            });
+            Assert.IsNotNull(html);
+            Console.WriteLine(html.GetMaxCharacters(1000));
+        }
+
+        [TestMethod]
+        public void SynchronousBytesDownload()
+        {
+            byte[] html = HttpClientUtils.DownloadBytes("https://west-wind.com/images/wwtoolbarlogo.png");
+            Assert.IsNotNull(html);
+            Console.WriteLine(html.Length);
+        }
+#endif
 
         [TestMethod]
         public async Task HttpRequestJsonStringWithUrlTest()
