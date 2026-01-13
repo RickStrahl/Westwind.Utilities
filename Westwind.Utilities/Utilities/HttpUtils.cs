@@ -368,11 +368,12 @@ namespace Westwind.Utilities
         /// passed in a filename - if the file is of a different image type the
         /// extension may be changed.
         /// </summary>
-        /// <param name="filename">Url of image to download</param>
-        /// <param name="imageUrl">Optional output image file. Filename may change extension if the image format doesn't match the filename.
+        /// <param name="imageUrl">Url of image to download</param>
+        /// <param name="fileName">Optional output image file. Filename may change extension if the image format doesn't match the filename.
         /// If not passed a temporary files file is created. Caller is responsible for cleaning up this file.
         /// </param>
-        /// <param name="settings">Optional Http Settings for the request</param>
+        /// <param name="settings">Optional more detailed Http Settings for the request</param>
+        /// <returns>file name that was created or null</returns>
         public static async Task<string> DownloadImageToFileAsync(string imageUrl, string filename = null, HttpRequestSettings settings = null)
         {
             if (string.IsNullOrEmpty(imageUrl) || 

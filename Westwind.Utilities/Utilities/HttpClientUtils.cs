@@ -6,12 +6,12 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Westwind.Utilities
 {
-
     /// <summary>
     /// Http Client wrapper that provides single line access for common Http requests
     /// that return string, Json or binary content. 
@@ -49,7 +49,7 @@ namespace Westwind.Utilities
             string content = null;
 
             using (var client = GetHttpClient(null, settings))
-            {                
+            {
                 try
                 {
                     settings.Response = await client.SendAsync(settings.Request);
@@ -61,7 +61,7 @@ namespace Westwind.Utilities
                     settings.ErrorMessage = ex.GetBaseException().Message;
                     return null;
                 }
-              
+
 
                 // Capture the response content
                 try
@@ -84,27 +84,28 @@ namespace Westwind.Utilities
                             else
                             {
                                 content = await settings.Response.Content.ReadAsStringAsync();
-                            }                            
+                            }
                         }
-                        
+
                         return content;
                     }
 
-                    settings.HasErrors = true;                        
-                    settings.ErrorMessage = ((int) settings.Response.StatusCode).ToString()  + " " + settings.Response.StatusCode.ToString();
+                    settings.HasErrors = true;
+                    settings.ErrorMessage = ((int)settings.Response.StatusCode).ToString() + " " +
+                                            settings.Response.StatusCode.ToString();
 
                     if (settings.ThrowExceptions)
                         throw new HttpRequestException(settings.ErrorMessage);
 
                     // return null but allow for explicit response reading
-                    return null;                    
+                    return null;
                 }
                 catch (Exception ex)
                 {
                     settings.ErrorException = ex;
                     settings.ErrorMessage = ex.GetBaseException().Message;
 
-                    if(settings.ThrowExceptions)
+                    if (settings.ThrowExceptions)
 #pragma warning disable CA2200
                         throw;
 #pragma warning restore CA2200
@@ -113,6 +114,7 @@ namespace Westwind.Utilities
                 }
             }
         }
+
 
 #if NET6_0_OR_GREATER
 
@@ -142,7 +144,8 @@ namespace Westwind.Utilities
         /// <param name="contentType">Optional Content type for the request</param>
         /// <param name="verb">The HTTP Verb to use (GET,POST,PUT,DELETE etc.)</param>
         /// <returns>string of HTTP response</returns>
-        public static async Task<string> DownloadStringAsync(string url, object data = null, string contentType = null, string verb = null)
+        public static async Task<string> DownloadStringAsync(string url, object data = null, string contentType = null,
+            string verb = null)
         {
             if (string.IsNullOrEmpty(verb))
             {
@@ -219,7 +222,8 @@ namespace Westwind.Utilities
                     }
 
                     settings.HasErrors = true;
-                    settings.ErrorMessage = ((int)settings.Response.StatusCode).ToString() + " " + settings.Response.StatusCode.ToString();
+                    settings.ErrorMessage = ((int)settings.Response.StatusCode).ToString() + " " +
+                                            settings.Response.StatusCode.ToString();
 
                     if (settings.ThrowExceptions)
                         throw new HttpRequestException(settings.ErrorMessage);
@@ -265,7 +269,8 @@ namespace Westwind.Utilities
         /// <param name="contentType">Optional Content type for the request</param>
         /// <param name="verb">The HTTP Verb to use (GET,POST,PUT,DELETE etc.)</param>
         /// <returns>string of HTTP response</returns>
-        public static string DownloadString(string url, object data = null, string contentType = null, string verb = null)
+        public static string DownloadString(string url, object data = null, string contentType = null,
+            string verb = null)
         {
             if (string.IsNullOrEmpty(verb))
             {
@@ -284,6 +289,127 @@ namespace Westwind.Utilities
             });
         }
 #endif
+
+        /// <summary>
+        /// Downloads a Url to a file.
+        /// </summary>             
+        /// <param name="url">Optional Url to download - settings.Url works too</param>
+        /// <param name="filename">Option filename to download to - settings.OutputFilename works too</param>
+        /// <param name="settings">Http request settings can be used in lieu of other parameters</param>
+        /// <remarks></remarks>
+        /// <returns>true or fals</returns>
+        public static async Task<bool> DownloadFileAsync(HttpClientRequestSettings settings, string filename = null)
+        {
+            if (settings == null)
+                return false;
+
+            if (string.IsNullOrEmpty(settings.OutputFilename))
+            {
+                settings.HasErrors = true;
+                settings.ErrorMessage = "No ouput file provided. Provide `filename` parameter or `settings.OutputFilename`.";
+                return false;
+            }
+                  
+            using (var client = GetHttpClient(null, settings))
+            {
+                try
+                {
+                    settings.Response = await client.SendAsync(settings.Request);
+                }
+                catch (Exception ex)
+                {
+                    settings.HasErrors = true;
+                    settings.ErrorException = ex;
+                    settings.ErrorMessage = ex.GetBaseException().Message;
+                    return false;
+                }
+
+
+                // Capture the response content
+                try
+                {
+                    if (settings.Response.IsSuccessStatusCode)
+                    {
+                        // http 201 no content may return null and be success
+
+                        if (File.Exists(settings.OutputFilename))
+                            File.Delete(settings.OutputFilename);
+
+                        if (settings.HasResponseContent)
+                        {
+                            if (settings.MaxResponseSize > 0)
+                            {
+                                using (var outputStream = new FileStream(settings.OutputFilename, FileMode.OpenOrCreate,
+                                           FileAccess.Write))
+                                {
+                                    using (var stream = await settings.Response.Content.ReadAsStreamAsync())
+                                    {
+                                        var buffer = new byte[settings.MaxResponseSize];
+                                        _ = await stream.ReadAsync(buffer, 0, settings.MaxResponseSize);
+                                        await outputStream.WriteAsync(buffer, 0, buffer.Length);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                using (var outputStream = new FileStream(settings.OutputFilename, FileMode.OpenOrCreate,
+                                           FileAccess.Write))
+                                {
+                                    using (var stream = await settings.Response.Content.ReadAsStreamAsync())
+                                    {
+                                        await stream.CopyToAsync(outputStream, 8 * 1024);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        return true;
+                    }
+
+                    settings.HasErrors = true;
+                    settings.ErrorMessage = ((int)settings.Response.StatusCode).ToString() + " " +
+                                            settings.Response.StatusCode.ToString();
+
+                    if (settings.ThrowExceptions)
+                        throw new HttpRequestException(settings.ErrorMessage);
+
+                    // return null but allow for explicit response reading
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    settings.HasErrors = true;
+                    settings.ErrorException = ex;
+                    settings.ErrorMessage = ex.GetBaseException().Message;
+
+                    if (settings.ThrowExceptions)
+#pragma warning disable CA2200
+                        throw;
+#pragma warning restore CA2200
+
+                    return false;
+                }
+            }
+        }
+        /// <summary>
+        /// Downloads a Url to a file.
+        /// </summary>             
+        /// <param name="url">Optional Url to download - settings.Url works too</param>
+        /// <param name="filename">Option filename to download to - settings.OutputFilename works too</param>
+        /// <param name="settings">Http request settings can be used in lieu of other parameters</param>
+        /// <remarks></remarks>
+        /// <returns>true or fals</returns>
+        public static Task<bool> DownloadFileAsync(string url, string filename)
+        {
+            var settings = new HttpClientRequestSettings();
+            if (!string.IsNullOrEmpty(url))
+                settings.Url = url;
+            if (!string.IsNullOrEmpty(filename))
+                settings.OutputFilename = filename;
+
+            return DownloadFileAsync(settings);
+        }
+
 
 
         /// <summary>
@@ -338,7 +464,8 @@ namespace Westwind.Utilities
                     }
 
                     settings.HasErrors = true;
-                    settings.ErrorMessage = ((int)settings.Response.StatusCode).ToString() + " " + settings.Response.StatusCode.ToString();
+                    settings.ErrorMessage = ((int)settings.Response.StatusCode).ToString() + " " +
+                                            settings.Response.StatusCode.ToString();
 
                     if (settings.ThrowExceptions)
                         throw new HttpRequestException(settings.ErrorMessage);
@@ -361,7 +488,8 @@ namespace Westwind.Utilities
             }
         }
 
-        public static async Task<byte[]> DownloadBytesAsync(string url, object data = null, string contentType = null, string verb = null)
+        public static async Task<byte[]> DownloadBytesAsync(string url, object data = null, string contentType = null,
+            string verb = null)
         {
             if (string.IsNullOrEmpty(verb))
             {
@@ -428,11 +556,11 @@ namespace Westwind.Utilities
                             {
                                 using (var stream = settings.Response.Content.ReadAsStream())
                                 {
-                                    using(var ms = new MemoryStream())
+                                    using (var ms = new MemoryStream())
                                     {
                                         stream.CopyTo(ms);
                                         content = ms.ToArray();
-                                    }                                    
+                                    }
                                 }
                             }
                         }
@@ -441,7 +569,8 @@ namespace Westwind.Utilities
                     }
 
                     settings.HasErrors = true;
-                    settings.ErrorMessage = ((int)settings.Response.StatusCode).ToString() + " " + settings.Response.StatusCode.ToString();
+                    settings.ErrorMessage = ((int)settings.Response.StatusCode).ToString() + " " +
+                                            settings.Response.StatusCode.ToString();
 
                     if (settings.ThrowExceptions)
                         throw new HttpRequestException(settings.ErrorMessage);
@@ -473,8 +602,8 @@ namespace Westwind.Utilities
         /// <param name="contentType">Request content type</param>
         /// <param name="verb">HTTP verb (GET, POST, etc.)</param>
         /// <returns>string or null on failure</returns>
-
-        public static byte[] DownloadBytes(string url, object data = null, string contentType = null, string verb = null)
+        public static byte[] DownloadBytes(string url, object data = null, string contentType = null,
+            string verb = null)
         {
             if (string.IsNullOrEmpty(verb))
             {
@@ -500,32 +629,33 @@ namespace Westwind.Utilities
         /// <param name="settings">Pass HTTP request configuration parameters object to set the URL, Verb, Headers, content and more</param>
         /// <returns>string of HTTP response</returns>
         public static async Task<HttpResponseMessage> DownloadResponseMessageAsync(HttpClientRequestSettings settings)
-        {            
+        {
             using (var client = GetHttpClient(null, settings))
             {
                 try
-                {                    
+                {
                     settings.Response = await client.SendAsync(settings.Request);
 
                     if (settings.ThrowExceptions && !settings.Response.IsSuccessStatusCode)
-                        throw new HttpRequestException(settings.ResponseStatusCode + " " + settings.Response.ReasonPhrase);
+                        throw new HttpRequestException(settings.ResponseStatusCode + " " +
+                                                       settings.Response.ReasonPhrase);
 
                     return settings.Response;
                 }
                 catch (Exception ex)
                 {
                     settings.HasErrors = true;
-                    settings.ErrorException = ex;                    
+                    settings.ErrorException = ex;
                     settings.ErrorMessage = ex.GetBaseException().Message;
 
                     if (settings.ThrowExceptions)
 #pragma warning disable CA2200
                         throw;
 #pragma warning restore CA2200
-                    
+
                     return null;
                 }
-            }            
+            }
         }
 
 #endif
@@ -533,12 +663,12 @@ namespace Westwind.Utilities
 
 #if NET6_0_OR_GREATER
 
-            /// <summary>
-            /// Calls a URL and returns the raw, unretrieved HttpResponse. Also set on settings.Response and you 
-            /// can read the response content from settings.Response.Content.ReadAsXXX() methods.
-            /// </summary>
-            /// <param name="settings">Pass HTTP request configuration parameters object to set the URL, Verb, Headers, content and more</param>
-            /// <returns>string of HTTP response</returns>
+        /// <summary>
+        /// Calls a URL and returns the raw, unretrieved HttpResponse. Also set on settings.Response and you 
+        /// can read the response content from settings.Response.Content.ReadAsXXX() methods.
+        /// </summary>
+        /// <param name="settings">Pass HTTP request configuration parameters object to set the URL, Verb, Headers, content and more</param>
+        /// <returns>string of HTTP response</returns>
         public static HttpResponseMessage DownloadResponseMessage(HttpClientRequestSettings settings)
         {
             using (var client = GetHttpClient(null, settings))
@@ -548,7 +678,8 @@ namespace Westwind.Utilities
                     settings.Response = client.Send(settings.Request);
 
                     if (settings.ThrowExceptions && !settings.Response.IsSuccessStatusCode)
-                        throw new HttpRequestException(settings.ResponseStatusCode + " " + settings.Response.ReasonPhrase);
+                        throw new HttpRequestException(settings.ResponseStatusCode + " " +
+                                                       settings.Response.ReasonPhrase);
 
                     return settings.Response;
                 }
@@ -575,18 +706,18 @@ namespace Westwind.Utilities
         /// <typeparam name="TResult">Result type to deserialize to</typeparam>
         /// <param name="settings">Configuration for this request</param>
         /// <returns></returns>
-        public static async Task<TResult> DownloadJsonAsync<TResult>(HttpClientRequestSettings settings)             
+        public static async Task<TResult> DownloadJsonAsync<TResult>(HttpClientRequestSettings settings)
         {
             settings.RequestContentType = "application/json";
             settings.Encoding = Encoding.UTF8;
-            
+
             string json = await DownloadStringAsync(settings);
 
             if (json == null)
             {
                 return default;
             }
-             
+
             try
             {
                 return JsonConvert.DeserializeObject<TResult>(json);
@@ -599,13 +730,14 @@ namespace Westwind.Utilities
 
                 settings.HasErrors = true;
                 settings.ErrorMessage = ex.GetBaseException().Message;
-                settings.ErrorException = ex;                
+                settings.ErrorException = ex;
             }
 
             return default;
         }
 
-        public static async Task<TResult> DownloadJsonAsync<TResult>(string url, string verb = "GET", object data = null)
+        public static async Task<TResult> DownloadJsonAsync<TResult>(string url, string verb = "GET",
+            object data = null)
         {
             return await DownloadJsonAsync<TResult>(new HttpClientRequestSettings
             {
@@ -616,6 +748,63 @@ namespace Westwind.Utilities
             });
         }
 
+#if NET6_0_OR_GREATER
+
+        /// <summary>
+        /// Makes a JSON request that returns a JSON result.
+        /// </summary>
+        /// <typeparam name="TResult">Result type to deserialize to</typeparam>
+        /// <param name="settings">Configuration for this request</param>
+        /// <returns>Result or null - check ErrorMessage in settings on failure</returns>
+        public static TResult DownloadJson<TResult>(HttpClientRequestSettings settings)
+        {
+            settings.RequestContentType = "application/json";
+            settings.Encoding = Encoding.UTF8;
+
+            string json = DownloadString(settings);
+
+            if (json == null)
+            {
+                return default;
+            }
+
+            try
+            {
+                return JsonConvert.DeserializeObject<TResult>(json);
+            }
+            catch (Exception ex)
+            {
+                // original error has priority
+                if (settings.HasErrors)
+                    return default;
+
+                settings.HasErrors = true;
+                settings.ErrorMessage = ex.GetBaseException().Message;
+                settings.ErrorException = ex;
+            }
+
+            return default;
+        }
+
+
+        /// <summary>
+        /// Makes a JSON request that returns a JSON result.
+        /// </summary>
+        /// <param name="url">Request URL</param>
+        /// <param name="verb">Http Verb to use. Defaults to GET on no data or POST when data is passed.</param>
+        /// <param name="data">Data to be serialized to JSON for sending</param>
+        /// <returns>result or null</returns>
+        public static TResult DownloadJson<TResult>(string url, string verb = "GET", object data = null)
+        {
+            return DownloadJson<TResult>(new HttpClientRequestSettings
+            {
+                Url = url,
+                HttpVerb = verb,
+                RequestContent = data,
+                RequestContentType = data != null ? "application/json" : null
+            });
+        }
+#endif
 
         /// <summary>
         /// Creates an instance of the HttpClient and sets the API Key
@@ -631,7 +820,7 @@ namespace Westwind.Utilities
             handler = handler ?? new HttpClientHandler()
             {
                 Proxy = settings.Proxy,
-                Credentials = settings.Credentials,                
+                Credentials = settings.Credentials,
             };
 
 #if NET6_0_OR_GREATER
@@ -654,7 +843,6 @@ namespace Westwind.Utilities
         /// <param name="settings">Settings instance</param>        
         public static void ApplySettingsToRequest(HttpClientRequestSettings settings)
         {
-
             settings.Request = new HttpRequestMessage
             {
                 RequestUri = new Uri(settings.Url),
@@ -672,20 +860,18 @@ namespace Westwind.Utilities
             {
                 settings.RequestContentType = settings.RequestFormPostMode == HttpFormPostMode.MultiPart
                     ? "multipart/form-data; boundary=" + HttpClientUtils.STR_MultipartBoundary
-                    : "application/x-www-form-urlencoded";                
+                    : "application/x-www-form-urlencoded";
                 settings.RequestContent = settings.GetPostBufferBytes();
             }
 
             if (settings.RequestContent != null &&
                 (settings.HttpVerb.Equals("POST", StringComparison.OrdinalIgnoreCase) ||
-                settings.HttpVerb.Equals("PUT", StringComparison.OrdinalIgnoreCase) ||
-                settings.HttpVerb.Equals("PATCH", StringComparison.OrdinalIgnoreCase))
+                 settings.HttpVerb.Equals("PUT", StringComparison.OrdinalIgnoreCase) ||
+                 settings.HttpVerb.Equals("PATCH", StringComparison.OrdinalIgnoreCase))
                )
             {
                 HttpContent content = null;
 
-
-               
 
                 if (settings.RequestContent is string)
                 {
@@ -695,7 +881,8 @@ namespace Westwind.Utilities
                         content = new StringContent(jsonString, settings.Encoding, settings.RequestContentType);
                     }
                     else
-                        content = new StringContent(settings.RequestContent as string, settings.Encoding, settings.RequestContentType);
+                        content = new StringContent(settings.RequestContent as string, settings.Encoding,
+                            settings.RequestContentType);
                 }
                 else if (settings.RequestContent is byte[])
                 {
@@ -714,7 +901,6 @@ namespace Westwind.Utilities
 
                 if (content != null)
                     settings.Request.Content = content;
-
             }
         }
 
@@ -724,7 +910,7 @@ namespace Westwind.Utilities
             if (string.IsNullOrEmpty(header) || string.IsNullOrEmpty(value))
                 return;
 
-            
+
             var lheader = header.ToLower();
 
 
@@ -836,6 +1022,12 @@ namespace Westwind.Utilities
         /// </summary>
         public string CapturedResponseContent { get; set; }
 
+
+        /// <summary>
+        /// Output file name for file download operations
+        /// </summary>
+        public string OutputFilename { get; set; }
+
         /// <summary>
         /// Capture binary Response data from the server when 
         /// using the Data methods rather than string methods.
@@ -856,15 +1048,36 @@ namespace Westwind.Utilities
             }
         }
 
+        /// <summary>
+        /// Content Type of the response - may be null if there is no content or the content type is not set by server
+        /// </summary>
+        public string ResponseContentType => Response?.Content?.Headers.ContentType?.MediaType;
+
+        /// <summary>
+        /// Content Length of the response. -1 if there is no result content
+        /// </summary>
+        public long ResponseContentLength => Response?.Content?.Headers?.ContentLength ?? -1;
+
+        /// <summary>
+        /// Response content headers (content type, size, charset etc.) - 
+        /// check for null if request did not succeed or doesn't produce content
+        /// </summary>
+        public HttpContentHeaders ResponseContentHeaders => Response?.Content?.Headers;
+
+        /// <summary>
+        /// Non-Content Response headers - check for null if request did not succeed
+        /// </summary>
+        public HttpResponseHeaders ResponseHeaders => Response?.Headers;
+
         public bool HasResponseContent
         {
             get
             {
-                if (Response?.Content?.Headers== null)
+                if (Response?.Content?.Headers == null)
                     return false;
 
                 return Response.Content.Headers.ContentLength > 0;
-           }
+            }
         }
 
         /// <summary>
@@ -924,9 +1137,8 @@ namespace Westwind.Utilities
             HttpVerb = "GET";
             Headers = new Dictionary<string, string>();
             Encoding = Encoding.UTF8;
-            UserAgent = "West Wind .NET Http Client";            
+            UserAgent = "West Wind .NET Http Client";
         }
-
 
 
         #region POST data
@@ -1003,7 +1215,7 @@ namespace Westwind.Utilities
                 PostData.Write(value);
                 PostData.Write(iso.GetBytes("\r\n"));
             }
-            else  // Raw or Xml, JSON modes
+            else // Raw or Xml, JSON modes
                 PostData.Write(value);
         }
 
@@ -1049,7 +1261,8 @@ namespace Westwind.Utilities
         /// <param name="contentType">Content type of the file to upload. Default is application/octet-stream</param>
         /// <param name="contentFilename">Optional filename to use in the Content-Disposition header. If not specified uses the file name of the file being uploaded.</param>
         /// <returns>true or false. Fails if the file is not found or couldn't be encoded</returns>
-        public bool AddPostFile(string key, string filename, string contentType = "application/octet-stream", string contentFilename=null)
+        public bool AddPostFile(string key, string filename, string contentType = "application/octet-stream",
+            string contentFilename = null)
         {
             byte[] lcFile;
 
@@ -1071,7 +1284,7 @@ namespace Westwind.Utilities
             }
             catch (Exception e)
             {
-                ErrorMessage = e.Message;                
+                ErrorMessage = e.Message;
                 HasErrors = true;
                 return false;
             }
@@ -1105,7 +1318,7 @@ namespace Westwind.Utilities
         /// <returns>the Post buffer or null if empty or not using
         /// form post mode</returns>
         public string GetPostBuffer()
-        {                        
+        {
             var bytes = PostStream?.ToArray();
             if (bytes == null)
                 return null;
@@ -1117,6 +1330,7 @@ namespace Westwind.Utilities
                 // add final boundary
                 data += "\r\n--" + HttpClientUtils.STR_MultipartBoundary + "--\r\n";
             }
+
             return data;
         }
 
@@ -1138,10 +1352,11 @@ namespace Westwind.Utilities
                 // add final boundary
                 PostData.Write(Encoding.Default.GetBytes("\r\n--" + HttpClientUtils.STR_MultipartBoundary + "--\r\n"));
                 PostStream?.Flush();
-            }   
-            
-            return PostStream?.ToArray();            
+            }
+
+            return PostStream?.ToArray();
         }
+
         #endregion
 
 
@@ -1174,7 +1389,7 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public async Task<TResult> GetResponseJson<TResult>()
         {
-            var json =await GetResponseStringAsync();
+            var json = await GetResponseStringAsync();
 
             if (json == null)
                 return default;
@@ -1193,7 +1408,7 @@ namespace Westwind.Utilities
             if (obj == null)
                 return null;
 
-            if(obj.ContainsKey("message"))
+            if (obj.ContainsKey("message"))
                 return obj["message"].ToString();
             if (obj.ContainsKey("Message"))
                 return obj["Message"].ToString();

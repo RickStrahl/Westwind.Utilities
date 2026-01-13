@@ -55,10 +55,58 @@ namespace Westwind.Utilities.Test
             Console.WriteLine(content);
         }
 
+
+        [TestMethod]
+        public async Task ASynchBytesDownloadTest()
+        {
+            byte[] html = await HttpClientUtils.DownloadBytesAsync("https://west-wind.com/images/wwtoolbarlogo.png");
+            Assert.IsNotNull(html);
+            Console.WriteLine(html.Length);
+        }
+
+        [TestMethod]
+        public async Task DownloadAsFileAsyncTest()
+        {
+            var dlFile = Path.Combine(Path.GetTempPath(), "~wwtoolbarlogo.png");
+            if (File.Exists(dlFile))
+                File.Delete(dlFile);
+
+            bool result = await HttpClientUtils.DownloadFileAsync("https://west-wind.com/images/wwtoolbarlogo.png",dlFile);
+            Assert.IsTrue(result);
+            Assert.IsTrue(File.Exists(dlFile));
+            File.Delete(dlFile);
+        }
+
+
+
+        [TestMethod]
+        public async Task DownloadAsFileWithSettingsAsyncTest()
+        {
+            var dlFile = Path.Combine(Path.GetTempPath(), "~wwtoolbarlogo.png");
+            if (File.Exists(dlFile))
+                File.Delete(dlFile);
+
+            var settings = new HttpClientRequestSettings { 
+                Url = "https://west-wind.com/images/wwtoolbarlogo.png",
+                OutputFilename = dlFile
+            };
+            bool result = await HttpClientUtils.DownloadFileAsync(settings: settings);
+
+            Assert.IsTrue(result);
+
+            // helper for header
+            Assert.AreEqual(settings.ResponseContentType,"image/png");
+            // raw header access
+            Assert.AreEqual(settings.ResponseContentHeaders.ContentType?.MediaType, "image/png");
+            Assert.IsTrue(File.Exists(dlFile));
+            File.Delete(dlFile);
+        }
+
+
 #if NET6_0_OR_GREATER
         [TestMethod]
-        public void SynchronousStringDownload()
-        {
+        public void SynchronousStringDownloadTest()
+        {            
             string html = HttpClientUtils.DownloadString("https://west-wind.com");
             Assert.IsNotNull(html);
             Console.WriteLine(html.GetMaxCharacters(1000));

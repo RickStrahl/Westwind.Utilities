@@ -1,26 +1,13 @@
 <Solution>
-  <Configurations>
-    <BuildType Name="Debug" />
-    <BuildType Name="net40" />
-    <BuildType Name="Release" />
-  </Configurations>
   <Folder Name="/Solution Items/">
     <File Path=".gitignore" />
     <File Path="Changelog.md" />
     <File Path="Readme.md" />
   </Folder>
   <Folder Name="/Tests/">
-    <Project Path="Westwind.Utilities.Test/Westwind.Utilities.Test.csproj">
-      <BuildType Solution="net40|*" Project="Release" />
-    </Project>
+    <Project Path="Westwind.Utilities.Test/Westwind.Utilities.Test.csproj" />
   </Folder>
-  <Project Path="Westwind.Utilities.Data/Westwind.Utilities.Data.csproj">
-    <BuildType Solution="net40|*" Project="Debug" />
-  </Project>
-  <Project Path="Westwind.Utilities.Windows/Westwind.Utilities.Windows.csproj">
-    <BuildType Solution="net40|*" Project="Debug" />
-  </Project>
-  <Project Path="Westwind.Utilities/Westwind.Utilities.csproj">
-    <BuildType Solution="net40|*" Project="Release" />
-  </Project>
+  <Project Path="Westwind.Utilities.Data/Westwind.Utilities.Data.csproj" />
+  <Project Path="Westwind.Utilities.Windows/Westwind.Utilities.Windows.csproj" />
+  <Project Path="Westwind.Utilities/Westwind.Utilities.csproj" />
 </Solution>
