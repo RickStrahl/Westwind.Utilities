@@ -24,6 +24,8 @@ namespace Westwind.Utilities
     {
         public const string STR_MultipartBoundary = "----FormBoundary3vDSIXiW0WSTB551";
 
+        #region String Download
+
         /// <summary>
         /// Runs an Http request and returns success results as a string or null
         /// on failure or non-200/300 requests.
@@ -290,6 +292,12 @@ namespace Westwind.Utilities
         }
 #endif
 
+
+        #endregion
+
+
+        #region File Download
+
         /// <summary>
         /// Downloads a Url to a file.
         /// </summary>             
@@ -309,7 +317,7 @@ namespace Westwind.Utilities
                 settings.ErrorMessage = "No ouput file provided. Provide `filename` parameter or `settings.OutputFilename`.";
                 return false;
             }
-                  
+
             using (var client = GetHttpClient(null, settings))
             {
                 try
@@ -362,7 +370,7 @@ namespace Westwind.Utilities
                                 }
                             }
                         }
-                        
+
                         return true;
                     }
 
@@ -410,6 +418,342 @@ namespace Westwind.Utilities
             return DownloadFileAsync(settings);
         }
 
+#if NET6_0_OR_GREATER
+
+        /// <summary>
+        /// Downloads a Url to a file.
+        /// </summary>             
+        /// <param name="url">Optional Url to download - settings.Url works too</param>
+        /// <param name="filename">Option filename to download to - settings.OutputFilename works too</param>
+        /// <param name="settings">Http request settings can be used in lieu of other parameters</param>
+        /// <remarks></remarks>
+        /// <returns>true or fals</returns>
+        public static bool DownloadFile(HttpClientRequestSettings settings, string filename = null)
+        {
+            if (settings == null)
+                return false;
+
+            if (string.IsNullOrEmpty(settings.OutputFilename))
+            {
+                settings.HasErrors = true;
+                settings.ErrorMessage = "No ouput file provided. Provide `filename` parameter or `settings.OutputFilename`.";
+                return false;
+            }
+
+            using (var client = GetHttpClient(null, settings))
+            {
+                try
+                {
+                    settings.Response = client.Send(settings.Request);
+                }
+                catch (Exception ex)
+                {
+                    settings.HasErrors = true;
+                    settings.ErrorException = ex;
+                    settings.ErrorMessage = ex.GetBaseException().Message;
+                    return false;
+                }
+
+
+                // Capture the response content
+                try
+                {
+                    if (settings.Response.IsSuccessStatusCode)
+                    {
+                        // http 201 no content may return null and be success
+
+                        if (File.Exists(settings.OutputFilename))
+                            File.Delete(settings.OutputFilename);
+
+                        if (settings.HasResponseContent)
+                        {
+                            if (settings.MaxResponseSize > 0)
+                            {
+                                using (var outputStream = new FileStream(settings.OutputFilename, FileMode.OpenOrCreate,
+                                           FileAccess.Write))
+                                {
+                                    using (var stream = settings.Response.Content.ReadAsStream())
+                                    {
+                                        var buffer = new byte[settings.MaxResponseSize];
+                                        _ = stream.Read(buffer, 0, settings.MaxResponseSize);
+                                        outputStream.Write(buffer, 0, buffer.Length);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                using (var outputStream = new FileStream(settings.OutputFilename, FileMode.OpenOrCreate,
+                                           FileAccess.Write))
+                                {
+                                    using (var stream =settings.Response.Content.ReadAsStream())
+                                    {
+                                        stream.CopyTo(outputStream, 8 * 1024);
+                                    }
+                                }
+                            }
+                        }
+
+                        return true;
+                    }
+
+                    settings.HasErrors = true;
+                    settings.ErrorMessage = ((int)settings.Response.StatusCode).ToString() + " " +
+                                            settings.Response.StatusCode.ToString();
+
+                    if (settings.ThrowExceptions)
+                        throw new HttpRequestException(settings.ErrorMessage);
+
+                    // return null but allow for explicit response reading
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    settings.HasErrors = true;
+                    settings.ErrorException = ex;
+                    settings.ErrorMessage = ex.GetBaseException().Message;
+
+                    if (settings.ThrowExceptions)
+#pragma warning disable CA2200
+                        throw;
+#pragma warning restore CA2200
+
+                    return false;
+                }
+            }
+        }
+        /// <summary>
+        /// Downloads a Url to a file.
+        /// </summary>             
+        /// <param name="url">Optional Url to download - settings.Url works too</param>
+        /// <param name="filename">Option filename to download to - settings.OutputFilename works too</param>
+        /// <param name="settings">Http request settings can be used in lieu of other parameters</param>
+        /// <remarks></remarks>
+        /// <returns>true or fals</returns>
+        public static bool DownloadFile(string url, string filename)
+        {
+            var settings = new HttpClientRequestSettings();
+            if (!string.IsNullOrEmpty(url))
+                settings.Url = url;
+            if (!string.IsNullOrEmpty(filename))
+                settings.OutputFilename = filename;
+
+            return DownloadFile(settings);
+        }
+
+#endif
+
+        /// <summary>
+        /// Downloads an image to a temporary file or a file you specify, automatically
+        /// adjusting the file extension to match the image content type (ie. .png, jpg, .gif etc)
+        /// Always use the return value to receive the final image file name.
+        ///
+        /// If you don't pass a file a temporary file is created in Temp Files folder.
+        /// You're responsible for cleaning up the file after you are done with it.
+        /// 
+        /// You should check the filename that is returned regardless of whether you
+        /// passed in a filename - if the file is of a different image type the
+        /// extension may be changed.
+        /// </summary>
+        /// <param name="imageUrl">Url of image to download</param>
+        /// <param name="filename">
+        /// Optional output image file name. Filename may change extension if the image format doesn't match the filename.
+        /// If not passed a temporary files file is created in the temp file location and you can move the file
+        /// manually. If using the temporary file, caller is responsible for cleaning up the file after creation.
+        /// </param>
+        /// <param name="settings">Optional more detailed Http Settings for the request</param>
+        /// <returns>file name that was created or null</returns>
+        public static async Task<string> DownloadImageToFileAsync(string imageUrl = null, string filename = null, HttpClientRequestSettings settings = null)
+        {
+            if (settings == null)
+            {
+                if (string.IsNullOrEmpty(imageUrl))
+                    return null;
+                settings = new();
+            }
+
+            if (!string.IsNullOrEmpty(imageUrl))
+                settings.Url = imageUrl;
+            imageUrl = settings.Url;
+            if (!string.IsNullOrEmpty(filename))
+                settings.OutputFilename = filename;
+            filename = settings.OutputFilename;
+
+
+            if (string.IsNullOrEmpty(imageUrl) ||
+                !imageUrl.StartsWith("http://") && !imageUrl.StartsWith("https://"))
+                return null;
+           
+            // if no filename is specified at all use a temp file
+            if (string.IsNullOrEmpty(filename))
+            {
+                filename = Path.Combine(Path.GetTempPath(), "~img-" + DataUtils.GenerateUniqueId());
+            }
+            // we download to a temp file
+            filename = Path.ChangeExtension(filename, "bin");
+
+            string newFilename;
+
+            try
+            {
+                settings.OutputFilename = filename;
+
+                await DownloadFileAsync(settings);
+
+                var ext = ImageUtils.GetExtensionFromMediaType(settings.ResponseContentType);
+                if (ext == null)
+                {
+                    if (File.Exists(filename))
+                        File.Delete(filename);
+                    return null; // invalid image type
+                }
+
+                newFilename = Path.ChangeExtension(filename, ext);
+
+
+                if (File.Exists(newFilename))
+                    File.Delete(newFilename);
+
+                // rename the file
+                File.Move(filename, newFilename);
+            }
+            catch
+            {
+                if (File.Exists(filename))
+                    File.Delete(filename);
+
+                return null;
+            }
+
+            return newFilename;
+        }
+
+
+        /// <summary>
+        /// Downloads an image to a temporary file or a file you specify, automatically
+        /// adjusting the file extension to match the image content type (ie. .png, jpg, .gif etc)
+        /// Always use the return value to receive the final image file name.
+        ///
+        /// If you don't pass a file a temporary file is created in Temp Files folder.
+        /// You're responsible for cleaning up the file after you are done with it.
+        /// 
+        /// You should check the filename that is returned regardless of whether you
+        /// passed in a filename - if the file is of a different image type the
+        /// extension may be changed.
+        /// </summary>
+        /// <param name="settings">Must specify Url and optionally OutputFilename - see parametered version</param>
+        /// <returns>file name that was created or null</returns>
+        public static async Task<string> DownloadImageToFileAsync( HttpClientRequestSettings settings = null) => await DownloadImageToFileAsync(null, null, settings);
+
+#if NET6_0_OR_GREATER
+
+        /// <summary>
+        /// Downloads an image to a temporary file or a file you specify, automatically
+        /// adjusting the file extension to match the image content type (ie. .png, jpg, .gif etc)
+        /// Always use the return value to receive the final image file name.
+        ///
+        /// If you don't pass a file a temporary file is created in Temp Files folder.
+        /// You're responsible for cleaning up the file after you are done with it.
+        /// 
+        /// You should check the filename that is returned regardless of whether you
+        /// passed in a filename - if the file is of a different image type the
+        /// extension may be changed.
+        /// </summary>
+        /// <param name="imageUrl">Url of image to download</param>
+        /// <param name="filename">
+        /// Optional output image file name. Filename may change extension if the image format doesn't match the filename.
+        /// If not passed a temporary files file is created in the temp file location and you can move the file
+        /// manually. If using the temporary file, caller is responsible for cleaning up the file after creation.
+        /// </param>
+        /// <param name="settings">Optional more detailed Http Settings for the request</param>
+        /// <returns>file name that was created or null</returns>
+        public static string DownloadImageToFile(string imageUrl = null, string filename = null, HttpClientRequestSettings settings = null)
+        {
+            if (settings == null)
+            {
+                if (string.IsNullOrEmpty(imageUrl))
+                    return null;
+                settings = new();
+            }
+
+            if (!string.IsNullOrEmpty(imageUrl))
+                settings.Url = imageUrl;
+            imageUrl = settings.Url;
+            if (!string.IsNullOrEmpty(filename))
+                settings.OutputFilename = filename;
+            filename = settings.OutputFilename;
+
+
+            if (string.IsNullOrEmpty(imageUrl) ||
+                !imageUrl.StartsWith("http://") && !imageUrl.StartsWith("https://"))
+                return null;
+
+            // if no filename is specified at all use a temp file
+            if (string.IsNullOrEmpty(filename))
+            {
+                filename = Path.Combine(Path.GetTempPath(), "~img-" + DataUtils.GenerateUniqueId());
+            }
+            // we download to a temp file
+            filename = Path.ChangeExtension(filename, "bin");
+
+            string newFilename;
+
+            try
+            {
+                settings.OutputFilename = filename;
+
+                DownloadFile(settings);
+
+                var ext = ImageUtils.GetExtensionFromMediaType(settings.ResponseContentType);
+                if (ext == null)
+                {
+                    if (File.Exists(filename))
+                        File.Delete(filename);
+                    return null; // invalid image type
+                }
+
+                newFilename = Path.ChangeExtension(filename, ext);
+
+
+                if (File.Exists(newFilename))
+                    File.Delete(newFilename);
+
+                // rename the file
+                File.Move(filename, newFilename);
+            }
+            catch
+            {
+                if (File.Exists(filename))
+                    File.Delete(filename);
+
+                return null;
+            }
+
+            return newFilename;
+        }
+
+
+        /// <summary>
+        /// Downloads an image to a temporary file or a file you specify, automatically
+        /// adjusting the file extension to match the image content type (ie. .png, jpg, .gif etc)
+        /// Always use the return value to receive the final image file name.
+        ///
+        /// If you don't pass a file a temporary file is created in Temp Files folder.
+        /// You're responsible for cleaning up the file after you are done with it.
+        /// 
+        /// You should check the filename that is returned regardless of whether you
+        /// passed in a filename - if the file is of a different image type the
+        /// extension may be changed.
+        /// </summary>
+        /// <param name="settings">Must specify Url and optionally OutputFilename - see parametered version</param>
+        /// <returns>file name that was created or null</returns>
+        public static string DownloadImageToFile(HttpClientRequestSettings settings = null) => DownloadImageToFile(null, null, settings);
+
+#endif
+
+#endregion
+
+
+        #region Byte Data Download
 
 
         /// <summary>
@@ -487,6 +831,74 @@ namespace Westwind.Utilities
                 }
             }
         }
+
+#if Net6_0_OR_GREATER
+        public static string DownloadImageToFile(string imageUrl = null, string filename = null, HttpClientRequestSettings settings = null)
+        {
+            if (settings == null)
+            {
+                if (string.IsNullOrEmpty(imageUrl))
+                    return null;
+                settings = new();
+            }
+
+            if (!string.IsNullOrEmpty(imageUrl))
+                settings.Url = imageUrl;
+            imageUrl = settings.Url;
+            if (!string.IsNullOrEmpty(filename))
+                settings.OutputFilename = filename;
+            filename = settings.OutputFilename;
+
+
+            if (string.IsNullOrEmpty(imageUrl) ||
+                !imageUrl.StartsWith("http://") && !imageUrl.StartsWith("https://"))
+                return null;
+
+            // if no filename is specified at all use a temp file
+            if (string.IsNullOrEmpty(filename))
+            {
+                filename = Path.Combine(Path.GetTempPath(), "~img-" + DataUtils.GenerateUniqueId());
+            }
+            // we download to a temp file
+            filename = Path.ChangeExtension(filename, "bin");
+
+            string newFilename;
+
+            try
+            {
+                settings.OutputFilename = filename;
+                
+                DownloadFile(settings);
+
+                var ext = ImageUtils.GetExtensionFromMediaType(settings.ResponseContentType);
+                if (ext == null)
+                {
+                    if (File.Exists(filename))
+                        File.Delete(filename);
+                    return null; // invalid image type
+                }
+
+                newFilename = Path.ChangeExtension(filename, ext);
+
+
+                if (File.Exists(newFilename))
+                    File.Delete(newFilename);
+
+                // rename the file
+                File.Move(filename, newFilename);
+            }
+            catch
+            {
+                if (File.Exists(filename))
+                    File.Delete(filename);
+
+                return null;
+            }
+
+            return newFilename;
+        }
+
+#endif
 
         public static async Task<byte[]> DownloadBytesAsync(string url, object data = null, string contentType = null,
             string verb = null)
@@ -621,7 +1033,121 @@ namespace Westwind.Utilities
                 RequestContentType = contentType
             });
         }
+#endif
 
+#endregion
+
+        #region Json
+
+        /// <summary>
+        /// Makes a JSON request that returns a JSON result.
+        /// </summary>
+        /// <typeparam name="TResult">Result type to deserialize to</typeparam>
+        /// <param name="settings">Configuration for this request</param>
+        /// <returns></returns>
+        public static async Task<TResult> DownloadJsonAsync<TResult>(HttpClientRequestSettings settings)
+{
+    settings.RequestContentType = "application/json";
+    settings.Encoding = Encoding.UTF8;
+
+    string json = await DownloadStringAsync(settings);
+
+    if (json == null)
+    {
+        return default;
+    }
+
+    try
+    {
+        return JsonConvert.DeserializeObject<TResult>(json);
+    }
+    catch (Exception ex)
+    {
+        // original error has priority
+        if (settings.HasErrors)
+            return default;
+
+        settings.HasErrors = true;
+        settings.ErrorMessage = ex.GetBaseException().Message;
+        settings.ErrorException = ex;
+    }
+
+    return default;
+}
+
+public static async Task<TResult> DownloadJsonAsync<TResult>(string url, string verb = "GET",
+    object data = null)
+{
+    return await DownloadJsonAsync<TResult>(new HttpClientRequestSettings
+    {
+        Url = url,
+        HttpVerb = verb,
+        RequestContent = data,
+        RequestContentType = data != null ? "application/json" : null
+    });
+}
+
+#if NET6_0_OR_GREATER
+
+/// <summary>
+/// Makes a JSON request that returns a JSON result.
+/// </summary>
+/// <typeparam name="TResult">Result type to deserialize to</typeparam>
+/// <param name="settings">Configuration for this request</param>
+/// <returns>Result or null - check ErrorMessage in settings on failure</returns>
+public static TResult DownloadJson<TResult>(HttpClientRequestSettings settings)
+{
+    settings.RequestContentType = "application/json";
+    settings.Encoding = Encoding.UTF8;
+
+    string json = DownloadString(settings);
+
+    if (json == null)
+    {
+        return default;
+    }
+
+    try
+    {
+        return JsonConvert.DeserializeObject<TResult>(json);
+    }
+    catch (Exception ex)
+    {
+        // original error has priority
+        if (settings.HasErrors)
+            return default;
+
+        settings.HasErrors = true;
+        settings.ErrorMessage = ex.GetBaseException().Message;
+        settings.ErrorException = ex;
+    }
+
+    return default;
+}
+
+
+/// <summary>
+/// Makes a JSON request that returns a JSON result.
+/// </summary>
+/// <param name="url">Request URL</param>
+/// <param name="verb">Http Verb to use. Defaults to GET on no data or POST when data is passed.</param>
+/// <param name="data">Data to be serialized to JSON for sending</param>
+/// <returns>result or null</returns>
+public static TResult DownloadJson<TResult>(string url, string verb = "GET", object data = null)
+{
+    return DownloadJson<TResult>(new HttpClientRequestSettings
+    {
+        Url = url,
+        HttpVerb = verb,
+        RequestContent = data,
+        RequestContentType = data != null ? "application/json" : null
+    });
+}
+
+#endif
+#endregion
+
+        #region Http Response
         /// <summary>
         /// Calls a URL and returns the raw, unretrieved HttpResponse. Also set on settings.Response and you 
         /// can read the response content from settings.Response.Content.ReadAsXXX() methods.
@@ -658,7 +1184,6 @@ namespace Westwind.Utilities
             }
         }
 
-#endif
 
 
 #if NET6_0_OR_GREATER
@@ -700,112 +1225,9 @@ namespace Westwind.Utilities
         }
 #endif
 
-        /// <summary>
-        /// Makes a JSON request that returns a JSON result.
-        /// </summary>
-        /// <typeparam name="TResult">Result type to deserialize to</typeparam>
-        /// <param name="settings">Configuration for this request</param>
-        /// <returns></returns>
-        public static async Task<TResult> DownloadJsonAsync<TResult>(HttpClientRequestSettings settings)
-        {
-            settings.RequestContentType = "application/json";
-            settings.Encoding = Encoding.UTF8;
+        #endregion
 
-            string json = await DownloadStringAsync(settings);
-
-            if (json == null)
-            {
-                return default;
-            }
-
-            try
-            {
-                return JsonConvert.DeserializeObject<TResult>(json);
-            }
-            catch (Exception ex)
-            {
-                // original error has priority
-                if (settings.HasErrors)
-                    return default;
-
-                settings.HasErrors = true;
-                settings.ErrorMessage = ex.GetBaseException().Message;
-                settings.ErrorException = ex;
-            }
-
-            return default;
-        }
-
-        public static async Task<TResult> DownloadJsonAsync<TResult>(string url, string verb = "GET",
-            object data = null)
-        {
-            return await DownloadJsonAsync<TResult>(new HttpClientRequestSettings
-            {
-                Url = url,
-                HttpVerb = verb,
-                RequestContent = data,
-                RequestContentType = data != null ? "application/json" : null
-            });
-        }
-
-#if NET6_0_OR_GREATER
-
-        /// <summary>
-        /// Makes a JSON request that returns a JSON result.
-        /// </summary>
-        /// <typeparam name="TResult">Result type to deserialize to</typeparam>
-        /// <param name="settings">Configuration for this request</param>
-        /// <returns>Result or null - check ErrorMessage in settings on failure</returns>
-        public static TResult DownloadJson<TResult>(HttpClientRequestSettings settings)
-        {
-            settings.RequestContentType = "application/json";
-            settings.Encoding = Encoding.UTF8;
-
-            string json = DownloadString(settings);
-
-            if (json == null)
-            {
-                return default;
-            }
-
-            try
-            {
-                return JsonConvert.DeserializeObject<TResult>(json);
-            }
-            catch (Exception ex)
-            {
-                // original error has priority
-                if (settings.HasErrors)
-                    return default;
-
-                settings.HasErrors = true;
-                settings.ErrorMessage = ex.GetBaseException().Message;
-                settings.ErrorException = ex;
-            }
-
-            return default;
-        }
-
-
-        /// <summary>
-        /// Makes a JSON request that returns a JSON result.
-        /// </summary>
-        /// <param name="url">Request URL</param>
-        /// <param name="verb">Http Verb to use. Defaults to GET on no data or POST when data is passed.</param>
-        /// <param name="data">Data to be serialized to JSON for sending</param>
-        /// <returns>result or null</returns>
-        public static TResult DownloadJson<TResult>(string url, string verb = "GET", object data = null)
-        {
-            return DownloadJson<TResult>(new HttpClientRequestSettings
-            {
-                Url = url,
-                HttpVerb = verb,
-                RequestContent = data,
-                RequestContentType = data != null ? "application/json" : null
-            });
-        }
-#endif
-
+        #region Helpers
         /// <summary>
         /// Creates an instance of the HttpClient and sets the API Key
         /// in the headers.
@@ -943,6 +1365,8 @@ namespace Westwind.Utilities
 
             req.Headers.Add(header, value);
         }
+
+        #endregion
     }
 
     /// <summary>
@@ -1358,7 +1782,6 @@ namespace Westwind.Utilities
         }
 
         #endregion
-
 
         /// <summary>
         /// Retrieves the response as a 

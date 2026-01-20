@@ -56,7 +56,7 @@ namespace Westwind.Utilities.InternetTools
     /// </summary>
 #if NET6_0_OR_GREATER
     [Obsolete("Westwind.HttpClient is obsolete in .NET Core as it uses the old HttpWebRequest class. Please use System.Net.HttpClient or " +
-        "Westwind.Utilities.HttpClientUtils (for async operation) or Westwind.Utilities.HttpUtils (for sync operations)")]
+        "`Westwind.Utilities.HttpClientUtils` or in Net4.x for sync Operations `Westwind.Utilities.HttpUtils`")]
 #endif
     public class HttpClient : IDisposable
 	{

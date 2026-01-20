@@ -297,6 +297,40 @@ namespace Westwind.Utilities.Test
             Assert.IsTrue(html.Contains("SailBig.jpg"));
 
         }
+
+        [TestMethod]
+        public async Task DownloadImageAsyncTest()
+        {
+            string filename = await HttpClientUtils.DownloadImageToFileAsync("https://markdownmonster.west-wind.com/Images/MarkdownMonster_Icon_32.png", @"c:\temp\test.png");
+            Assert.IsNotNull(filename);
+            Assert.IsTrue(File.Exists(filename));
+            Console.WriteLine(filename);
+
+            //ShellUtils.ShellExecute(filename);
+            //await Task.Delay(250);
+
+            if (File.Exists(filename))
+                File.Delete(filename);
+        }
+
+        [TestMethod]
+        public async Task DownloadImageAsyncSettingsTest()
+        {
+            string filename = await HttpClientUtils.DownloadImageToFileAsync(new HttpClientRequestSettings
+            {
+                Url = "https://markdownmonster.west-wind.com/Images/MarkdownMonster_Icon_32.png",
+                OutputFilename = @"c:\temp\test.png"
+            });
+            Assert.IsNotNull(filename);
+            Assert.IsTrue(File.Exists(filename));
+            Console.WriteLine(filename);
+
+            //ShellUtils.ShellExecute(filename);
+            //await Task.Delay(250);
+
+            if (File.Exists(filename))
+                File.Delete(filename);
+        }
     }
 
 }

@@ -9,7 +9,7 @@ Added routine to easily download bytes from an Http server.
 * **HttpClientUtils.DownloadFile/Async**   
 Download content directly to file from an Http Server.
 
-* **HttpClient Utils Settings Object Response Updates**  
+* **Additional HttpClientUtils Settings Object Response Properties**  
 Provided several helper properties to facilitate common header access. Explicitly exposed new Response properties: `ResponseContentType`, `ResponseContentLength`,  `ResponseContentHeaders` and `ResponseHeaders`.
 
 

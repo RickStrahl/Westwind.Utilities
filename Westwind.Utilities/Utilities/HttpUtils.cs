@@ -359,8 +359,10 @@ namespace Westwind.Utilities
 
 
         /// <summary>
-        /// Creates a temporary image file from a download from a URL
-        /// 
+        /// Downloads an image to a temporary file or a file you specify, automatically
+        /// adjusting the file extension to match the image content type (ie. .png, jpg, .gif etc)
+        /// Always use the return value to receive the final image file name.
+        ///
         /// If you don't pass a file a temporary file is created in Temp Files folder.
         /// You're responsible for cleaning up the file after you are done with it.
         /// 
@@ -369,8 +371,10 @@ namespace Westwind.Utilities
         /// extension may be changed.
         /// </summary>
         /// <param name="imageUrl">Url of image to download</param>
-        /// <param name="fileName">Optional output image file. Filename may change extension if the image format doesn't match the filename.
-        /// If not passed a temporary files file is created. Caller is responsible for cleaning up this file.
+        /// <param name="filename">
+        /// Optional output image file name. Filename may change extension if the image format doesn't match the filename.
+        /// If not passed a temporary files file is created in the temp file location and you can move the file
+        /// manually. If using the temporary file, caller is responsible for cleaning up the file after creation.
         /// </param>
         /// <param name="settings">Optional more detailed Http Settings for the request</param>
         /// <returns>file name that was created or null</returns>
@@ -398,7 +402,11 @@ namespace Westwind.Utilities
 
                 var ext = ImageUtils.GetExtensionFromMediaType(ct);
                 if (ext == null)
+                {
+                    if(File.Exists(filename))
+                        File.Delete(filename);
                     return null; // invalid image type
+                }
 
                 newFilename = Path.ChangeExtension(filename, ext);
 

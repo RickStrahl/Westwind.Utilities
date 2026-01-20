@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net10.0;net8.0;net6.0;net462;netstandard2.0</TargetFrameworks>
-		<Version>5.2</Version>
+		<TargetFrameworks>net10.0;net8.0;net6.0;net472;netstandard2.0</TargetFrameworks>
+		<Version>5.2.6</Version>
 		<Authors>Rick Strahl</Authors>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Language>en-US</Language>
@@ -20,7 +20,7 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageLicenseFile>LICENSE.MD</PackageLicenseFile>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Copyright>Rick Strahl, West Wind Technologies, 2010-2025</Copyright>
+		<Copyright>Rick Strahl, West Wind Technologies, 2010-2026</Copyright>
 		<Company>West Wind Technologies</Company>
 	</PropertyGroup>
 
@@ -38,20 +38,20 @@
 		<DefineConstants>RELEASE</DefineConstants>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(TargetFramework)' != 'net462'">
+	<PropertyGroup Condition="'$(TargetFramework)' != 'net472'">
 		<DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
 	</PropertyGroup>
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'net462'">
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net472'">
 		<DefineConstants>NETFULL</DefineConstants>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
 		<DebugType>embedded</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 	</PropertyGroup>
 
 
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
 		<!-- explicitly required netFX dependencies -->
 		<Reference Include="Microsoft.CSharp" />
 		<Reference Include="System.Web" />
@@ -59,7 +59,7 @@
 		<Reference Include="System.Configuration" />
 	</ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' != 'net462' ">
+	<ItemGroup Condition=" '$(TargetFramework)' != 'net472' ">
 		<!-- explicitly required netFX dependencies -->
 		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
 	</ItemGroup>
