@@ -836,6 +836,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="str">String to compare</param>        
         /// <param name="matchValues">String values to compare to</param>
+        /// <remarks>null values in matchValues are ignored</remarks>
         /// <returns></returns>
         public static bool EqualsAny(this string str, params string[] matchValues)
         {
@@ -844,6 +845,9 @@ namespace Westwind.Utilities
 
             foreach (var value in matchValues)
             {
+                // null values are ignored
+                if (value == null) continue;
+
                 if (str.Equals(value))
                     return true;
             }
@@ -866,6 +870,9 @@ namespace Westwind.Utilities
 
             foreach (var value in matchValues)
             {
+                // null values are ignored
+                if (value == null) continue;
+
                 if (str.Equals(value, compare))
                     return true;
             }
@@ -890,6 +897,9 @@ namespace Westwind.Utilities
 
             foreach (var value in matchValues)
             {
+                // null values are ignored
+                if (value == null) continue;
+
                 str = str.Replace(value, replaceWith);
             }
 
