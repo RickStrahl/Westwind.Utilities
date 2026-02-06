@@ -330,33 +330,29 @@ namespace Westwind.Utilities
             if (string.IsNullOrEmpty(path))
                 return path;
 
+            var fnameOrDirectory = Path.GetFileName(path);
+            if (fnameOrDirectory.Length >= length)
+                return "..." + fnameOrDirectory;
+
             if (path.Length <= length)
                 return path;
 
-            var index = -1;
-            for (int i = path.Length-1; i >= 0; i--)
-            {
-                if (path[i] == '\\' || path[i] == '/')
-                {
-                    index = i;
-                    break;
-                }
-            }
-
-            if (index == -1) // no slashes
-                return path.Substring(0,length); 
+            var index = Math.Max(path.LastIndexOf('\\'), path.LastIndexOf('/'));
+            if (index <= 0)
+                return path.Substring(0, length);
 
             var end = path.Substring(index);
-            var start = path.Substring(0, index - 1);
+            var maxStartLength = length - end.Length;
 
-            var maxStartLength = length - end.Length ;
+            if (maxStartLength <= 0)
+                return "..." + end.Substring(Math.Max(0, end.Length - (length - 3)));
 
-            var startBlock = start.Substring(0, maxStartLength);
+            var start = path.Substring(0, index);
 
             if (start.Length > maxStartLength)
-                startBlock = startBlock.Substring(0, maxStartLength - 3) + "...";
+                start = start.Substring(0, Math.Max(0, maxStartLength - 3)) + "...";
 
-            return startBlock + end;
+            return start + end;
         }
 
 

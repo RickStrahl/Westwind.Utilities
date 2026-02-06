@@ -19,7 +19,7 @@ namespace Westwind.Utilities.Linq
         /// <param name="f">Expression that points at the element list to select from</param>
         /// <returns>Flattened list or empty enumerable</returns>
         /// <example>
-        /// var topics = topicTree.FlattenTree(t=> t.Topics);
+        /// var topics = topicTree.FlattenTree(t=&gt; t.Topics);
         /// </example>
         public static IEnumerable<T> FlattenTree<T>(
             this IEnumerable<T> e,

@@ -31,92 +31,96 @@ namespace Westwind.Utilities
         public bool HasErrors => this.Count > 0;
 
         /// <summary>
-        /// Adds a new error to the collection
-        /// <seealso>Class ValidationError</seealso>
+        /// Adds a new <see cref="T:ValidationError">ValidationError</see> to the collection
+        /// 
         /// </summary>
-        /// <param name="Error">
+        /// <param name="error">
         /// Validation Error object
         /// </param>
         /// <returns>Void</returns>
-        public void Add(ValidationError Error)
+        public void Add(ValidationError error)
         {
-            List.Add(Error);
+            List.Add(error);
         }
 
 
         /// <summary>
         /// Adds a new error to the collection
-        /// <seealso>Class ValidationErrorCollection</seealso>
+        /// <seealso>T:ValidationErrorCollection</seealso>
         /// </summary>
-        /// <param name="Message">
+        /// <param name="message">
         /// Message of the error
         /// </param>
-        /// <param name="FieldName">
+        /// <param name="fieldName">
         /// optional field name that it applies to (used for Databinding errors on 
         /// controls)
         /// </param>
-        /// <param name="ID">
+        /// <param name="id">
         /// An optional ID you assign the error
         /// </param>
         /// <returns>Void</returns>
-        public void Add(string Message, string FieldName = "", string ID = "")
+        public void Add(string message, string fieldName = "", string id = "")
         {
             var error = new ValidationError() 
             { 
-                Message = Message, 
-                ControlID = FieldName, 
-                ID = ID 
+                Message = message, 
+                ControlID = fieldName, 
+                ID = id 
             };
             Add(error);
         }
 
         /// <summary>
-        /// Like Add but allows specifying of a format  
+        /// Like Add but allows specifying of a format. 
+        /// Adds a <see cref="T:ValidationError">ValidationError</see>.
+        /// 
+        /// <seealso>T:ValidationErrorCollection</seealso>
+        /// <seealso>T:ValidationError</seealso>        
         /// </summary>
-        /// <param name="Message"></param>
-        /// <param name="FieldName"></param>
-        /// <param name="ID"></param>
-        /// <param name="arguments"></param>
-        public void AddFormat(string Message, string FieldName, string ID, params object[] arguments)
+        /// <param name="message">A format message into which arguments are embedded using `{0}` `{1}` syntax etc.</param>
+        /// <param name="fieldName">Optional name of the field</param>
+        /// <param name="id">Optional Id</param>
+        /// <param name="arguments">Any arguments to send</param>
+        public void AddFormat(string message, string fieldName, string id, params object[] arguments)
         {
-            this.Add(string.Format(Message, arguments), FieldName, ID);
+            Add(string.Format(message, arguments), fieldName, id);
         }
 
         /// <summary>
         /// Removes the item specified in the index from the Error collection
         /// </summary>
-        /// <param name="Index"></param>
-        public void Remove(int Index)
+        /// <param name="index"></param>
+        public void Remove(int index)
         {
-            if (Index > List.Count - 1 || Index < 0)
-                List.RemoveAt(Index);
+            if (index > List.Count - 1 || index < 0)
+                List.RemoveAt(index);
         }
 
         /// <summary>
         /// Adds a validation error if the condition is true. Otherwise no item is 
         /// added.
-        /// <seealso>Class ValidationErrorCollection</seealso>
+        /// <seealso>ValidationErrorCollection</seealso>
         /// </summary>
-        /// <param name="Condition">
+        /// <param name="condition">
         /// If true this error is added. Otherwise not.
         /// </param>
-        /// <param name="Message">
+        /// <param name="message">
         /// The message for this error
         /// </param>
-        /// <param name="FieldName">
+        /// <param name="fieldName">
         /// Name of the UI field (optional) that this error relates to. Used optionally
         ///  by the databinding classes.
         /// </param>
-        /// <param name="ID">
+        /// <param name="id">
         /// An optional Error ID.
         /// </param>
         /// <returns>value of condition</returns>
-        public bool Assert(bool Condition, string Message, string FieldName, string ID)
+        public bool Assert(bool condition, string message, string fieldName, string id)
         {
-            if (Condition)
-                Add(Message, FieldName, ID);
+            if (condition)
+                Add(message, fieldName, id);
 
-            return Condition;
+            return condition;
         }
 
         /// <summary>
@@ -124,59 +128,61 @@ namespace Westwind.Utilities
         /// added.
         /// <seealso>Class ValidationErrorCollection</seealso>
         /// </summary>
-        /// <param name="Condition">
+        /// <param name="condition">
         /// If true the Validation Error is added.
         /// </param>
-        /// <param name="Message">
+        /// <param name="message">
         /// The Error Message for this error.
         /// </param>
         /// <returns>value of condition</returns>
-        public bool Assert(bool Condition, string Message)
+        public bool Assert(bool condition, string message)
         {
-            if (Condition)
-                Add(Message);
+            if (condition)
+                Add(message);
 
-            return Condition;
+            return condition;
         }
 
         /// <summary>
         /// Adds a validation error if the condition is true. Otherwise no item is 
         /// added.
-        /// <seealso>Class ValidationErrorCollection</seealso>
+        /// <seealso>T:ValidationErrorCollection</seealso>
         /// </summary>
-        /// <param name="Condition">
+        /// <param name="condition">
         /// If true the Validation Error is added.
         /// </param>
-        /// <param name="Message">
+        /// <param name="message">
         /// The Error Message for this error.
         /// </param>
+        /// <param name="fieldName">
+        /// Optional fieldName that can be linked in UI
+        /// </param>
         /// <returns>string</returns>
-        public bool Assert(bool Condition, string Message, string FieldName)
+        public bool Assert(bool condition, string message, string fieldName)
         {
-            if (Condition)
-                Add(Message, FieldName);
+            if (condition)
+                Add(message, fieldName);
 
-            return Condition;
+            return condition;
         }
 
 
         /// <summary>
         /// Asserts a business rule - if condition is true it's added otherwise not.
-        /// <seealso>Class ValidationErrorCollection</seealso>
         /// </summary>
-        /// <param name="Condition">
+        /// <param name="condition">
         /// If this condition evaluates to true the Validation Error is added
         /// </param>
-        /// <param name="Error">
+        /// <param name="error">
         /// Validation Error Object
         /// </param>
         /// <returns>value of condition</returns>
-        public bool Assert(bool Condition, ValidationError Error)
+        public bool Assert(bool condition, ValidationError error)
         {
-            if (Condition)
-                List.Add(Error);
+            if (condition)
+                List.Add(error);
 
-            return Condition;
+            return condition;
         }
 
 
@@ -192,9 +198,9 @@ namespace Westwind.Utilities
 
             StringBuilder sb = new StringBuilder(128);
 
-            foreach (ValidationError Error in this)
+            foreach (ValidationError error in this)
             {
-                sb.AppendLine(Error.Message);
+                sb.AppendLine(error.Message);
             }
 
             return sb.ToString();
@@ -214,9 +220,9 @@ namespace Westwind.Utilities
 
             StringBuilder sb = new StringBuilder(128);
 
-            foreach (ValidationError Error in this)
+            foreach (ValidationError error in this)
             {
-                sb.AppendLine($"{prefixLine} {Error.Message}");
+                sb.AppendLine($"{prefixLine} {error.Message}");
             }
 
             return sb.ToString();
@@ -235,15 +241,15 @@ namespace Westwind.Utilities
             StringBuilder sb = new StringBuilder(256);
             sb.Append("<ul>\r\n");
 
-            foreach (ValidationError Error in this)
+            foreach (ValidationError error in this)
             {
                 sb.Append("<li>");                
-                if (Error.ControlID != null && Error.ControlID != "")
+                if (error.ControlID != null && error.ControlID != "")
                     sb.AppendFormat("<a href='#' onclick=\"_errorLinkClick('{0}');return false;\" " +
                                   "style='text-decoration:none'>{1}</a>", 
-                                  Error.ControlID.Replace(".","_"),Error.Message);
+                                  error.ControlID.Replace(".","_"),error.Message);
                 else
-                    sb.Append(Error.Message);
+                    sb.Append(error.Message);
 
                 sb.AppendLine("</li>");
             }

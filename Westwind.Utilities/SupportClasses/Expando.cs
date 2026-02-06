@@ -123,6 +123,7 @@ namespace Westwind.Utilities
 
             var expando = this;
 
+            this.
             Initialize(expando);
             InitializeAsDictionary(expando, dictionary);
         }
@@ -130,8 +131,7 @@ namespace Westwind.Utilities
         /// <summary>
         /// Create an Expando from a dictionary
         /// </summary>
-        /// <param name="dict"></param>
-        /// <param name="expando">Expando instance</param>
+        /// <param name="dict">A dictionary of property/value pairs</param>
         public Expando(IDictionary<string, object> dict)
         {            
             var expando = this;

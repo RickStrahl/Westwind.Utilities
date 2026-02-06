@@ -456,6 +456,24 @@ namespace ExpandoTests
             Assert.AreEqual(dict["Accesses"], expando.Accesses);
         }
 
+        [TestMethod]
+        public void ExpandoFromList()
+        {
+            var props = new Dictionary<string, object>();
+            props.Add("Name", "Rick");
+            props.Add("Contains", false);
+            props.Add("Remove", false);
+            props.Add("InList", false);
+            props.Add("Count", 1);
+            
+            var expando = new Expando(props);
+            dynamic obj = expando;
+
+            object val = expando["Contains"];
+
+            Console.WriteLine(val);
+        }
+
     }
     
     public class ExpandoInstance : Expando
