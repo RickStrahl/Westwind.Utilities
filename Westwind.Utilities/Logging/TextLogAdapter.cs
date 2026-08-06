@@ -1,14 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Westwind.Utilities.Logging;
 using System.IO;
-using System.Xml;
 using System.Xml.Linq;
 using System.Data;
-using System.Web;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -39,8 +34,7 @@ namespace Westwind.Utilities.Logging
         {
             get { return _connectionString; }
             set { _connectionString = value; }
-        }
-
+        }        
 
         /// <summary>
         /// If true, log entries are written in a compact format without field names and separators. This is useful for very high volume logging where performance is critical.
@@ -68,48 +62,16 @@ namespace Westwind.Utilities.Logging
             }
 
             string logFilename = ConnectionString;
+            var sbEntryText = GetEntryString(entry);
+
+            var entryString = GetEntryString(entry);
 
             _writeSemaphore.Wait();
             try
             {
                 try
                 {
-                    using (var fileStream = new FileStream(logFilename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
-                    using (var sw = new StreamWriter(fileStream))
-                    {
-                        fileStream.Seek(0, SeekOrigin.End);
-
-                        sw.WriteLine($"Time:       {entry.Entered.ToString("yyyy-MM-dd HH:mm:ss")}");
-                        //sw.WriteLine($"Id:         {entry.Id}");
-                        sw.WriteLine($"Message:    {entry.Message}");
-                        sw.WriteLine($"ErrorLevel: {entry.ErrorLevel}");
-
-                        if (entry.Web != null)
-                        {
-                            if (!string.IsNullOrEmpty(entry.Web.Url))
-                                sw.WriteLine($"Url:        {entry.Web.Url}");
-                            if (!string.IsNullOrEmpty(entry.Web.QueryString))
-                                sw.WriteLine($"Query:      {entry.Web.QueryString}");
-                            if (!string.IsNullOrEmpty(entry.Web.Referrer))
-                                sw.WriteLine($"Referrer:   {entry.Web.Referrer}");
-                            if (!string.IsNullOrEmpty(entry.Web.IpAddress))
-                                sw.WriteLine($"IpAddress:  {entry.Web.IpAddress}");
-                            if (!string.IsNullOrEmpty(entry.Web.UserAgent))
-                                sw.WriteLine($"UserAgent:  {entry.Web.UserAgent}");
-
-                            if (!string.IsNullOrEmpty(entry.Web.PostData))
-                                sw.WriteLine($"PostData:   {entry.Web.PostData.Replace("&", "\r\n")}");
-
-                            if (entry.Web.RequestDuration > 0)
-                                sw.WriteLine($"Duration:       {entry.Web.RequestDuration}");
-                        }
-
-                        if (!string.IsNullOrEmpty(entry.Details))
-                            sw.WriteLine($"Details:    {entry.Details}");
-
-
-                        sw.WriteLine("----------------------------------------");
-                    }
+                    File.AppendAllText(logFilename, sbEntryText.ToString());                    
                 }
                 catch
                 {
@@ -140,44 +102,15 @@ namespace Westwind.Utilities.Logging
 
             string logFilename = ConnectionString;
 
+            var sbEntryString = GetEntryString(entry);
+
             await _writeSemaphore.WaitAsync().ConfigureAwait(false);
             try
             {
                 await using var fileStream = new FileStream(logFilename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read, 4096, FileOptions.Asynchronous);
                 await using var sw = new StreamWriter(fileStream);
                 fileStream.Seek(0, SeekOrigin.End);
-
-                await sw.WriteLineAsync($"Time:       {entry.Entered:yyyy-MM-dd HH:mm:ss}").ConfigureAwait(false);
-                //await sw.WriteLineAsync($"Id:         {entry.Id}").ConfigureAwait(false);
-                await sw.WriteLineAsync($"Message:    {entry.Message}").ConfigureAwait(false);
-                await sw.WriteLineAsync($"ErrorLevel: {entry.ErrorLevel}").ConfigureAwait(false);
-
-                if (entry.Web != null)
-                {
-                    if (!string.IsNullOrEmpty(entry.Web.Url))
-                        await sw.WriteLineAsync($"Url:        {entry.Web.Url}").ConfigureAwait(false);
-                    if (!string.IsNullOrEmpty(entry.Web.QueryString))
-                        await sw.WriteLineAsync($"Query:      {entry.Web.QueryString}").ConfigureAwait(false);
-                    if (!string.IsNullOrEmpty(entry.Web.Referrer))
-                        await sw.WriteLineAsync($"Referrer:   {entry.Web.Referrer}").ConfigureAwait(false);
-                    if (!string.IsNullOrEmpty(entry.Web.IpAddress))
-                        await sw.WriteLineAsync($"IpAddress:  {entry.Web.IpAddress}").ConfigureAwait(false);
-                    if (!string.IsNullOrEmpty(entry.Web.UserAgent))
-                        await sw.WriteLineAsync($"UserAgent:  {entry.Web.UserAgent}").ConfigureAwait(false);
-
-                    if (!string.IsNullOrEmpty(entry.Web.PostData))
-                        await sw.WriteLineAsync($"PostData:   {entry.Web.PostData.Replace("&", "\r\n")}").ConfigureAwait(false);
-
-                    if (entry.Web.RequestDuration > 0)
-                        await sw.WriteLineAsync($"Duration:       {entry.Web.RequestDuration}").ConfigureAwait(false);
-                }
-
-                if (!string.IsNullOrEmpty(entry.Details))
-                    await sw.WriteLineAsync($"Details:    {entry.Details}").ConfigureAwait(false);
-
-
-                await sw.WriteLineAsync("----------------------------------------").ConfigureAwait(false);
-                await sw.FlushAsync().ConfigureAwait(false);
+                await sw.WriteAsync(sbEntryString.ToString());
             }
             catch
             {
@@ -195,42 +128,16 @@ namespace Westwind.Utilities.Logging
         {
             string logFilename = ConnectionString;
 
+
+            var sbEntryText = GetCompactEntryString(entry);
+
             await _writeSemaphore.WaitAsync().ConfigureAwait(false);
             try
             {
-                await using var fileStream = new FileStream(logFilename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read, 4096, FileOptions.Asynchronous);
+                await using var fileStream = new FileStream(logFilename, FileMode.OpenOrCreate , FileAccess.Write, FileShare.Read, 4096, FileOptions.Asynchronous);
                 await using var sw = new StreamWriter(fileStream);
                 fileStream.Seek(0, SeekOrigin.End);
-
-                await sw.WriteLineAsync($"{entry.Entered:yyyy-MM-dd HH:mm:ss} - {entry.Message} - {entry.ErrorLevel}").ConfigureAwait(false);
-
-                if (entry.Web != null)
-                {
-
-                    if (!string.IsNullOrEmpty(entry.Web.Url))
-                        await sw.WriteAsync($"   {entry.Web.Verb} - {entry.Web.Url}").ConfigureAwait(false);
-                    if (!string.IsNullOrEmpty(entry.Web.QueryString))
-                        await sw.WriteAsync($"- {entry.Web.QueryString}").ConfigureAwait(false);
-                    if (!string.IsNullOrEmpty(entry.Web.Referrer))
-                        await sw.WriteAsync($"- {entry.Web.Referrer}").ConfigureAwait(false);
-                    if (!string.IsNullOrEmpty(entry.Web.IpAddress))
-                        await sw.WriteAsync($"- {entry.Web.IpAddress}").ConfigureAwait(false);
-                    if (!string.IsNullOrEmpty(entry.Web.UserAgent))
-                        await sw.WriteAsync($"UserAgent:  {entry.Web.UserAgent}").ConfigureAwait(false);
-
-                    if (!string.IsNullOrEmpty(entry.Web.PostData))
-                        await sw.WriteLineAsync($"PostData:   {entry.Web.PostData.Replace("&", "\r\n")}").ConfigureAwait(false);
-
-                    if (entry.Web.RequestDuration > 0)
-                        await sw.WriteLineAsync($"Duration:       {entry.Web.RequestDuration}").ConfigureAwait(false);
-                }
-
-                if (!string.IsNullOrEmpty(entry.Details))
-                    await sw.WriteLineAsync($"Details:    {entry.Details}").ConfigureAwait(false);
-
-
-                await sw.WriteLineAsync("----------------------------------------").ConfigureAwait(false);
-                await sw.FlushAsync().ConfigureAwait(false);
+                await sw.WriteAsync(sbEntryText.ToString()).ConfigureAwait(false);               
             }
             catch
             {
@@ -270,41 +177,12 @@ namespace Westwind.Utilities.Logging
         public bool WriteCompactEntry(T entry)
         {
             string logFilename = ConnectionString;
+            var sbEntryText = GetCompactEntryString(entry);
+
             _writeSemaphore.Wait();
             try
             {
-                using var fileStream = new FileStream(logFilename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
-                using var sw = new StreamWriter(fileStream);
-                fileStream.Seek(0, SeekOrigin.End);
-
-                sw.WriteLine($"{entry.Entered.ToString("yyyy-MM-dd HH:mm:ss")} - {entry.Message} - {entry.ErrorLevel}");
-
-                if (entry.Web != null)
-                {
-
-                    if (!string.IsNullOrEmpty(entry.Web.Url))
-                        sw.Write($"   {entry.Web.Verb} - {entry.Web.Url}");
-                    if (!string.IsNullOrEmpty(entry.Web.QueryString))
-                        sw.Write($"- {entry.Web.QueryString}");
-                    if (!string.IsNullOrEmpty(entry.Web.Referrer))
-                        sw.Write($"- {entry.Web.Referrer}");
-                    if (!string.IsNullOrEmpty(entry.Web.IpAddress))
-                        sw.Write($"- {entry.Web.IpAddress}");
-                    if (!string.IsNullOrEmpty(entry.Web.UserAgent))
-                        sw.Write($"UserAgent:  {entry.Web.UserAgent}");
-
-                    if (!string.IsNullOrEmpty(entry.Web.PostData))
-                        sw.WriteLine($"PostData:   {entry.Web.PostData.Replace("&", "\r\n")}");
-
-                    if (entry.Web.RequestDuration > 0)
-                        sw.WriteLine($"Duration:       {entry.Web.RequestDuration}");
-                }
-
-                if (!string.IsNullOrEmpty(entry.Details))
-                    sw.WriteLine($"Details:    {entry.Details}");
-
-
-                sw.WriteLine("----------------------------------------");
+                File.AppendAllText(logFilename, sbEntryText.ToString());
             }
             catch
             {
@@ -452,6 +330,78 @@ namespace Westwind.Utilities.Logging
             row["Referrer"] = (string)node.Element("Referrer");
             row["PostData"] = (string)node.Element("PostData");
             row["IpAddress"] = (string)node.Element("IpAddress");
+        }
+
+
+
+        private StringBuilder GetEntryString(T entry)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"Time:       {entry.Entered.ToString("yyyy-MM-dd HH:mm:ss")}");
+            sb.AppendLine($"Message:    {entry.Message}");
+            sb.AppendLine($"ErrorLevel: {entry.ErrorLevel}");
+
+            if (entry.Web != null)
+            {
+                if (!string.IsNullOrEmpty(entry.Web.Url))
+                    sb.AppendLine($"Url:        {entry.Web.Url}");
+                if (!string.IsNullOrEmpty(entry.Web.QueryString))
+                    sb.AppendLine($"Query:      {entry.Web.QueryString}");
+                if (!string.IsNullOrEmpty(entry.Web.Referrer))
+                    sb.AppendLine($"Referrer:   {entry.Web.Referrer}");
+                if (!string.IsNullOrEmpty(entry.Web.IpAddress))
+                    sb.AppendLine($"IpAddress:  {entry.Web.IpAddress}");
+                if (!string.IsNullOrEmpty(entry.Web.UserAgent))
+                    sb.AppendLine($"UserAgent:  {entry.Web.UserAgent}");
+
+                if (!string.IsNullOrEmpty(entry.Web.PostData))
+                    sb.AppendLine($"PostData:   {entry.Web.PostData.Replace("&", "\r\n")}");
+
+                if (entry.Web.RequestDuration > 0)
+                    sb.AppendLine($"Duration:       {entry.Web.RequestDuration}");
+            }
+
+            if (!string.IsNullOrEmpty(entry.Details))
+                sb.AppendLine($"Details:    {entry.Details}");
+
+            sb.AppendLine("----------------------------------------");
+
+            return sb;
+        }
+
+        private StringBuilder GetCompactEntryString(T entry)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"{entry.Entered.ToString("yyyy-MM-dd HH:mm:ss")} - {entry.Message} - {entry.ErrorLevel}");
+
+            if (entry.Web != null)
+            {
+                if (!string.IsNullOrEmpty(entry.Web.Url))
+                    sb.Append($"   {entry.Web.Verb} - {entry.Web.Url}");
+                if (!string.IsNullOrEmpty(entry.Web.QueryString))
+                    sb.Append($"- {entry.Web.QueryString}");
+                if (!string.IsNullOrEmpty(entry.Web.Referrer))
+                    sb.Append($"- {entry.Web.Referrer}");
+                if (!string.IsNullOrEmpty(entry.Web.IpAddress))
+                    sb.Append($"- {entry.Web.IpAddress}");
+                if (!string.IsNullOrEmpty(entry.Web.UserAgent))
+                    sb.Append($"UserAgent:  {entry.Web.UserAgent}");
+
+                if (!string.IsNullOrEmpty(entry.Web.PostData))
+                    sb.AppendLine($"PostData:   {entry.Web.PostData.Replace("&", "\r\n")}");
+
+                if (entry.Web.RequestDuration > 0)
+                    sb.AppendLine($"Duration:       {entry.Web.RequestDuration}");
+            }
+
+            if (!string.IsNullOrEmpty(entry.Details))
+                sb.AppendLine($"Details:    {entry.Details}");
+
+
+            sb.AppendLine("----------------------------------------");
+
+
+            return sb;
         }
     }
 }
