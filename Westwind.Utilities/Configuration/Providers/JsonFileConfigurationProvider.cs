@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          © West Wind Technologies, 2009-2013
+ *          Â© West Wind Technologies, 2009-2013
  *          http://www.west-wind.com/
  * 
  * Created: 09/12/2009
@@ -30,6 +30,8 @@
  **************************************************************  
 */
 #endregion
+
+using System;
 
 namespace Westwind.Utilities.Configuration
 {
@@ -106,6 +108,34 @@ namespace Westwind.Utilities.Configuration
             DecryptFields(config);
 
             return result;
+        }
+
+
+        /// <summary>
+        /// Writes the current configuration information to an
+        /// JSON string. String is JSON Serialization format.
+        /// </summary>
+        /// <returns>json string of serialized config object</returns>
+        public override string WriteAsString(AppConfiguration config)
+        {
+            string json = string.Empty;
+            EncryptFields(config);
+
+            try
+            {
+                json = JsonSerializationUtils.Serialize(config, true, true);
+            }
+            catch (Exception ex)
+            {
+                SetError(ex);
+                return string.Empty;
+            }
+            finally
+            {
+                DecryptFields(config);
+            }
+
+            return json;
         }
     }
 
