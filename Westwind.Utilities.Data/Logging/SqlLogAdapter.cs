@@ -35,6 +35,8 @@ namespace Westwind.Utilities.Logging
         public string Filename { get; set; } = "ApplicationLog";
 
 
+        public bool AutoCreateLog { get; set; } 
+
         /// <summary>
         /// The name of the table that data in SQL Server is written to
         /// </summary>
@@ -178,7 +180,7 @@ namespace Westwind.Utilities.Logging
                 parms.Add(data.CreateParameter("@UserAgent", StringUtils.Truncate(entry.Web.UserAgent, 255)));
                 parms.Add(data.CreateParameter("@Url", entry.Web.Url));
                 parms.Add(data.CreateParameter("@QueryString", StringUtils.Truncate(entry.Web.QueryString, 255)));
-                parms.Add(data.CreateParameter("@Referrer", entry.Web.Referrer));
+                parms.Add(data.CreateParameter("@Referrer", StringUtils.Truncate(entry.Web.Referrer, 255)));
                 parms.Add(data.CreateParameter("@PostData", StringUtils.Truncate(entry.Web.PostData, 2048), 2048));
                 parms.Add(data.CreateParameter("@RequestDuration", entry.Web.RequestDuration));
 
@@ -191,10 +193,7 @@ namespace Westwind.Utilities.Logging
                        values ({parmList})
                 """;
 
-            Console.WriteLine(sql);
-
             int result = await data.ExecuteNonQueryAsync(sql, parms.ToArray()).ConfigureAwait(false);
-
 
             // check for table missing and retry
             if (data.ErrorNumber == 208)
@@ -299,21 +298,17 @@ namespace Westwind.Utilities.Logging
         /// <returns></returns>
         public bool CreateLog()
         {
-            using SqlDataAccess data = CreateDal();
-            // try to drop the log table first
-            try
-            {
-                DeleteLog();
-            }
-            catch { } // ignore InvalidOperation
 
-            string sql = string.Format(STR_ApplicationWebLogCreateStatement, Filename);
+            using SqlDataAccess data = CreateDal();
+         
+            string sql = string.Format(STR_ApplicationWebLogCreateStatement, Filename);           
             int result = data.ExecuteNonQuery(sql);
             if (result < 0)
                 throw new InvalidOperationException("Failed to create Application Log Table: " + data.ErrorMessage);
 
             return true;
         }
+
 
         /// <summary>
         /// Deletes the Sql Log Table

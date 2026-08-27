@@ -645,6 +645,11 @@ namespace Westwind.Utilities.Data
                 if (RecordCount == -1)
                     RecordCount = 0;
             }
+            catch(SqlException ex)
+            {
+                RecordCount = -1;
+                SetError(ex); ;
+            }
             catch (DbException ex)
             {
                 RecordCount = -1;
@@ -2172,15 +2177,6 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             if (ex != null)
                 ErrorException = ex;            
         }
-
-        protected virtual void SetError(DbException ex)
-        {
-            SetError(ex.Message, ex.ErrorCode);
-            ErrorException = ex;
-
-            if (ThrowExceptions)
-                throw ex;
-        }
         protected virtual void SetError(SqlException ex)
         {
             SetError(ex.Message, ex.Number);
@@ -2189,6 +2185,15 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             if (ThrowExceptions)
                 throw ex;
         }
+        protected virtual void SetError(DbException ex)
+        {
+            SetError(ex.Message, ex.ErrorCode);
+            ErrorException = ex;
+
+            if (ThrowExceptions)
+                throw ex;
+        }
+       
 
         protected virtual void SetError(Exception ex)
         {
