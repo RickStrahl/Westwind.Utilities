@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -140,7 +136,7 @@ namespace Westwind.Utilities
         public static async Task<bool> Timeout(this Task task, int timeoutMs)
         {
             var completed = await Task.WhenAny(task, Task.Delay(timeoutMs));
-            
+
             if (task.IsFaulted)
                 throw task.Exception.GetBaseException();
 
@@ -158,9 +154,9 @@ namespace Westwind.Utilities
         /// <exception cref="TimeoutException">Thrown if the task times out</exception>
         /// <exception cref="Exception">Any exceptions thrown by the task code</exception>
         public static async Task<TResult> TimeoutWithResult<TResult>(this Task<TResult> task, int timeoutMs)
-        {                       
-            var completed = await Task.WhenAny(task, Task.Delay(timeoutMs));     
-            
+        {
+            var completed = await Task.WhenAny(task, Task.Delay(timeoutMs));
+
             if (task.IsFaulted)
                 throw task.Exception.GetBaseException();
 
@@ -193,7 +189,7 @@ namespace Westwind.Utilities
                 {
                     action.Invoke();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     errorHandler?.Invoke(ex);
                 }
@@ -223,7 +219,7 @@ namespace Westwind.Utilities
                 {
                     action.Invoke(parm);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     errorHandler?.Invoke(ex);
                 }
@@ -234,4 +230,105 @@ namespace Westwind.Utilities
         }
     }
 
+
+
+    /// <summary>
+    /// Processes tasks in a way that only the latest task is executed,
+    /// discarding any previous pending tasks.
+    /// </summary>
+    public class LatestWinsTaskProcessor<T> : IDisposable
+    {
+        private readonly object _syncRoot = new object();
+        private readonly Func<T, Task> _processor;
+        private readonly AsyncLocal<bool> _isInsideProcessor = new AsyncLocal<bool>();
+        private bool _isProcessing;
+        private bool _isDisposed;
+        private bool _hasPendingItem;
+        private T _pendingItem;
+        private Task _processingTask = Task.CompletedTask;
+
+        public LatestWinsTaskProcessor(Func<T, Task> processor)
+        {
+            _processor = processor ?? throw new ArgumentNullException(nameof(processor));
+        }
+
+        public Task ProcessAsync(T item)
+        {
+            lock (_syncRoot)
+            {
+                if (_isDisposed)
+                    return Task.CompletedTask;
+
+                _pendingItem = item;
+                _hasPendingItem = true;
+
+                if (_isInsideProcessor.Value)
+                    return Task.CompletedTask;
+
+                if (!_isProcessing)
+                {
+                    _isProcessing = true;
+                    _processingTask = ProcessPendingItemsAsync();
+                }
+
+                return _processingTask;
+            }
+        }
+
+        public void Dispose()
+        {
+            lock (_syncRoot)
+            {
+                _isDisposed = true;
+                _hasPendingItem = false;
+                _pendingItem = default;
+            }
+        }
+
+        private async Task ProcessPendingItemsAsync()
+        {
+            try
+            {
+                while (true)
+                {
+                    T item;
+                    lock (_syncRoot)
+                    {
+                        item = _pendingItem;
+                        _pendingItem = default;
+                        _hasPendingItem = false;
+                    }
+
+                    _isInsideProcessor.Value = true;
+                    try
+                    {
+                        await _processor(item);
+                    }
+                    finally
+                    {
+                        _isInsideProcessor.Value = false;
+                    }
+
+                    lock (_syncRoot)
+                    {
+                        if (_isDisposed || !_hasPendingItem)
+                        {
+                            _isProcessing = false;
+                            return;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                lock (_syncRoot)
+                {
+                    _isProcessing = false;
+                }
+                throw;
+            }
+        }
+    }
 }
+
+
