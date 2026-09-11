@@ -133,7 +133,6 @@ namespace Westwind.Utilities.Logging
 
             int result = data.ExecuteNonQuery(sql, parms.ToArray());                       
 
-
             // check for table missing and retry
             if (data.ErrorNumber == 208)
             {

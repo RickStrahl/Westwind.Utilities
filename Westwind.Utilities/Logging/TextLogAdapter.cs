@@ -16,6 +16,7 @@ namespace Westwind.Utilities.Logging
 
     public class TextLogAdapter<T> : ILogAdapter<T> where T : LogEntry, new()
     {
+        /// <summary>
         /// A connection string name for data stores that use
         /// connections.
         /// </summary>
