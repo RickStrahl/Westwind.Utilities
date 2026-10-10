@@ -272,34 +272,7 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static bool GoUrl(string url, string workingFolder = null)
         {
-            if (string.IsNullOrEmpty(workingFolder))
-                return OpenUrl(url);
-
-            string TPath = Path.GetTempPath();
-
-            ProcessStartInfo info = new ProcessStartInfo();
-            info.UseShellExecute = true;
-            info.Verb = "Open";
-            info.WorkingDirectory = TPath;
-            info.FileName = url;
-
-            bool result;
-
-            using (Process process = new Process())
-            {
-                process.StartInfo = info;
-
-                try
-                {
-                    result = process.Start();
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-
-            return result;
+            return ShellExecute(url, null, workingFolder) != -1;
         }
 
         /// <summary>
@@ -362,7 +335,6 @@ namespace Westwind.Utilities
         }
 
 
-
         /// <summary>
         /// Wrapper around the Shell Execute API. Windows specific.
         /// </summary>
@@ -370,22 +342,34 @@ namespace Westwind.Utilities
         /// <param name="arguments"></param>
         /// <param name="workingFolder"></param>
         /// <param name="verb"></param>
-        /// <returns></returns>
+        /// <returns>0 on started Ok, -1 on failure</returns>
         public static int ShellExecute(string url, string arguments = null,
-            string workingFolder = null, string verb = "open")
+            string workingFolder = null,
+            string verb = "Open")
         {
-            ProcessStartInfo info = new ProcessStartInfo();
-            info.UseShellExecute = true;
-            info.Verb = verb;
-
-            info.FileName = url;
-            info.Arguments = arguments;
-            info.WorkingDirectory = workingFolder;
-
-            using (Process process = new Process())
+            try
             {
-                process.StartInfo = info;
-                process.Start();
+                var info = new ProcessStartInfo
+                {
+                    UseShellExecute = true,
+                    Verb = verb,
+                    FileName = url,
+                    Arguments = arguments,
+                    WorkingDirectory = workingFolder
+                };
+
+                using (var process = new Process())
+                {
+                    process.StartInfo = info;
+                    if (!process.Start())
+                    {
+                        return -1;
+                    }
+                }
+            }
+            catch
+            {
+                return -1;
             }
 
             return 0;
