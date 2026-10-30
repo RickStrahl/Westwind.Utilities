@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Text.RegularExpressions;
 
 
@@ -145,9 +146,9 @@ namespace Westwind.Utilities
         /// <summary>
         /// Create an embedded image url for binary data like images and media
         /// </summary>
-        /// <param name="imageBytes"></param>
-        /// <param name="mimeType"></param>
-        /// <returns></returns>
+        /// <param name="imageBytes">The binary data to embed</param>
+        /// <param name="mimeType">The mime type of the data to embed. Defaults to image/png</param>
+        /// <returns>data: Uri. Format: `data:mimeType;base64,encodedData`)</returns>
         public static string BinaryToEmbeddedBase64(byte[] imageBytes, string mimeType = "image/png")
         {
             if (imageBytes == null) return null;
@@ -155,6 +156,23 @@ namespace Westwind.Utilities
             var data = $"data:{mimeType};base64," + Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
             return data;
         }
+
+        /// <summary>
+        /// Create an embedded image url from an image or media file
+        /// </summary>
+        /// <param name="filename">The path to the image or media file to embed</param>
+        /// <param name="mimeType">The mime type of the data to embed. Defaults to image/png</param>
+        /// <returns>data: Uri. Format: `data:mimeType;base64,encodedData`)</returns>
+        public static string BinaryToEmbeddedBase64(string filename, string mimeType = "image/png")
+        {
+            if (string.IsNullOrEmpty(filename) || !File.Exists(filename)) return null;
+
+            byte[] imageBytes = File.ReadAllBytes(filename);
+            var data = $"data:{mimeType};base64," + Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
+            return data;
+        }
+
+
 
 #if NET6_0_OR_GREATER
         /// <summary>
