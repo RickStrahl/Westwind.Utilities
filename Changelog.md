@@ -1,5 +1,15 @@
 # Westwind.Utilities Changelog
 
+#5.3.5
+
+* **HtmlUtils.BinaryToEmbeddedBase64() with Filename**  
+Added an overload to this method that can load a file instead of using binary data to create `data:` Urls.
+
+* **ImageUtils.GetImageMimeType()**  
+Add two methods that return an image mime type based on the binary file signature. Looks at marker bytes in the first few bytes of image data. Works with binary data or a file from disk.
+
+* **ShellUtils.ShowBinary()**  
+A method that allows you to via binary data as a file by providing binary data and a file extension. The method creates a temporary file and displays then uses System `ShellExecute()` to display it. Very useful for images.
 
 ## 5.3
 
