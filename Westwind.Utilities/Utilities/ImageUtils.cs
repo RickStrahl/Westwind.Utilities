@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          © West Wind Technologies, 2009
+ *          Â© West Wind Technologies, 2009
  *          http://www.west-wind.com/
  * 
  * Created: 09/12/2009
@@ -687,6 +687,8 @@ namespace Westwind.Utilities
                    ext == ".ico";
         }
 
+
+
         /// <summary>
         /// Determines whether a byte array  is an image based 
         /// on binary signature bytes.
@@ -756,6 +758,75 @@ namespace Westwind.Utilities
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Returns an image mime type from binary image data
+        /// </summary>
+        /// <param name="data">Binary image data</param>
+        /// <returns></returns>
+        public static string GetImageMimeType(byte[] data)
+        {
+            // use the same logic as IsImage but return the mime type instead of true/false
+
+            if (data == null || data.Length < 4)
+                return null;
+
+            // PNG (also covers APNG, which is an extension of PNG)
+            if (data.Length >= 8 &&
+                data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4E &&
+                data[3] == 0x47 && data[4] == 0x0D && data[5] == 0x0A &&
+                data[6] == 0x1A && data[7] == 0x0A)
+            {                
+                return "image/png";
+            }
+
+
+            // JPEG
+            if (data.Length >= 4 &&
+                data[0] == 0xFF && data[1] == 0xD8 &&
+                data[data.Length - 2] == 0xFF && data[data.Length - 1] == 0xD9)
+            {
+                return "image/jpeg";
+            }
+
+            // GIF
+            if (data.Length >= 6 &&
+                data[0] == 0x47 && data[1] == 0x49 && data[2] == 0x46 &&
+                data[3] == 0x38 && (data[4] == 0x39 || data[4] == 0x37) && data[5] == 0x61)
+            {
+                return "image/gif";
+            }
+
+            // BMP
+            if (data.Length >= 2 &&
+                data[0] == 0x42 && data[1] == 0x4D)
+            {
+                return "image/bmp";
+            }
+
+            // WebP: starts with 'RIFF' + 4 bytes + 'WEBP'
+            if (data.Length >= 12 &&
+                data[0] == 0x52 && data[1] == 0x49 && data[2] == 0x46 && data[3] == 0x46 &&
+                data[8] == 0x57 && data[9] == 0x45 && data[10] == 0x42 && data[11] == 0x50)
+            {
+                return "image/webp";
+            }
+
+            // AVIF: starts with 'ftyp' + 'avif' or 'avis' box brand
+            // ISO BMFF files start with 4-byte box size then 'ftyp'
+            if (data.Length >= 12 &&
+                data[4] == 0x66 && data[5] == 0x74 && data[6] == 0x79 && data[7] == 0x70)
+            {
+                // Check major brand
+                string brand = System.Text.Encoding.ASCII.GetString(data, 8, 4);
+                if (brand == "avif" || brand == "avis")
+                {
+                    return "image/avif";
+                }
+            }
+
+            return null;
         }
     }
 }
