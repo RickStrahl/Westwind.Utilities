@@ -569,9 +569,30 @@ namespace Westwind.Utilities
 
             return GoUrl(File);
         }
-#endregion
 
-#region Simple HTTP Helpers
+        /// <summary>
+        /// Displays a binary file by dumping it out into the temp folder and shell executing it.
+        /// Provide an extension for the temp file to be created with.        
+        /// 
+        /// Note the file will not be deleted automatically but a single file name is used and
+        /// reused for repeated calls to this method. 
+        /// </summary>
+        /// <param name="imageFilename">Full path to the image file</param>
+        /// <param name="extension">The extension for the type of images (ie. png,jpg,gif,bmp etc)</param>
+        /// <returns></returns>
+        public static bool ShowBinary(byte[] data, string extension = "png")
+        {
+            string File = Path.GetTempPath() + "\\__preview." + extension;
+
+            FileStream fs = new FileStream(File, FileMode.Create, FileAccess.Write);
+            fs.Write(data, 0, data.Length);
+            fs.Close();
+
+            return GoUrl(File);
+        }
+        #endregion
+
+        #region Simple HTTP Helpers
         /// <summary>
         /// Simple method to retrieve HTTP content from the Web quickly
         /// </summary>
