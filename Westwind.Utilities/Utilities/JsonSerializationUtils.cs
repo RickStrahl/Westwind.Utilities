@@ -278,6 +278,9 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static string FormatJsonString(string json)
         {
+            if (string.IsNullOrWhiteSpace(json))
+                return string.Empty;
+
             return JToken.Parse(json).ToString(Formatting.Indented) as string;			
         }
 
