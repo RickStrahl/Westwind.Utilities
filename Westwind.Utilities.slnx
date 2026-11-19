@@ -2,6 +2,7 @@
   <Folder Name="/Solution Items/">
     <File Path=".gitignore" />
     <File Path="Changelog.md" />
+    <File Path="Directory.Build.props" />
     <File Path="Readme.md" />
   </Folder>
   <Folder Name="/Tests/">
